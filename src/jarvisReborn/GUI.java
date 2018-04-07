@@ -110,7 +110,7 @@ public class GUI {
 		Gui g1 = initGUI();
 		JLabel title = new JLabel("Welcome to jarvis!");
 		title.setBackground(Color.BLACK);
-		title.setForeground(Color.WHITE);
+		title.setForeground(Color.BLACK);
 		title.setBounds(0,0,g1.x,40);
 		title.setHorizontalAlignment(JLabel.CENTER);
 		this.title=title;
