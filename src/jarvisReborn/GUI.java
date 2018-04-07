@@ -67,6 +67,7 @@ public class GUI {
 			ssalPanel.setBorder(border);
 			JLabel cmdLabel = new JLabel();
 			cmdLabel.setText("Command Line");
+			cmdLabel.setForeground(Color.WHITE);
 			cmdLabel.setBounds(10,5,x,40);
 			ssalPanel.add(cmdLabel);
 			ssalPanel.setBounds(0,50,x,y-100);
@@ -96,7 +97,7 @@ public class GUI {
 		Gui g1=new Gui();
 		g1.f=new JFrame("SSAL AI");
 		g1.f.setBackground(Color.BLACK);
-		g1.f.setForeground(Color.WHITE);
+		g1.f.setForeground(Color.BLACK);
 		g1.setVisible();
 		g1.size();
 		g1.f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,6 +109,8 @@ public class GUI {
 	GUI(){
 		Gui g1 = initGUI();
 		JLabel title = new JLabel("Welcome to jarvis!");
+		title.setBackground(Color.BLACK);
+		title.setForeground(Color.WHITE);
 		title.setBounds(0,0,g1.x,40);
 		title.setHorizontalAlignment(JLabel.CENTER);
 		this.title=title;
