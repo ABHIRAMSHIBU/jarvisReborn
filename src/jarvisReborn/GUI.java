@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import sun.security.ec.ECDHKeyAgreement;
+
 public class GUI {
 	/* All critical GUI Components will go here */
 	public JFrame frame;
@@ -28,12 +30,29 @@ public class GUI {
 				else if(tf.getText().contains("$run")) {
 					int i = tf.getText().indexOf(" ");
 					int j = tf.getText().indexOf(" ", i+1);
+					int z = tf.getText().indexOf(" ",j+1);
 					int pin = Integer.valueOf(tf.getText().substring(i+1,j));
-					int operation = Integer.valueOf(tf.getText().substring(j+1));
-					tf.setText(Core.telnet.echo(pin+" "+operation+"\r"));
+					int operation = Integer.valueOf(tf.getText().substring(j+1,z));
+					tf.setText(Core.telnet[Integer.valueOf(tf.getText().substring(z+1))].echo(pin+" "+operation+"\r"));
 				}
 				else {
 					tf.setText("INVALID: "+tf.getText());
+				}
+			}
+			else if(e.getSource() == button[1]) {
+				//code to be added for button 1
+				try {
+					int mcu = Integer.valueOf(tf.getText());
+					Thread control = new Thread() {
+						public void run() {
+							new ControlGUI(mcu, Core.telnet[mcu]);
+						}
+					};
+					control.start();
+					tf.setText("Launching GUI now");
+				}
+				catch(Exception e1){
+					tf.setText("Error occured check : "+tf.getText());
 				}
 			}
 		}
@@ -95,6 +114,11 @@ public class GUI {
 			button[0].addActionListener(new ButtonListen());
 			button[0].setForeground(Color.WHITE);
 			button[0].setBackground(Color.BLACK);
+			button[1]=new JButton("Control");
+			button[1].setBounds(10,100,100,40);
+			button[1].addActionListener(new ButtonListen());
+			panel.add(button[1]);
+			
 		}
 	}
 	void kill(Gui g) {

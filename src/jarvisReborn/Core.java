@@ -5,7 +5,7 @@ import tg.SSALTeleInit;
 public class Core {
 	static Thread tele;
 	public static Thread telnetThread;
-	public static Telnet telnet;
+	public static Telnet telnet[];
 	public static void main(String[] args) {
 		new Core();
 	}
@@ -18,9 +18,10 @@ public class Core {
 		};
 		telegram.start();
 		tele=telegram;
+		telnet = new Telnet[50];        //Supports 50 clients
 		telnetThread = new Thread() {
 			public void run() {
-				telnet = new Telnet();
+				telnet[0] = new Telnet("192.168.43.9",23);
 			}
 		};
 		telnetThread.start();
