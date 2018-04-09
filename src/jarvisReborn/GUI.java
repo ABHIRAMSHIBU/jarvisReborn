@@ -25,6 +25,13 @@ public class GUI {
 					tf.setText(""+Core.tele.getState());
 					System.out.println("boo");
 				}
+				else if(tf.getText().contains("$run")) {
+					int i = tf.getText().indexOf(" ");
+					int j = tf.getText().indexOf(" ", i+1);
+					int pin = Integer.valueOf(tf.getText().substring(i+1,j));
+					int operation = Integer.valueOf(tf.getText().substring(j+1));
+					tf.setText(Core.telnet.echo(pin+" "+operation+"\r"));
+				}
 				else {
 					tf.setText("INVALID: "+tf.getText());
 				}
@@ -79,8 +86,8 @@ public class GUI {
 			button[0]=new JButton();
 			button[0].setText("Run Command");
 			tf = new JTextField();
-			tf.setForeground(Color.WHITE);
-			tf.setBackground(Color.BLACK);
+			tf.setForeground(Color.BLACK);
+			tf.setBackground(Color.WHITE);
 			tf.setBounds(10,50,x-200,40);
 			button[0].setBounds(x-180,50,175,40);
 			panel.add(tf);
@@ -110,7 +117,7 @@ public class GUI {
 		Gui g1 = initGUI();
 		JLabel title = new JLabel("Welcome to jarvis!");
 		title.setBackground(Color.BLACK);
-		title.setForeground(Color.WHITE);
+		title.setForeground(Color.BLACK);
 		title.setBounds(0,0,g1.x,40);
 		title.setHorizontalAlignment(JLabel.CENTER);
 		this.title=title;
