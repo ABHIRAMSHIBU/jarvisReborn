@@ -1,5 +1,7 @@
 package jarvisReborn;
 
+import Sockets.Telnet;
+import Sockets.TelnetServer;
 import tg.SSALTeleInit;
 
 public class Core {
@@ -21,10 +23,10 @@ public class Core {
 		telnet = new Telnet[50];        //Supports 50 clients
 		telnetThread = new Thread() {
 			public void run() {
-				telnet[0] = new Telnet("192.168.43.9",23);
+				telnet[0] = new Telnet("192.168.43.146",23);
 			}
 		};
 		telnetThread.start();
-		
+		new TelnetServer(8000);
 	}
 }

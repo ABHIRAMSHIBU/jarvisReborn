@@ -20,7 +20,6 @@ public class GUI {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("YO");
 			// TODO Auto-generated method stub
 			if(e.getSource() == button[0]) {
 				if(tf.getText().equals("$tel status")){

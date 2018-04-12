@@ -1,4 +1,4 @@
-package jarvisReborn;
+package Sockets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.net.Socket;
 
 public class Telnet{
 	Socket socket;
+	public boolean status=false;
 	public boolean pinStatus(int pin) {
 		String reply=echo(pin+"\r");
 		if(Integer.valueOf(reply.substring(0, 1))==1) {
@@ -55,10 +56,12 @@ public class Telnet{
 		Socket pingSocket = null;
 	
 			try {
-					pingSocket = new Socket("192.168.43.9", 23);
+					pingSocket = new Socket("192.168.43.146", 23);
 					socket=pingSocket;
+					status=true;
 			} catch (IOException e) {
-				return;
+				System.out.println("Telnet Error occured!");
+				status=false;
 			}
 			//System.out.println("Sending 13 0");
 			/*
@@ -87,8 +90,10 @@ public class Telnet{
 			try {
 					pingSocket = new Socket(ip, port);
 					socket=pingSocket;
+					status=true;
 			} catch (IOException e) {
-				return;
+				System.out.println("Telnet Error occured!");
+				status=false;
 			}
 	}
 }

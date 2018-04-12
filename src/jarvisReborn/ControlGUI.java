@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 
+import Sockets.Telnet;
+
 public class ControlGUI {
 	JToggleButton toggleButton[]=new JToggleButton[20];
 	JLabel label[] = new JLabel[20];
