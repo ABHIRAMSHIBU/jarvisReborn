@@ -2,11 +2,15 @@ package jarvisReborn;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.function.Consumer;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import CommandHandlers.MainCMDHandler;
 import sun.security.ec.ECDHKeyAgreement;
 
 public class GUI {
@@ -15,43 +19,81 @@ public class GUI {
 	public JLabel title;
 	public JButton button[];
 	public JPanel ssalPanel;
-	JTextField tf;
+	JTextArea ta;
+	class enterListen implements KeyListener {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// TODO Auto-generated method stub
+			if(KeyEvent.getKeyText(e.getKeyCode()).equals("Enter")) {
+				new ButtonListen().actionPerformed(null);
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
 	class ButtonListen implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			if(e.getSource() == button[0]) {
-				if(tf.getText().equals("$tel status")){
-					tf.setText(""+Core.tele.getState());
-					System.out.println("boo");
-				}
-				else if(tf.getText().contains("$run")) {
-					int i = tf.getText().indexOf(" ");
-					int j = tf.getText().indexOf(" ", i+1);
-					int z = tf.getText().indexOf(" ",j+1);
-					int pin = Integer.valueOf(tf.getText().substring(i+1,j));
-					int operation = Integer.valueOf(tf.getText().substring(j+1,z));
-					tf.setText(Core.telnet[Integer.valueOf(tf.getText().substring(z+1))].echo(pin+" "+operation+"\r"));
+			String lastLine=ta.getText().substring(ta.getText().lastIndexOf("\n")+1);
+			if(lastLine.contains("$")) {
+				MainCMDHandler mainCMDHandler = new MainCMDHandler(lastLine,ta);
+				if(mainCMDHandler.parsed) {
+					ta.append("\n>"+mainCMDHandler.output);
+					ta.append("\n");
 				}
 				else {
-					tf.setText("INVALID: "+tf.getText());
+					ta.append("\n>"+"Invalid command check and retry!");
+					ta.append("\n");
 				}
 			}
-			else if(e.getSource() == button[1]) {
+			/*if(e.getSource() == button[0]) {
+				if(ta.getText().equals("$tel status")){
+					ta.setText(""+Core.tele.getState());
+					System.out.println("boo");
+				}
+				else if(ta.getText().contains("$run")) {
+					int i = ta.getText().indexOf(" ");
+					int j = ta.getText().indexOf(" ", i+1);
+					int z = ta.getText().indexOf(" ",j+1);
+					int pin = Integer.valueOf(ta.getText().substring(i+1,j));
+					int operation = Integer.valueOf(ta.getText().substring(j+1,z));
+					ta.setText(Core.telnet[Integer.valueOf(ta.getText().substring(z+1))].echo(pin+" "+operation+"\r"));
+				}
+				else {
+					ta.setText("INVALID: "+ta.getText());
+				}
+			}*/
+			else if(lastLine.length()>0){
 				//code to be added for button 1
 				try {
-					int mcu = Integer.valueOf(tf.getText());
+					int mcu = Integer.valueOf(lastLine);
 					Thread control = new Thread() {
 						public void run() {
-							new ControlGUI(mcu, Core.telnet[mcu]);
+							new ControlGUI(mcu, Core.telnet[mcu],ta);
 						}
 					};
+					ta.append("\n>Launching GUI now");
 					control.start();
-					tf.setText("Launching GUI now");
+					control.join();
+					ta.append("\n");
 				}
 				catch(Exception e1){
-					tf.setText("Error occured check : "+tf.getText());
+					ta.append("\n>Error occured check MCU number");
+					ta.append("\n");
 				}
 			}
 		}
@@ -103,18 +145,33 @@ public class GUI {
 			button = new JButton[10];
 			button[0]=new JButton();
 			button[0].setText("Run Command");
-			tf = new JTextField();
-			tf.setForeground(Color.BLACK);
-			tf.setBackground(Color.WHITE);
-			tf.setBounds(10,50,x-200,40);
-			button[0].setBounds(x-180,50,175,40);
-			panel.add(tf);
+			
+			ta = new JTextArea();
+			ta.setForeground(Color.BLACK);
+			ta.setBackground(Color.WHITE);
+			//ta.setBounds(10,50,x-200,240);
+			ta.setText(">Welcome to SSAL command line\n"
+					+">Enter $help for help with commands\n"
+					+">Promt is now active start commanding\n");
+			ta.addKeyListener(new enterListen());
+			JScrollPane scrollPane;
+			try {
+				scrollPane= new JScrollPane(ta);
+				scrollPane.setBounds(10,50,x-200,240);
+			}
+			catch(Exception e){
+				scrollPane=null;
+				System.out.println("Error contained?");
+			}
+			
+			button[0].setBounds(x-180,100,175,40);
+			panel.add(scrollPane);
 			panel.add(button[0]);
 			button[0].addActionListener(new ButtonListen());
 			button[0].setForeground(Color.WHITE);
 			button[0].setBackground(Color.BLACK);
 			button[1]=new JButton("Control");
-			button[1].setBounds(10,100,100,40);
+			button[1].setBounds(x-180,150,175,40);
 			button[1].addActionListener(new ButtonListen());
 			panel.add(button[1]);
 			
@@ -138,7 +195,7 @@ public class GUI {
 	}
 	GUI(){
 		Gui g1 = initGUI();
-		JLabel title = new JLabel("Welcome to jarvis!");
+		JLabel title = new JLabel("Welcome to SSAL AI!");
 		title.setBackground(Color.BLACK);
 		title.setForeground(Color.BLACK);
 		title.setBounds(0,0,g1.x,40);
