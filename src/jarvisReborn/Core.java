@@ -1,7 +1,9 @@
 package jarvisReborn;
 
+import Config.ConfigParse;
 import Sockets.Telnet;
 import Sockets.TelnetServer;
+import jdk.internal.dynalink.beans.StaticClass;
 import tg.SSALTeleInit;
 
 public class Core {
@@ -20,13 +22,21 @@ public class Core {
 		};
 		telegram.start();
 		tele=telegram;
+		/** 
+		 * Config Section
+		 * File in /home/username/SSAL/ssal.conf 
+		 * Please write this file with 
+		 * ID IP PINS.
+		 * Should be seperated with single space.
+		 */
+		ConfigParse configParse = new ConfigParse();
 		telnet = new Telnet[50];        //Supports 50 clients
-		telnetThread = new Thread() {
-			public void run() {
-				telnet[0] = new Telnet("192.168.43.6",23);
-			}
-		};
-		telnetThread.start();
+		for (int i=0;i<configParse.data.size();i++) {
+			int id=configParse.data.get(i).id;
+			String ip=configParse.data.get(i).ip;
+			System.out.println("Starting telnet for id:"+id+" ip:"+ip);
+			telnet[configParse.data.get(i).id] = new Telnet(configParse.data.get(i).ip,23);
+		}
 		new TelnetServer(8000);
 	}
 }

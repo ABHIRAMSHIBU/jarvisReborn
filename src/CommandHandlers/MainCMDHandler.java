@@ -22,7 +22,15 @@ public class MainCMDHandler {
 		int space1=input.indexOf(" ");
 		int pin=Integer.valueOf(input.substring(0, space1)), 
 				mcu=Integer.valueOf(input.substring(space1+1));
-		output=Core.telnet[mcu].echo(pin+"\r");
+		try {
+			output=Core.telnet[mcu].echo(pin+"\r");
+		}
+		catch(Exception e){
+			output="Error contacting ESP";
+		}
+		if(!Core.telnet[mcu].run) {
+			output="Error contacting ESP";
+		}
 	}
 	public void parseSET(String input) {
 		// 13 0 0
@@ -33,7 +41,12 @@ public class MainCMDHandler {
 			mcu=Integer.valueOf(input.substring(space2+1));
 		//System.out.println("Pin is:"+pin+" operation is:"+operation+" mcu is:"+mcu);
 		parsed=true;
-		output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+		try {
+			output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+		}
+		catch(Exception e) {
+			output="Error contacting ESP";
+		}
 		//Im gonna make that text view bigger
 	}
 }
