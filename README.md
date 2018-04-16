@@ -9,3 +9,4 @@ Jarvis can
 <li>Prevent electrical hazards</li>
 <li>Afterall saves energy (Turn on and forget)</li>
 </ul>
+Config file in branch <a href="'https://gitlab.com/ABHIRAMSHIBU/jarvisReborn.git/">config</a>
