@@ -9,8 +9,9 @@ import java.net.Socket;
 
 public class Telnet{
 	Socket socket;
-	public boolean status=false;
+	public boolean status=false,run=false;
 	public boolean pinStatus(int pin) {
+		run=false;
 		String reply=echo(pin+"\r");
 		if(Integer.valueOf(reply.substring(0, 1))==1) {
 			return true;
@@ -27,7 +28,8 @@ public class Telnet{
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Telnet:IOError");
 		}
 		try {
 			Thread.sleep(200);
@@ -54,6 +56,7 @@ public class Telnet{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		run=true;
 		return z;
 	}
 	public Telnet() {
