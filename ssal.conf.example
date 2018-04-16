@@ -1,4 +1,4 @@
-ID    IP       PIN_AVAIL   # Warning :There should be only one space 
+ID    IP       PIN_AVAIL   # Warning :There should be only one space /home/user/SSAL/ssal.conf
 0 192.168.43.1 2,3,4,5,6,7,8,9,10,13,14,15,16,17,18,19
 1 192.168.43.2 2,3,4,5,6,7,8,9,10,13,14,15,16,17,18,19
 5 192.168.43.3 2,3,4,5,6,7,8,9,10,13,14,15,16,17,18,19
