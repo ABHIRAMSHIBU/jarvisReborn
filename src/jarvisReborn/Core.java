@@ -23,7 +23,7 @@ public class Core {
 		telnet = new Telnet[50];        //Supports 50 clients
 		telnetThread = new Thread() {
 			public void run() {
-				telnet[0] = new Telnet("192.168.43.146",23);
+				telnet[0] = new Telnet("192.168.43.6",23);
 			}
 		};
 		telnetThread.start();

@@ -44,7 +44,12 @@ public class Telnet{
 			e.printStackTrace();
 		}
 		try {
-			z = (in.readLine());
+			if(socket.getInputStream().available()>0) {
+				z = (in.readLine());
+			}
+			else {
+				z = "No input available";
+			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

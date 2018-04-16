@@ -1,10 +1,12 @@
 package jarvisReborn;
 
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 
 import Sockets.Telnet;
@@ -32,7 +34,7 @@ public class ControlGUI {
 			}
 		}
 	};
-	public ControlGUI(int mcu, Telnet telnet) {
+	public ControlGUI(int mcu, Telnet telnet,JTextArea ta) {
 		this.telnet=telnet;
 		JFrame frame = new JFrame("Control panel for mcu "+mcu);
 		frame.setSize(600, 630);
@@ -57,6 +59,7 @@ public class ControlGUI {
 				toggleButton[i].setText("OFF");
 				toggleButton[i].setSelected(false);
 				System.out.println("Pin "+i+" is off");
+				ta.append("\n>Pin "+i+" is off");
 			}
 			frame.add(label[i]);
 			toggleButton[i].addActionListener(buttonListner);
