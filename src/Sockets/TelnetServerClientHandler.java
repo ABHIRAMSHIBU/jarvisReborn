@@ -27,12 +27,12 @@ public class TelnetServerClientHandler extends Thread {
 				    		System.out.println("Client "+id+" disconnect!");
 				    		return;
 				    	}
-				    	int i = message.indexOf(" ");
+				    	/*int i = message.indexOf(" ");
 						int j = message.indexOf(" ", i+1);
 						int z = message.indexOf(" ",j+1);
 						int pin = Integer.valueOf(message.substring(i+1,j));
 						int operation = Integer.valueOf(message.substring(j+1,z));
-						message = Core.telnet[Integer.valueOf(message.substring(z+1))].echo(pin+" "+operation+"\r");
+						message = Core.telnet[Integer.valueOf(message.substring(z+1))].echo(pin+" "+operation+"\r");*/
 				    	System.out.println("Telnet "+id+" : "+message);
 				    }
 			}
