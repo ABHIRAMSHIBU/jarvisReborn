@@ -3,7 +3,6 @@ package jarvisReborn;
 import Config.ConfigParse;
 import Sockets.Telnet;
 import Sockets.TelnetServer;
-import jdk.internal.dynalink.beans.StaticClass;
 import tg.SSALTeleInit;
 
 public class Core {

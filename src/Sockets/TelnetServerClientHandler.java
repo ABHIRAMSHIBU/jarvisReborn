@@ -41,6 +41,8 @@ public class TelnetServerClientHandler extends Thread {
 						else {
 							message = "Error!";
 						}
+				    	out.println(message);
+				    	//System.out.println(message);
 				    }
 			}
 			catch (Exception e) {

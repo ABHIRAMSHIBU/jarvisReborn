@@ -13,10 +13,20 @@ public class Telnet{
 	public boolean pinStatus(int pin) {
 		run=false;
 		String reply=echo(pin+"\r");
-		if(Integer.valueOf(reply.substring(0, 1))==1) {
-			return true;
+		try{
+			if(reply != null) {
+				if(Integer.valueOf(reply.substring(0, 1))==1) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
 		}
-		else {
+		catch(java.lang.NumberFormatException e) {
 			return false;
 		}
 	}
@@ -30,6 +40,14 @@ public class Telnet{
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			System.out.println("Telnet:IOError");
+		}
+		try {
+			while(socket.getInputStream().available()>0) {
+				socket.getInputStream().read();
+			}
+		} catch (IOException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
 		}
 		try {
 			Thread.sleep(200);
