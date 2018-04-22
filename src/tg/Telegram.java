@@ -104,7 +104,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        				temp="Lights on";
 				        		}
 			        			else {
-			        				temp="Data mismatch! Error:3";
+			        				temp="Data mismatch! Error:3 Data:"+c.output;
 			        			}
 			        		}
 			        		else if(temp.toLowerCase().contains("off")){
@@ -113,7 +113,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        				temp="Lights off";
 			        			}
 			        			else {
-			        				temp="Data mismatch! Error:3";
+			        				temp="Data mismatch! Error:3 Data:"+c.output;
 			        			}
 			        		}
 			        		else {
@@ -127,7 +127,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        				temp="Fan on";
 				        		}
 			        			else {
-			        				temp="Data mismatch! Error:3";
+			        				temp="Data mismatch! Error:3 Data:"+c.output;
 			        			}
 			        		}
 			        		else if(temp.toLowerCase().contains("off")){
@@ -136,7 +136,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        				temp="Fan off";
 			        			}
 			        			else {
-			        				temp="Data mismatch! Error:3";
+			        				temp="Data mismatch! Error:3 Data:"+c.output;
 			        			}
 			        		}
 			        		else {
@@ -199,7 +199,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        				temp="Lights on";
 		        		}
 	        			else {
-	        				temp="Data mismatch! Error:3";
+	        				temp="Data mismatch! Error:3 Data:"+c.output;
 	        			}
 	        		}
 	        		else if(temp.toLowerCase().contains("off")){
@@ -208,7 +208,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        				temp="Lights off";
 	        			}
 	        			else {
-	        				temp="Data mismatch! Error:3";
+	        				temp="Data mismatch! Error:3 Data:"+c.output;
 	        			}
 	        		}
 	        		else {
@@ -223,7 +223,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        			
 		        		}
 	        			else {
-	        				temp="Data mismatch! Error:3";
+	        				temp="Data mismatch! Error:3 Data:"+c.output;
 	        			}
 	        		}
 	        		else if(temp.toLowerCase().contains("off")){
@@ -232,7 +232,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        				temp="Fan off";
 	        			}
 	        			else {
-	        				temp="Data mismatch! Error:3";
+	        				temp="Data mismatch! Error:3 Data:"+c.output;
 	        			}
 	        		}
 	        		else {

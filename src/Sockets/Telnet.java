@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import com.sun.org.apache.xml.internal.security.utils.EncryptionConstants;
+
 
 public class Telnet{
 	Socket socket;
@@ -15,7 +17,12 @@ public class Telnet{
 	public boolean status=false,run=false;
 	public void reconnect() {
 		Socket pingSocket = null;
-		
+		try {
+			socket.close();
+		}
+		catch(Exception e){
+			socket=null;
+		}
 		try {
 				pingSocket = new Socket(ip, port);
 				socket=pingSocket;
@@ -101,11 +108,22 @@ public class Telnet{
 			e.printStackTrace();
 		}
 		try {
-			if(socket.getInputStream().available()>0) {
-				z = (in.readLine());
-			}
-			else {
-				z = "No input available";
+			int j=0;
+			while(j<5) {
+				if(socket.getInputStream().available()>0) {
+					z = (in.readLine());
+					break;
+				}
+				else {
+					z = "No input available";
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				j++;
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
