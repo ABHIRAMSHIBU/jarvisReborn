@@ -1,7 +1,8 @@
-# jarvisReborn
-<h3>Jarvis is a IOT based AI, made by students of TKMCE and IITRAM.
+# jarvisReborn aka SSAL
+<b>SSAL is a SophiSticated Artifical Logic powered by BrainNet Technologies</b>
+<h3>SSAL is a IOT based AI, made by students of TKMCE and IITRAM.
 </h3>
-Jarvis can
+<i><b>SSAL can</i></b>
 <ul>
 <li>Talk to people</li>
 <li>Predict electrical failure</li>
