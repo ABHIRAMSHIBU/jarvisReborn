@@ -9,7 +9,44 @@ import java.net.Socket;
 
 public class Telnet{
 	Socket socket;
+	String ip;
+	int port;
+	boolean failed=false;
 	public boolean status=false,run=false;
+	public void reconnect() {
+		Socket pingSocket = null;
+		
+		try {
+				pingSocket = new Socket(ip, port);
+				socket=pingSocket;
+				status=true;
+		} catch (IOException e) {
+			System.out.println("Telnet Error occured!");
+			status=false;
+		}
+	}
+	public boolean checkTelnet(int n) {
+		String reply = echo("13\r");
+		int z=5;
+		if(failed==true) {
+			z=1;
+		}
+		if(n<z) {
+			if(reply.equals("No input available")) {
+				//System.out.println("Iteration "+n);
+				reconnect();
+				if(n==4) {
+					failed=true;
+				}
+				return checkTelnet(n+1);
+			}
+			failed=false;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	public boolean pinStatus(int pin) {
 		run=false;
 		String reply=echo(pin+"\r");
@@ -89,28 +126,13 @@ public class Telnet{
 				System.out.println("Telnet Error occured!");
 				status=false;
 			}
-			//System.out.println("Sending 13 0");
-			/*
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			
-			//out.println("13 0\r");
-			try {
-				System.out.println(in.readLine());
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			*/
 	}
 	public Telnet(String ip) {
 		this(ip,23);
 	}
 	public Telnet(String ip, int port) {
+		this.ip=ip;
+		this.port=port;
 		Socket pingSocket = null;
 	
 			try {

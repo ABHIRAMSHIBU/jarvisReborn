@@ -4,14 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.function.Consumer;
-
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import CommandHandlers.MainCMDHandler;
-import sun.security.ec.ECDHKeyAgreement;
 
 public class GUI {
 	/* All critical GUI Components will go here */

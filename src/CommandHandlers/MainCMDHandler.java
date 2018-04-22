@@ -23,7 +23,12 @@ public class MainCMDHandler {
 		int pin=Integer.valueOf(input.substring(0, space1)), 
 				mcu=Integer.valueOf(input.substring(space1+1));
 		try {
-			output=Core.telnet[mcu].echo(pin+"\r");
+			if(Core.telnet[mcu].checkTelnet(0)) {
+				output=Core.telnet[mcu].echo(pin+"\r");
+			}
+			else {
+				output="Telnet faild to reconnect, giving up!";
+			}
 		}
 		catch(Exception e){
 			output="Error contacting ESP";
@@ -42,7 +47,12 @@ public class MainCMDHandler {
 		//System.out.println("Pin is:"+pin+" operation is:"+operation+" mcu is:"+mcu);
 		parsed=true;
 		try {
-			output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+			if(Core.telnet[mcu].checkTelnet(0)) {
+				output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+			}
+			else {
+				output="Telnet faild to reconnect, giving up!";
+			}
 		}
 		catch(Exception e) {
 			output="Error contacting ESP";
