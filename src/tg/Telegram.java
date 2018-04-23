@@ -1,5 +1,6 @@
 package tg;
 
+import jarvisReborn.Core;
 import jarvisReborn.Details;
 import jarvisReborn.GUI;
 import java.io.BufferedReader;
@@ -99,7 +100,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        	//Cleanup needed
 			        	if(temp.toLowerCase().contains("light")) {
 			        		if(temp.toLowerCase().contains("on")) {
-			        			MainCMDHandler c = new MainCMDHandler("$set 13 1 1", null);
+			        			MainCMDHandler c = new MainCMDHandler("$set 13 1 "+Details.MCU, null);
 			        			if(c.output.contains("13 on")) {
 			        				temp="Lights on";
 				        		}
@@ -108,7 +109,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        			}
 			        		}
 			        		else if(temp.toLowerCase().contains("off")){
-			        			MainCMDHandler c = new MainCMDHandler("$set 13 0 1", null);
+			        			MainCMDHandler c = new MainCMDHandler("$set 13 0 "+Details.MCU, null);
 			        			if(c.output.contains("13 off")) {
 			        				temp="Lights off";
 			        			}
@@ -122,7 +123,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        	}
 			        	else if(temp.toLowerCase().contains("fan")) {
 			        		if(temp.toLowerCase().contains("on")) {
-			        			MainCMDHandler c = new MainCMDHandler("$set 14 1 1", null);
+			        			MainCMDHandler c = new MainCMDHandler("$set 14 1 "+Details.MCU, null);
 			        			if(c.output.contains("14 on")) {
 			        				temp="Fan on";
 				        		}
@@ -131,7 +132,7 @@ public class Telegram extends TelegramLongPollingBot {
 			        			}
 			        		}
 			        		else if(temp.toLowerCase().contains("off")){
-			        			MainCMDHandler c = new MainCMDHandler("$set 14 0 1", null);
+			        			MainCMDHandler c = new MainCMDHandler("$set 14 0 "+Details.MCU, null);
 			        			if(c.output.contains("14 off")) {
 			        				temp="Fan off";
 			        			}
@@ -194,7 +195,7 @@ public class Telegram extends TelegramLongPollingBot {
         		temp=temp.substring(z+1);
         		if(temp.toLowerCase().contains("light")) {
 	        		if(temp.toLowerCase().contains("on")) {
-	        			MainCMDHandler c = new MainCMDHandler("$set 13 1 1", null);
+	        			MainCMDHandler c = new MainCMDHandler("$set 13 1 "+Details.MCU, null);
 	        			if(c.output.contains("13 on")) {
 	        				temp="Lights on";
 		        		}
@@ -203,7 +204,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        			}
 	        		}
 	        		else if(temp.toLowerCase().contains("off")){
-	        			MainCMDHandler c = new MainCMDHandler("$set 13 0 1", null);
+	        			MainCMDHandler c = new MainCMDHandler("$set 13 0 "+Details.MCU, null);
 	        			if(c.output.contains("13 off")) {
 	        				temp="Lights off";
 	        			}
@@ -217,7 +218,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        	}
         		else if(temp.toLowerCase().contains("fan")) {
 	        		if(temp.toLowerCase().contains("on")) {
-	        			MainCMDHandler c = new MainCMDHandler("$set 14 1 1", null);
+	        			MainCMDHandler c = new MainCMDHandler("$set 14 1 "+Details.MCU, null);
 	        			if(c.output.contains("14 on")) {
 	        				temp="Fan on";
 	        			
@@ -227,7 +228,7 @@ public class Telegram extends TelegramLongPollingBot {
 	        			}
 	        		}
 	        		else if(temp.toLowerCase().contains("off")){
-	        			MainCMDHandler c = new MainCMDHandler("$set 14 0 1", null);
+	        			MainCMDHandler c = new MainCMDHandler("$set 14 0 "+Details.MCU, null);
 	        			if(c.output.contains("14 off")) {
 	        				temp="Fan off";
 	        			}
@@ -245,6 +246,20 @@ public class Telegram extends TelegramLongPollingBot {
         		message = new SendMessage();
 	        	message.setChatId(update.getMessage().getChatId());
 	        	message.setText(temp);
+        	}
+        	else if(data.length()==1) {
+        		try {
+        			int pin = Integer.valueOf(data);
+        			Details.MCU=data;
+        			message = new SendMessage();
+    	        	message.setChatId(update.getMessage().getChatId());
+    	        	message.setText("ROOM set to "+data);
+        		}
+        		catch(Exception e){
+        			message = new SendMessage();
+    	        	message.setChatId(update.getMessage().getChatId());
+    	        	message.setText("Pin not set!");
+        		}
         	}
         	else {
 	            message = new SendMessage() // Create a SendMessage object with mandatory fields
