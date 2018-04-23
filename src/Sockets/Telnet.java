@@ -8,6 +8,8 @@ import java.net.Socket;
 
 import com.sun.org.apache.xml.internal.security.utils.EncryptionConstants;
 
+import jarvisReborn.Details;
+
 
 public class Telnet{
 	Socket socket;
@@ -109,7 +111,8 @@ public class Telnet{
 		}
 		try {
 			int j=0;
-			while(j<5) {
+			int retryCount=Details.FETCH_RETRY_COUNT;
+			while(j<retryCount) {
 				if(socket.getInputStream().available()>0) {
 					z = (in.readLine());
 					break;
