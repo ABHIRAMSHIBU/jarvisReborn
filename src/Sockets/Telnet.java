@@ -21,7 +21,7 @@ public class Telnet{
 			socket.close();
 		}
 		catch(Exception e){
-			socket=null;
+//			socket=null;
 		}
 		try {
 				pingSocket = new Socket(ip, port);
