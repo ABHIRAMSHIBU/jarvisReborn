@@ -28,7 +28,7 @@ public class Core {
 	public static Thread telnetThread;
 	public static Telnet telnet[];
 	public static void main(String[] args) {
-		System.out.println("SSAL version 1, Copyright (C) 2018 Abhiram Shibu\n" + 
+		System.out.println("SSAL version 1, Copyleft (C) 2018 Abhiram Shibu\n" + 
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
 				"This is free software, and you are welcome\n" + 
 				"to redistribute it under certain conditions;");
