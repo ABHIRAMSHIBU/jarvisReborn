@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import com.sun.org.apache.xml.internal.security.utils.EncryptionConstants;
+import com.sun.xml.internal.ws.Closeable;
 
 import jarvisReborn.Details;
 
@@ -72,6 +73,14 @@ public class Telnet{
 		}
 		else {
 			return false;
+		}
+	}
+	public void close() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	public boolean pinStatus(int pin) {

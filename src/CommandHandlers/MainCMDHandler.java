@@ -18,7 +18,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package CommandHandlers;
 
+import javax.print.attribute.standard.PrinterMessageFromOperator;
 import javax.swing.JTextArea;
+
+import Config.ConfigParse;
+import Sockets.Telnet;
 import jarvisReborn.Core;
 
 public class MainCMDHandler {
@@ -33,6 +37,9 @@ public class MainCMDHandler {
 		}
 		else if(input.contains("$test")) {
 			parseTEST(input.substring(input.indexOf(" ")+1));
+		}
+		else if(input.contains("$reset")) {
+			parseRESET(input.substring(input.indexOf(" ")+1));
 		}
 	}
 	public void parseTEST(String input) {
@@ -54,6 +61,34 @@ public class MainCMDHandler {
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
 		}
+	}
+	public void parseRESET(String input) {
+		parsed=true;
+		int mcu=Integer.valueOf(input);
+		try {
+			ConfigParse configParse = new ConfigParse();
+			for (int i=0;i<configParse.data.size();i++) {
+				int id=configParse.data.get(i).id;
+				String ip=configParse.data.get(i).ip;
+				if(id==mcu) {
+					System.out.println("Closing old connection for id:"+id);
+					try {
+						Core.telnet[configParse.data.get(i).id].close();
+					}
+					catch (Exception e) {
+						
+					}
+					System.out.println("Starting telnet for id:"+id+" ip:"+ip);
+					Core.telnet[configParse.data.get(i).id] = new Telnet(configParse.data.get(i).ip,23);
+					System.out.println("Reset Success!");
+					output="Reset Success!";
+				}
+			}
+		}
+		catch(Exception e){
+			output="Reset Failure!";
+		}
+		
 	}
 	public void parseSET(String input) {
 		// 13 0 0
