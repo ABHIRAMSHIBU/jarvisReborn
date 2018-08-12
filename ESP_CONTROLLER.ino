@@ -31,6 +31,40 @@ char readEEPROM(int address){
   ROM_ADDRESS=address;
   return EEPROM.read(ROM_ADDRESS);
 }
+void writeESSID_EEPROM(String data){
+    int length = data.length();
+    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    data.toCharArray(buff,32);
+    int reallocation=13;
+    for(int i=0;i<32;i++){
+        EEPROM.write(reallocation+i,buff[i]);
+    }
+}
+String readESSID_EEPROM(){
+    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    int reallocation=13;
+    for(int i=0;i<32;i++){
+        buff[i]=EEPROM.read(reallocation+i);
+    }
+    return String(buff);
+}
+void writePass_EEPROM(String data){
+    int length = data.length();
+    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    data.toCharArray(buff,32);
+    int reallocation=45;
+    for(int i=0;i<32;i++){
+        EEPROM.write(reallocation+i,buff[i]);
+    }
+}
+String readPass_EEPROM(){
+    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    int reallocation=45;
+    for(int i=0;i<32;i++){
+        buff[i]=EEPROM.read(reallocation+i);
+    }
+    return String(buff);
+}
 /* EEPROM CODE ** UNDER DEVELOPMENT ** */
 char readByNameEEPROM(String loc){
   /* Writing to each cell in EEPROM to reduce complexity (CPU is 16MHz). */
@@ -223,11 +257,30 @@ void echoSerial(){                      // Test function Serial->Serial
 
 /* ESP initallizer */
 void initializeESP(){
+    int count=0;
     mux:
+    writeESP(F("AT+CWMODE?\r\n"));
+    delay(200);
+    String data = readESP();
+    if(data.indexOf("CWMODE:1")==-1){
+        writeESP(F("AT+CWMODE=1\r\n"));
+        Serial.println(F("Setting ap mode"));
+        delay(200);
+        Serial.println(readESP());
+        count++;
+        if(count==10){
+            writeESP(F("AT+RST\r\n"));
+            Serial.println(F("Reset ESP"));
+            delay(200);
+            Serial.println(readESP());
+            count=0;
+        }
+        goto mux;
+    }
     writeESP(F("AT+CIPMUX=1\r\n"));   //Set mux to 1 thereby allowing multi connection
     delay(200);
 //     Serial.print("Data:");
-    String data =readESP();
+    data =readESP();
 //     Serial.println(data);
     /* Detect error and try to fix by restarting the function */
     if(data.indexOf(F("ERROR"))>-1){
@@ -352,7 +405,33 @@ void loop() {
             delay(300);
             readESP();
             Serial.println(F("Hotspot initallized!"));
-            delay(600000);
+            long time=millis();
+            while((millis()-time)<60000){
+                passThrough();
+                if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
+                    dataESP.remove(0,dataESP.indexOf(F(","))+1); //Remove header
+                    int id=dataESP.substring(0,1).toInt();  // Get id
+                    Serial.print(F("ID :"));       
+                    Serial.println(id);
+                    dataESP.remove(0,dataESP.indexOf(":")+1);  //Remove id
+                    Serial.print(F("Trimmed data:"));
+                    Serial.println(dataESP);     //Now u have data\r\n left
+                    if(id==0){                   // Allow only id 0
+                        if(dataESP.startsWith(F("writeAP="))){
+                            //Syntax wiriteAP=ssid,pass no quotes needed
+                            dataESP.remove(0,dataESP.indexOf(F("="))+1);
+                            String SSID = dataESP.substring(0,dataESP.indexOf(F(",")));
+                            String PASS = dataESP.substring(dataESP.indexOf(F(","))+1);
+                            Serial.print(F("SSID ="));
+                            writeESSID_EEPROM(SSID);
+                            Serial.println(readESSID_EEPROM());
+                            Serial.print(F("PASS ="));
+                            writePass_EEPROM(PASS);
+                            Serial.println(readPass_EEPROM());
+                        }
+                    }
+                }
+            }
             writeESP(F("AT+RST\r\n"));
             delay(300);
             readESP();
@@ -383,69 +462,69 @@ void loop() {
       Serial.println(dataESP);     //Now u have data\r\n left
       if(id==0){                   // Allow only id 0
         if(dataESP.indexOf(F(" "))>-1){
-          /* Find space split into pin and operation, then compile and send */
-          int space = dataESP.indexOf(F(" "));
-          int pin=dataESP.substring(0,space).toInt();
-          bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
+        /* Find space split into pin and operation, then compile and send */
+        int space = dataESP.indexOf(F(" "));
+        int pin=dataESP.substring(0,space).toInt();
+        bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
 //           Serial.print(F("Pin Set Request, PIN:"));
 //           Serial.print(pin);
 //           Serial.print(F(" Operation:"));
 //           Serial.println(operation);
-          digitalWrite(pin,operation); // do operation
-          pins[pin]=operation;         // update internal DB
-          String pinString=String(pin);
-          pinString.concat(F(" "));
-          if(operation){
+        digitalWrite(pin,operation); // do operation
+        pins[pin]=operation;         // update internal DB
+        String pinString=String(pin);
+        pinString.concat(F(" "));
+        if(operation){
             pinString.concat(F("on"));
-          }
-          else{
-            pinString.concat(F("off"));
-          }
-          /* Send assembled reply */
-          
-          //SendData - Because ardunio dont like functions
-          String temp="AT+CIPSEND=";//<link ID>,<length>
-          temp.concat(id);
-          temp.concat(F(","));
-          temp.concat(pinString.length()+2);
-          temp.concat(F("\r\n"));
-          writeESP(temp);
-          delay(100);
-          String inputData=readESP();
-          if(inputData.indexOf(F("OK")>-1)){
-            pinString.concat(F("\r\n"));
-            writeESP(pinString);
-          }
-          delay(100);
-          readESP();
-          //End SendData
-          
-          
         }
         else{
-          /* Here pin status is retrived and send to the SSAL Core */
-          int pin=dataESP.substring(0,dataESP.length()-2).toInt();
+            pinString.concat(F("off"));
+        }
+        /* Send assembled reply */
+        
+        //SendData - Because ardunio dont like functions
+        String temp="AT+CIPSEND=";//<link ID>,<length>
+        temp.concat(id);
+        temp.concat(F(","));
+        temp.concat(pinString.length()+2);
+        temp.concat(F("\r\n"));
+        writeESP(temp);
+        delay(100);
+        String inputData=readESP();
+        if(inputData.indexOf(F("OK")>-1)){
+            pinString.concat(F("\r\n"));
+            writeESP(pinString);
+        }
+        delay(100);
+        readESP();
+        //End SendData
+        
+        
+        }
+        else{
+        /* Here pin status is retrived and send to the SSAL Core */
+        int pin=dataESP.substring(0,dataESP.length()-2).toInt();
 //           Serial.print(F("Pin get Request, PIN:"));
 //           Serial.println(pin);
-          
-          //SendData - Because ardunio dont like functions
-          String pinString=String(pins[pin]);
-          String temp="AT+CIPSEND=";//<link ID>,<length>
-          temp.concat(id);
-          temp.concat(",");
-          temp.concat(pinString.length()+2);
-          temp.concat(F("\r\n"));
-          writeESP(temp);
-          delay(100);
-          String inputData=readESP();
-          if(inputData.indexOf("OK">-1)){
+        
+        //SendData - Because ardunio dont like functions
+        String pinString=String(pins[pin]);
+        String temp="AT+CIPSEND=";//<link ID>,<length>
+        temp.concat(id);
+        temp.concat(",");
+        temp.concat(pinString.length()+2);
+        temp.concat(F("\r\n"));
+        writeESP(temp);
+        delay(100);
+        String inputData=readESP();
+        if(inputData.indexOf("OK">-1)){
             pinString.concat("\r\n");
             writeESP(pinString);
-          }
-          delay(100);
-          readESP();
-          //End SendData
-          
+        }
+        delay(100);
+        readESP();
+        //End SendData
+        
         }
       }
       else{
