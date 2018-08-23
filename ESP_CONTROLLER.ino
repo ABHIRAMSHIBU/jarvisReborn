@@ -13,6 +13,7 @@
 #include<EEPROM.h>
 #include<TimerOne.h>
 #include<MemoryFree.h>
+#include<Wire.h>
 //Convience Variables
 #define True 1
 #define False 0
@@ -20,13 +21,14 @@
 #define ESPRX 11
 #define ESPBAUD 19200
 #define BAUD 115200
-#define DEBUG False
-#define VERSION 2.0
+#define DEBUG true
+#define VERSION 2.1
 SoftwareSerial ESP(ESPTX,ESPRX);
 bool checkESP=true;
 int ROM_ADDRESS = 0;
 int counter=0;
 int counter_disconnect=0;
+bool pins[11];    // Pin stats are stored here
 char readEEPROM(int address){
   ROM_ADDRESS=address;
   return EEPROM.read(ROM_ADDRESS);
@@ -203,10 +205,12 @@ bool writeByNameEEPROM(String loc,char data){
 String dataESP="",dataSerial="";
 String readSerial(){          //Data from serial Save and return
   dataSerial=Serial.readString();
+  dataSerial.reserve(20);
   return dataSerial;
 }
 String readESP(){            //Data from ESP save and return
   dataESP=ESP.readString();
+  dataESP.reserve(100);
   return dataESP;
 }
 
@@ -230,7 +234,41 @@ String readESP(){            //Data from ESP save and return
 //    Serial.println(F("Exited"));
 // }
 
-
+void initializeWire(){
+	Wire.begin(7);
+}
+void wireBody(){
+	Wire.requestFrom(8,15);
+	int wait=0;
+	//while(Wire.available()<1 && wait<1000){
+	//	wait++;
+	//};
+	char recived=char(Wire.read());
+	//Serial.println(recived);
+	if(recived='1'){
+		while(Wire.available()>1){
+			Serial.print(char(Wire.read()));
+		}
+		Serial.println();
+	}
+}
+void sendData(){
+	Wire.write("1");
+	//Wire.write("01010101");
+	String pinsString="";
+	for(int i=2;i<12;i++){ // IDK why it needs 12 instead of 11
+		if(pins[i]){
+			pinsString=pinsString+"1";
+		}
+		else{
+			pinsString=pinsString+"0";
+		}
+	}
+	char buff[20];
+	pinsString.toCharArray(buff,pinsString.length());
+	Wire.write(buff);
+	//Serial.println("Writing : "+String(buff));
+}
 void writeESP(String data){           //String to ESP
   ESP.print(data);
 }
@@ -339,12 +377,13 @@ void initializeInterrupt(){
   Timer1.attachInterrupt(CUSTOM_ISR); 
 }
 
-bool pins[11];    // Pin stats are stored here
 void setup() {
   for(int i=2;i<11;i++){
     pinMode(i,1);
   }
-  Serial.begin(BAUD); //Serial to debugger 0,1
+  if(DEBUG){
+	Serial.begin(BAUD); //Serial to debugger 0,1
+  }
   ESP.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
   ESP.setTimeout(100);   // Up
@@ -368,7 +407,9 @@ void setup() {
   Serial.print(F("freeMemory()="));
   Serial.println(freeMemory());  // Print free memory ocationally
   interrupts();                  // Can interrupt
+  initializeWire();
 }
+long time=millis();
 void loop() {
   //ISR treggers this function indirectly
   if(checkESP){
@@ -407,6 +448,7 @@ void loop() {
             Serial.println(F("Hotspot initallized!"));
             long time=millis();
             while((millis()-time)<60000){
+				//Wire.onRequest(sendData);
                 passThrough();
                 if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
                     dataESP.remove(0,dataESP.indexOf(F(","))+1); //Remove header
@@ -550,4 +592,24 @@ void loop() {
     }
     dataESP="";       //ESP data never got logged wink wink
   }
+  if((millis()-time)>100){
+	  //Serial.println("Running Wire shit!");
+  //Wire Stuff (I2C)
+	Wire.requestFrom(8,14);
+	int wait=0;
+	//while(Wire.available()<1 && wait<1000){
+	//	wait++;
+	//};
+	char recived=char(Wire.read());
+	Serial.println(recived);
+	if(recived='1'){
+		while(Wire.available()>1){
+			Serial.print(char(Wire.read()));
+		}
+		Serial.println();
+	}
+	time=millis();
+  }
+  
+  Wire.onRequest(sendData); //Get data from I2C
 }
