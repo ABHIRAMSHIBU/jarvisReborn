@@ -54,7 +54,7 @@ public class ControlGUI {
 	public ControlGUI(int mcu, Telnet telnet,JTextArea ta) {
 		this.telnet=telnet;
 		JFrame frame = new JFrame("Control panel for mcu "+mcu);
-		frame.setSize(600, 630);
+		frame.setSize(250, 630);
 		frame.setResizable(false);
 		frame.setLayout(null);
 		frame.setLayout(null);
@@ -63,9 +63,9 @@ public class ControlGUI {
 			toggleButton[i] = new JToggleButton("MEH");
 			label[i] = new JLabel();
 			label[i].setText("Pin :"+i);
-			label[i].setBounds(0,z,450,25);
+			label[i].setBounds(0,z,100,25);
 			label[i].setHorizontalAlignment(JLabel.RIGHT);
-			toggleButton[i].setBounds(500,z,100,25);
+			toggleButton[i].setBounds(100,z,100,25);
 			frame.add(toggleButton[i]);
 			if(telnet.pinStatus(i)) {
 				toggleButton[i].setText("ON");

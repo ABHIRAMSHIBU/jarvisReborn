@@ -18,6 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package jarvisReborn;
 
+import javax.swing.UIManager;
+
 import Config.ConfigParse;
 import Sockets.Telnet;
 import Sockets.TelnetServer;
@@ -32,6 +34,11 @@ public class Core {
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
 				"This is free software, and you are welcome\n" + 
 				"to redistribute it under certain conditions;");
+		try { 
+		    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
 		new Core();
 	}
 	Core(){
