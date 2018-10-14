@@ -202,7 +202,7 @@ bool writeByNameEEPROM(String loc,char data){
 }
 
 /* Serial Communication Handlers */
-String dataESP="",dataSerial="";
+String dataESP,dataSerial;
 String readSerial(){          //Data from serial Save and return
   dataSerial=Serial.readString();
   dataSerial.reserve(20);
@@ -256,6 +256,7 @@ void sendData(){
 	Wire.write("1");
 	//Wire.write("01010101");
 	String pinsString="";
+    pinsString.reserve(20);
 	for(int i=2;i<12;i++){ // IDK why it needs 12 instead of 11
 		if(pins[i]){
 			pinsString=pinsString+"1";
@@ -299,7 +300,9 @@ void initializeESP(){
     mux:
     writeESP(F("AT+CWMODE?\r\n"));
     delay(200);
-    String data = readESP();
+    String data;
+    data.reserve(100);
+    data=readESP();
     if(data.indexOf("CWMODE:1")==-1){
         writeESP(F("AT+CWMODE=1\r\n"));
         Serial.println(F("Setting ap mode"));
@@ -393,7 +396,9 @@ void setup() {
   Serial.println(F("Welcome to SSAL IoT Core"));
 //   Serial.println("Begin EEPROM test code");
   for(int i=0;i<13;i++){
-    String temp=F("PIN ");
+    String temp;
+    temp.reserve(10);
+    temp=F("PIN ");
     temp.concat(String(i));
     Serial.print(temp);
     Serial.print(F(":"));
@@ -416,7 +421,9 @@ void loop() {
       /* ESP RESET/SERVER CHECK */
     writeESP(F("AT+CIPMUX?\r\n"));  //Check MUX status, for server to run it should be 1
     delay(300);
-    String data=readESP();
+    String data;
+    data.reserve(100);
+    data=readESP();
 //     Serial.print("Interrpt:");
 //     Serial.println(data);
     if(data.indexOf(F("+CIPMUX:1"))==-1){  // not 1 make it 1
@@ -514,7 +521,9 @@ void loop() {
 //           Serial.println(operation);
         digitalWrite(pin,operation); // do operation
         pins[pin]=operation;         // update internal DB
-        String pinString=String(pin);
+        String pinString;
+        pinString.reserve(10);
+        pinString=String(pin);
         pinString.concat(F(" "));
         if(operation){
             pinString.concat(F("on"));
@@ -550,8 +559,11 @@ void loop() {
 //           Serial.println(pin);
         
         //SendData - Because ardunio dont like functions
-        String pinString=String(pins[pin]);
+        String pinString;
+        pinString.reserve(10);
+        pinString=String(pins[pin]);
         String temp="AT+CIPSEND=";//<link ID>,<length>
+        temp.reserve(50);
         temp.concat(id);
         temp.concat(",");
         temp.concat(pinString.length()+2);
@@ -573,7 +585,9 @@ void loop() {
         /* Kick trustpassers */
         String pinString=F("Not allowed!");
         //SendData 
-          String temp="AT+CIPSEND=";//<link ID>,<length>
+          String temp;
+          temp.reserve(50);
+          temp="AT+CIPSEND=";//<link ID>,<length>
           temp.concat(id);
           temp.concat(",");
           temp.concat(pinString.length()+2);
@@ -595,19 +609,28 @@ void loop() {
   if((millis()-time)>100){
 	  //Serial.println("Running Wire shit!");
   //Wire Stuff (I2C)
-	Wire.requestFrom(8,14);
-	int wait=0;
-	//while(Wire.available()<1 && wait<1000){
-	//	wait++;
-	//};
-	char recived=char(Wire.read());
-	Serial.println(recived);
-	if(recived='1'){
-		while(Wire.available()>1){
-			Serial.print(char(Wire.read()));
-		}
-		Serial.println();
-	}
+      
+      
+    Wire.beginTransmission(8);  
+    int error = Wire.endTransmission();
+    if(error==0){
+        Wire.requestFrom(8,14);
+        Serial.println("After request.");
+        int wait=0;
+        //while(Wire.available()<1 && wait<1000){
+        //	wait++;
+        //};
+        char recived=char(Wire.read());
+        Serial.println(recived);
+        if(recived='1'){
+            while(Wire.available()>1){
+                Serial.print(char(Wire.read()));
+            }
+            Serial.println();
+        }
+    }
+      
+      
 	time=millis();
   }
   
