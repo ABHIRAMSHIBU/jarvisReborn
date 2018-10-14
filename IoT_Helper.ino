@@ -4,19 +4,28 @@
 #include <LiquidCrystal.h>
 #include<Arduino.h>
 #include<Wire.h>
+#include<MemoryFree.h>
 #define DEBUG true
-#define VERSION 1.0
+#define VERSION 1.1
 #define BAUD 115200
-using namespace std;
-const int rs = 12, en = 11, d4 = 8, d5 = 7, d6 = 6, d7 = 5;
+
+//LCD declarations
+#define rs 12
+#define en 11
+#define d4 8
+#define d5 7
+#define d6 6
+#define d7 5
+
+// using namespace std;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 String main_message;
 long time;
 int count=0;
 int count_wait=0;
-float temp=0;
-float final_temp=0;
-String connection="Failed";
+float temp=0;           // Temperature temp varable
+float final_temp=0;     // Final Temperature is stored here
+String connection;
 void readTemp(){
 	temp=0;
 	lcd.cursor();
@@ -43,7 +52,9 @@ void update(){
 	if((millis()-time)>300){ //Scroll and set if update time exceeds..
 		time=millis();
 		assembleMessage();
-		String temp_message=String(main_message);
+		String temp_message;
+        temp_message.reserve(100);
+		temp_message=String(main_message);
 		String t=temp_message.substring(0,count);
 		temp_message.remove(0,count);
 		temp_message=temp_message+t;
@@ -90,50 +101,66 @@ void sendData(){
 }
 String wireData;
 void wireBody(){
-	Wire.requestFrom(7,11);
-	wireData="";
-	int wait=0;
-	while(Wire.available()<1 && wait<100){
-		wait++;
-		Serial.print(".");
-	};
-	if(Wire.available()>1){
-		Serial.println();
-		char recived=char(Wire.read());
-		wireData+=recived;
-		//Serial.println(recived);
-		if(recived='1'){
-			while(Wire.available()>1){
-				int read=Wire.read();
-				wireData+=char(read);
-				//Serial.print(char(read));
-				if(read==255){
-					connection="Failed";
-					break;
-				}
-				else{
-					connection="Connected";
-				}
-			}
-			//Serial.println();
-			Serial.println(wireData);
-		}
+    Wire.beginTransmission(7);  
+    int error = Wire.endTransmission();
+    if(error==0){
+        Wire.requestFrom(7,11);
+        wireData=F("");
+        wireData.reserve(20);
+        int wait=0;
+        while(Wire.available()<1 && wait<100){
+            wait++;
+    // 		Serial.print(".");
+        };
+        if(Wire.available()>1){
+    // 		Serial.println();
+            char recived=char(Wire.read());
+            wireData+=recived;
+            //Serial.println(recived);
+            if(recived='1'){
+                while(Wire.available()>1){
+                    int read=Wire.read();
+                    wireData+=char(read);
+                    //Serial.print(char(read));
+                    connection.reserve(10);
+                    if(read==255){
+                        connection=F("Failed");
+                        break;
+                    }
+                    else{
+                        connection=F("Connected");
+                    }
+                }
+                //Serial.println();
+    // 			Serial.println(wireData);
+            }
+        }
 	}
+	else{
+        connection=F("Failed");
+    }
 }
 int pinID=2;
 long timeProcessData=millis();
 String processData(){
 	wireData.remove(0,1);
 	pinData=String(wireData);
+    pinData.reserve(20);
 	int pinMode=wireData.substring(0+pinID-2,1+pinID-2).toInt();
 	String pinModeStr;
+    pinModeStr.reserve(4);
 	if(pinMode==1){
-		pinModeStr="ON";
+		pinModeStr=F("ON");
 	}
 	else if(pinMode==0){
-		pinModeStr="OFF";
+		pinModeStr=F("OFF");
 	}
-	String output="Pin "+String(pinID)+" is "+pinModeStr;
+	String output;
+	output.reserve(15);
+	output=F("Pin ");
+	output+=String(pinID);
+	output+=F(" is ");
+	output+=pinModeStr;
 	if((millis()-timeProcessData)>1000){
 		pinID++;
 		if(pinID==11){
@@ -147,13 +174,16 @@ void setup(){
 	initialize();
 	Wire.begin(8);
 }
-String editMessage="";
+// String editMessage="";
 long timeWire=millis();
 void loop(){
+    Serial.println(freeMemory());
 	update();
-	Wire.onRequest(sendData);
+    Wire.onRequest(sendData);
 	if((millis()-timeWire)>100){
 		wireBody();
 		timeWire=millis();
 	}
+	Serial.println(freeMemory());
+	
 }
