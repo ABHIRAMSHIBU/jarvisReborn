@@ -234,24 +234,8 @@ String readESP(){            //Data from ESP save and return
 //    Serial.println(F("Exited"));
 // }
 
-void initializeWire(){
-	Wire.begin(7);
-}
-void wireBody(){
-	Wire.requestFrom(8,15);
-	int wait=0;
-	//while(Wire.available()<1 && wait<1000){
-	//	wait++;
-	//};
-	char recived=char(Wire.read());
-	//Serial.println(recived);
-	if(recived='1'){
-		while(Wire.available()>1){
-			Serial.print(char(Wire.read()));
-		}
-		Serial.println();
-	}
-}
+
+//Wire Stuff
 void sendData(){
 	Wire.write("1");
 	//Wire.write("01010101");
@@ -270,6 +254,24 @@ void sendData(){
 	Wire.write(buff);
 	//Serial.println("Writing : "+String(buff));
 }
+void reciveData(int howMany) {
+    Serial.println("RAN");
+    char recived=char(Wire.read());
+    Serial.println(recived);
+    if(recived='1'){
+        while(Wire.available()>1){
+            Serial.print(char(Wire.read()));
+        }
+        Serial.println("Done");
+    }
+}
+void initializeWire(){
+	Wire.begin(8);
+    Wire.onRequest(sendData); //Get data from I2C
+    Wire.onReceive(reciveData);
+}
+//END WIRE STUFF
+
 void writeESP(String data){           //String to ESP
   ESP.print(data);
 }
@@ -414,7 +416,6 @@ void setup() {
   interrupts();                  // Can interrupt
   initializeWire();
 }
-long time=millis();
 void loop() {
   //ISR treggers this function indirectly
   if(checkESP){
@@ -606,33 +607,4 @@ void loop() {
     }
     dataESP="";       //ESP data never got logged wink wink
   }
-  if((millis()-time)>100){
-	  //Serial.println("Running Wire shit!");
-  //Wire Stuff (I2C)
-      
-      
-    Wire.beginTransmission(8);  
-    int error = Wire.endTransmission();
-    if(error==0){
-        Wire.requestFrom(8,14);
-        Serial.println("After request.");
-        int wait=0;
-        //while(Wire.available()<1 && wait<1000){
-        //	wait++;
-        //};
-        char recived=char(Wire.read());
-        Serial.println(recived);
-        if(recived='1'){
-            while(Wire.available()>1){
-                Serial.print(char(Wire.read()));
-            }
-            Serial.println();
-        }
-    }
-      
-      
-	time=millis();
-  }
-  
-  Wire.onRequest(sendData); //Get data from I2C
 }
