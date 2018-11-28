@@ -12,10 +12,10 @@
 //LCD declarations
 #define rs 12
 #define en 11
-#define d4 8
-#define d5 7
-#define d6 6
-#define d7 5
+#define d4 5
+#define d5 6
+#define d6 7
+#define d7 8
 
 // using namespace std;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -90,21 +90,21 @@ void initialize(){
 	analogReference(INTERNAL);
 }
 String pinData;
-void sendData(){
-	Wire.write("1");
-	char t[20];
-	String send=pinData+String(int(final_temp*100));
-	send.toCharArray(t,send.length());
-	Wire.write(t);
-	//String(int(temp*100)).toCharArray(t,String(int(temp*100)).length());
-	Wire.write(t);
-}
+// void sendData(){
+// 	Wire.write("1");
+// 	char t[20];
+// 	String send=pinData+String(int(final_temp*100));
+// 	send.toCharArray(t,send.length());
+// 	Wire.write(t);
+// 	//String(int(temp*100)).toCharArray(t,String(int(temp*100)).length());
+// 	Wire.write(t);
+// }
 String wireData;
 void wireBody(){
-    Wire.beginTransmission(7);  
+    Wire.beginTransmission(8);  
     int error = Wire.endTransmission();
     if(error==0){
-        Wire.requestFrom(7,11);
+        Wire.requestFrom(8,11);
         wireData=F("");
         wireData.reserve(20);
         int wait=0;
@@ -132,13 +132,24 @@ void wireBody(){
                     }
                 }
                 //Serial.println();
-    // 			Serial.println(wireData);
+     			Serial.println(wireData);
             }
         }
 	}
 	else{
         connection=F("Failed");
     }
+    Wire.endTransmission();
+    Wire.beginTransmission(8); 
+    Wire.write("1");
+	char t[20];
+	String send=pinData+String(int(final_temp*100));
+	send.toCharArray(t,send.length());
+	Wire.write(t);
+	//String(int(temp*100)).toCharArray(t,String(int(temp*100)).length());
+	Wire.write(t);
+    Serial.print("Ending transmission:");
+    Serial.println(Wire.endTransmission());    // stop transmitting
 }
 int pinID=2;
 long timeProcessData=millis();
@@ -179,7 +190,6 @@ long timeWire=millis();
 void loop(){
     Serial.println(freeMemory());
 	update();
-    Wire.onRequest(sendData);
 	if((millis()-timeWire)>100){
 		wireBody();
 		timeWire=millis();
