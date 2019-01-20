@@ -14,11 +14,12 @@
 #include<TimerOne.h>
 #include<MemoryFree.h>
 #include<Wire.h>
+#include<avr/wdt.h>
 //Convience Variables
 #define True 1
 #define False 0
-#define ESPTX 12
-#define ESPRX 11
+#define ESPTX 11
+#define ESPRX 12
 #define ESPBAUD 19200
 #define BAUD 115200
 #define DEBUG true
@@ -233,7 +234,14 @@ String readESP(){            //Data from ESP save and return
 //    readESP();
 //    Serial.println(F("Exited"));
 // }
-
+// WatchDog Stuff
+void setupWatchDog(){
+    wdt_reset();
+    MCUSR|=_BV(WDRF);
+    WDTCSR = _BV(WDCE) | _BV(WDE);
+    WDTCSR = _BV(WDE) | _BV(WDCE) | _BV(WDP0) |_BV(WDP3);
+}
+// END WatchDog Stuff
 
 //Wire Stuff
 void sendData(){
@@ -270,7 +278,7 @@ void initializeWire(){
     Wire.onRequest(sendData); //Get data from I2C
     Wire.onReceive(reciveData);
 }
-//END WIRE STUFF
+// END WIRE STUFF
 
 void writeESP(String data){           //String to ESP
   ESP.print(data);
@@ -415,6 +423,7 @@ void setup() {
   Serial.println(freeMemory());  // Print free memory ocationally
   interrupts();                  // Can interrupt
   initializeWire();
+  setupWatchDog();
 }
 void loop() {
   //ISR treggers this function indirectly
@@ -606,5 +615,6 @@ void loop() {
       }
     }
     dataESP="";       //ESP data never got logged wink wink
+    wdt_reset();
   }
 }
