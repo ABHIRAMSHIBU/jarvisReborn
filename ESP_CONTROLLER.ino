@@ -30,177 +30,56 @@ int ROM_ADDRESS = 0;
 int counter=0;
 int counter_disconnect=0;
 bool pins[11];    // Pin stats are stored here
-char readEEPROM(int address){
-  ROM_ADDRESS=address;
-  return EEPROM.read(ROM_ADDRESS);
+
+/** EEPROM BEGIN **/
+byte encodeByteArray(bool * pin,int offset){
+	byte val=0;
+	for(int i=0;i<8;i++){
+			val|=pin[i+offset]<<i;
+	}
+	return val;
 }
-void writeESSID_EEPROM(String data){
-    int length = data.length();
-    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-    data.toCharArray(buff,32);
-    int reallocation=13;
-    for(int i=0;i<32;i++){
-        EEPROM.write(reallocation+i,buff[i]);
+void decodeIntAndRestore(bool * pin,byte val,int offset){
+	byte temp;
+	for(int i=0;i<8;i++){
+		temp=val&(1<<i);
+		if(temp==(1<<i)){
+			pin[i+offset]=1;
+		}
+		else{
+			pin[i+offset]=0;
+		}
+	}
+}
+int findLocation(){
+    int i;
+    for(i=0;i<1024;i+=2){
+        if(EEPROM.read(i)!=0){
+            break;
+        }
     }
-}
-String readESSID_EEPROM(){
-    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-    int reallocation=13;
-    for(int i=0;i<32;i++){
-        buff[i]=EEPROM.read(reallocation+i);
+    if(i>1024){
+        i=0;
     }
-    return String(buff);
+    return i;
 }
-void writePass_EEPROM(String data){
-    int length = data.length();
-    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-    data.toCharArray(buff,32);
-    int reallocation=45;
-    for(int i=0;i<32;i++){
-        EEPROM.write(reallocation+i,buff[i]);
-    }
+void dumpToEEPROM(){
+    byte val=encodeByteArray(pins,2);
+    int loc=findLocation();
+    EEPROM.write((loc)%1024,0);
+    EEPROM.write((loc+1)%1024,0);
+    EEPROM.write((loc+2)%1024,10);
+    EEPROM.write((loc+3)%1024,val);
+    Serial.print(F("Write location:"));
+    Serial.println(loc);
 }
-String readPass_EEPROM(){
-    char buff[32]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-    int reallocation=45;
-    for(int i=0;i<32;i++){
-        buff[i]=EEPROM.read(reallocation+i);
-    }
-    return String(buff);
+void loadFromEEPROM(){
+    byte val;
+    int loc=findLocation();
+    val=EEPROM.read(loc+1);
+    decodeIntAndRestore(pins,val,2);
 }
-/* EEPROM CODE ** UNDER DEVELOPMENT ** */
-char readByNameEEPROM(String loc){
-  /* Writing to each cell in EEPROM to reduce complexity (CPU is 16MHz). */
-  if(!loc.compareTo(F("PIN 0"))){
-    ROM_ADDRESS=0;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 1"))){
-    ROM_ADDRESS=1;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 2"))){
-    ROM_ADDRESS=2;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 3"))){
-    ROM_ADDRESS=3;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 4"))){
-    ROM_ADDRESS=4;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 5"))){
-    ROM_ADDRESS=5;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 6"))){
-    ROM_ADDRESS=6;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 7"))){
-    ROM_ADDRESS=7;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 8"))){
-    ROM_ADDRESS=8;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 9"))){
-    ROM_ADDRESS=9;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 10"))){
-    ROM_ADDRESS=10;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("PIN 13"))){
-    ROM_ADDRESS=11;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else if(!loc.compareTo(F("ADC CONFIG"))){
-    ROM_ADDRESS=12;
-      return EEPROM.read(ROM_ADDRESS);
-  }
-  else{
-    return -1;
-  }
-}
-bool writeEEPROM(int address,char data){
-  ROM_ADDRESS=address;
-  EEPROM.write(ROM_ADDRESS,data);
-}
-bool writeByNameEEPROM(String loc,char data){
-  if(!loc.compareTo(F("PIN 0"))){
-    ROM_ADDRESS=0;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 1"))){
-    ROM_ADDRESS=1;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 2"))){
-    ROM_ADDRESS=2;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 3"))){
-    ROM_ADDRESS=3;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 4"))){
-    ROM_ADDRESS=4;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 5"))){
-    ROM_ADDRESS=5;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 6"))){
-    ROM_ADDRESS=6;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 7"))){
-    ROM_ADDRESS=7;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 8"))){
-    ROM_ADDRESS=8;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 9"))){
-    ROM_ADDRESS=9;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 10"))){
-    ROM_ADDRESS=10;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("PIN 13"))){
-    ROM_ADDRESS=11;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else if(!loc.compareTo(F("ADC CONFIG"))){
-    ROM_ADDRESS=12;
-    EEPROM.write(ROM_ADDRESS,data);
-      return 0;
-  }
-  else{
-    return -1;
-  }
-}
+/** END EEPROM **/
 
 /* Serial Communication Handlers */
 String dataESP,dataSerial;
@@ -391,6 +270,7 @@ void initializeInterrupt(){
 }
 
 void setup() {
+  loadFromEEPROM();
   for(int i=2;i<11;i++){
     pinMode(i,1);
   }
@@ -404,20 +284,8 @@ void setup() {
   initializeInterrupt();
   noInterrupts();        // Dont interrupt
   Serial.println(F("Welcome to SSAL IoT Core"));
-//   Serial.println("Begin EEPROM test code");
-  for(int i=0;i<13;i++){
-    String temp;
-    temp.reserve(10);
-    temp=F("PIN ");
-    temp.concat(String(i));
-    Serial.print(temp);
-    Serial.print(F(":"));
-    //writeByNameEEPROM(temp,100);
-    Serial.println(int(readByNameEEPROM(temp)));
-  }
-//   Serial.println("End EEPROM test code");
   for(int i=0;i<11;i++){
-    pins[i]=False;
+    digitalWrite(i,pins[i]);
   }
   Serial.print(F("freeMemory()="));
   Serial.println(freeMemory());  // Print free memory ocationally
@@ -476,18 +344,18 @@ void loop() {
                     Serial.print(F("Trimmed data:"));
                     Serial.println(dataESP);     //Now u have data\r\n left
                     if(id==0){                   // Allow only id 0
-                        if(dataESP.startsWith(F("writeAP="))){
-                            //Syntax wiriteAP=ssid,pass no quotes needed
-                            dataESP.remove(0,dataESP.indexOf(F("="))+1);
-                            String SSID = dataESP.substring(0,dataESP.indexOf(F(",")));
-                            String PASS = dataESP.substring(dataESP.indexOf(F(","))+1);
-                            Serial.print(F("SSID ="));
-                            writeESSID_EEPROM(SSID);
-                            Serial.println(readESSID_EEPROM());
-                            Serial.print(F("PASS ="));
-                            writePass_EEPROM(PASS);
-                            Serial.println(readPass_EEPROM());
-                        }
+//                         if(dataESP.startsWith(F("writeAP="))){
+//                             //Syntax wiriteAP=ssid,pass no quotes needed
+//                             dataESP.remove(0,dataESP.indexOf(F("="))+1);
+//                             String SSID = dataESP.substring(0,dataESP.indexOf(F(",")));
+//                             String PASS = dataESP.substring(dataESP.indexOf(F(","))+1);
+//                             Serial.print(F("SSID ="));
+//                             writeESSID_EEPROM(SSID);
+//                             Serial.println(readESSID_EEPROM());
+//                             Serial.print(F("PASS ="));
+//                             writePass_EEPROM(PASS);
+//                             Serial.println(readPass_EEPROM());
+//                         }
                     }
                 }
             }
@@ -530,7 +398,8 @@ void loop() {
 //           Serial.print(F(" Operation:"));
 //           Serial.println(operation);
         digitalWrite(pin,operation); // do operation
-        pins[pin]=operation;         // update internal DB
+        pins[pin]=operation;// update internal DB
+        dumpToEEPROM();
         String pinString;
         pinString.reserve(10);
         pinString=String(pin);
