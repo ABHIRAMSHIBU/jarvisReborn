@@ -82,6 +82,8 @@ void initialize(){
 		Serial.begin(BAUD);
 		Serial.println(F("Initallizing"));
 	}
+	pinMode(4,1);
+    digitalWrite(4,1);
 	pinMode(A0,INPUT);
 	lcd.begin(16,2);
 	assembleMessage();
@@ -139,15 +141,12 @@ void wireBody(){
 	else{
         connection=F("Failed");
     }
-    Wire.endTransmission();
     Wire.beginTransmission(8); 
-    Wire.write("1");
 	char t[20];
 	String send=pinData+String(int(final_temp*100));
 	send.toCharArray(t,send.length());
 	Wire.write(t);
 	//String(int(temp*100)).toCharArray(t,String(int(temp*100)).length());
-	Wire.write(t);
     Serial.print("Ending transmission:");
     Serial.println(Wire.endTransmission());    // stop transmitting
 }
@@ -184,6 +183,24 @@ String processData(){
 void setup(){
 	initialize();
 	Wire.begin(8);
+    pinMode(9,1);
+    pinMode(10,1);
+    digitalWrite(9,1);
+}
+int countLed=0;
+bool flag=true;
+void led(){
+    Serial.println("RAN");
+    digitalWrite(10,1);
+    delay(100);
+    digitalWrite(10,0);
+    delay(100);
+    if(countLed==5){
+        flag=!flag;
+        digitalWrite(9,flag);
+        countLed=0;
+    }
+    countLed++;
 }
 // String editMessage="";
 long timeWire=millis();
@@ -195,5 +212,5 @@ void loop(){
 		timeWire=millis();
 	}
 	Serial.println(freeMemory());
-	
+	led();
 }
