@@ -141,21 +141,20 @@ void sendData(){
 	Wire.write(buff);
 	//Serial.println("Writing : "+String(buff));
 }
-void reciveData(int howMany) {
-    Serial.println("RAN");
-    char recived=char(Wire.read());
-    Serial.println(recived);
-    if(recived='1'){
-        while(Wire.available()>1){
-            Serial.print(char(Wire.read()));
-        }
-        Serial.println("Done");
-    }
+void receiveData(int howMany) {
+  while (1 < Wire.available()) { // loop through all but the last
+    char c = Wire.read(); // receive byte as a character
+    Serial.print(c);         // print the character
+  }
+  int x = Wire.read();    // receive byte as an integer
+  Serial.println(x);         // print the integer
+  Wire.read();
+  Serial.println("NEXT");
 }
 void initializeWire(){
 	Wire.begin(8);
     Wire.onRequest(sendData); //Get data from I2C
-    Wire.onReceive(reciveData);
+    Wire.onReceive(receiveData);
 }
 // END WIRE STUFF
 
@@ -485,5 +484,7 @@ void loop() {
     }
     dataESP="";       //ESP data never got logged wink wink
     wdt_reset();
+    Wire.onRequest(sendData); //Get data from I2C
+    Wire.onReceive(receiveData);
   }
 }
