@@ -30,26 +30,26 @@ int ROM_ADDRESS = 0;
 int counter=0;
 int counter_disconnect=0;
 bool pins[11];    // Pin stats are stored here
-
+float temp;
 /** EEPROM BEGIN **/
 byte encodeByteArray(bool * pin,int offset){
-	byte val=0;
-	for(int i=0;i<8;i++){
-			val|=pin[i+offset]<<i;
-	}
-	return val;
+  byte val=0;
+  for(int i=0;i<8;i++){
+      val|=pin[i+offset]<<i;
+  }
+  return val;
 }
 void decodeIntAndRestore(bool * pin,byte val,int offset){
-	byte temp;
-	for(int i=0;i<8;i++){
-		temp=val&(1<<i);
-		if(temp==(1<<i)){
-			pin[i+offset]=1;
-		}
-		else{
-			pin[i+offset]=0;
-		}
-	}
+  byte temp;
+  for(int i=0;i<8;i++){
+    temp=val&(1<<i);
+    if(temp==(1<<i)){
+      pin[i+offset]=1;
+    }
+    else{
+      pin[i+offset]=0;
+    }
+  }
 }
 int findLocation(){
     int i;
@@ -124,35 +124,49 @@ void setupWatchDog(){
 
 //Wire Stuff
 void sendData(){
-	Wire.write("1");
-	//Wire.write("01010101");
-	String pinsString="";
+  Wire.write("1");
+  //Wire.write("01010101");
+  String pinsString="";
     pinsString.reserve(20);
-	for(int i=2;i<12;i++){ // IDK why it needs 12 instead of 11
-		if(pins[i]){
-			pinsString=pinsString+"1";
-		}
-		else{
-			pinsString=pinsString+"0";
-		}
-	}
-	char buff[20];
-	pinsString.toCharArray(buff,pinsString.length());
-	Wire.write(buff);
-	//Serial.println("Writing : "+String(buff));
+  for(int i=2;i<12;i++){ // IDK why it needs 12 instead of 11
+    if(pins[i]){
+      pinsString=pinsString+"1";
+    }
+    else{
+      pinsString=pinsString+"0";
+    }
+  }
+  char buff[20];
+  pinsString.toCharArray(buff,pinsString.length());
+  Wire.write(buff);
+  //Serial.println("Writing : "+String(buff));
 }
 void receiveData(int howMany) {
-  while (1 < Wire.available()) { // loop through all but the last
-    char c = Wire.read(); // receive byte as a character
-    Serial.print(c);         // print the character
+  char c[14];
+  int i=0;
+  for(i=0;i<14;i++){
+    c[i]=' ';
   }
-  int x = Wire.read();    // receive byte as an integer
-  Serial.println(x);         // print the integer
-  Wire.read();
-  Serial.println("NEXT");
+  i=0;
+  while (0 < Wire.available()) { // loop through all but the last
+    c[i] = Wire.read(); // receive byte as a character
+    i++;
+  }
+  c[i]='\0';
+  if(i){
+//     Serial.println(c);
+    temp=0;
+    for(int j=0;j<3;j++){
+        temp+=int(c[i-3+j]-48);
+        temp*=10;
+    }
+    temp/=100;
+//     Serial.print("Temp =");
+//     Serial.println(temp);
+  }
 }
 void initializeWire(){
-	Wire.begin(8);
+  Wire.begin(8);
     Wire.onRequest(sendData); //Get data from I2C
     Wire.onReceive(receiveData);
 }
@@ -274,7 +288,7 @@ void setup() {
     pinMode(i,1);
   }
   if(DEBUG){
-	Serial.begin(BAUD); //Serial to debugger 0,1
+  Serial.begin(BAUD); //Serial to debugger 0,1
   }
   ESP.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
@@ -332,7 +346,7 @@ void loop() {
             Serial.println(F("Hotspot initallized!"));
             long time=millis();
             while((millis()-time)<60000){
-				//Wire.onRequest(sendData);
+        //Wire.onRequest(sendData);
                 passThrough();
                 if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
                     dataESP.remove(0,dataESP.indexOf(F(","))+1); //Remove header
