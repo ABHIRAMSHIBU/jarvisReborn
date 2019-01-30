@@ -90,6 +90,7 @@ void initialize(){
 	lcd.print(main_message.substring(0,16));
 	time=millis();
 	analogReference(INTERNAL);
+    Serial.println(F("Welcome to SSAL Helper"));
 }
 String pinData;
 // void sendData(){
@@ -147,8 +148,8 @@ void wireBody(){
 	send.toCharArray(t,send.length());
 	Wire.write(t);
 	//String(int(temp*100)).toCharArray(t,String(int(temp*100)).length());
-    Serial.print("Ending transmission:");
-    Serial.println(Wire.endTransmission());    // stop transmitting
+//     Serial.print("Ending transmission:");
+//     Serial.println(Wire.endTransmission());    // stop transmitting
 }
 int pinID=2;
 long timeProcessData=millis();
@@ -187,24 +188,10 @@ void setup(){
     pinMode(10,1);
     digitalWrite(9,1);
 }
-int countLed=0;
-bool flag=true;
-void led(){
-    Serial.println("RAN");
-    digitalWrite(10,1);
-    delay(100);
-    digitalWrite(10,0);
-    delay(100);
-    if(countLed==5){
-        flag=!flag;
-        digitalWrite(9,flag);
-        countLed=0;
-    }
-    countLed++;
-}
 // String editMessage="";
 long timeWire=millis();
 void loop(){
+    Serial.print("freeMemory()=");
     Serial.println(freeMemory());
 	update();
 	if((millis()-timeWire)>100){
@@ -212,5 +199,4 @@ void loop(){
 		timeWire=millis();
 	}
 	Serial.println(freeMemory());
-	led();
 }
