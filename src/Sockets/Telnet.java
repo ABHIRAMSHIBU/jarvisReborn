@@ -116,6 +116,7 @@ public class Telnet{
 		}
 		try {
 			while(socket.getInputStream().available()>0) {
+				System.out.println("Flushing Input");
 				socket.getInputStream().read();
 			}
 		} catch (IOException e3) {
@@ -130,12 +131,13 @@ public class Telnet{
 		}
 		out.println(data);
 		String z="";
-		try {
-			Thread.sleep(300);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		/* Disabled for faster response */
+//		try {
+//			Thread.sleep(300);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		try {
 			int j=0;
 			int retryCount=Details.FETCH_RETRY_COUNT;
@@ -188,7 +190,7 @@ public class Telnet{
 					socket=pingSocket;
 					status=true;
 			} catch (IOException e) {
-				System.out.println("Telnet Error occured!");
+				System.out.println("Telnet Error occured for "+ip);
 				status=false;
 			}
 	}

@@ -167,7 +167,7 @@ public class GUI {
 			//ta.setBounds(10,50,x-200,240);
 			ta.setText(">Welcome to SSAL command line\n"
 					+">Enter $help for help with commands\n"
-					+">Promt is now active start commanding\n");
+					+">Prompt is now active, you can start commanding\n");
 			ta.addKeyListener(new enterListen());
 			JScrollPane scrollPane;
 			try {

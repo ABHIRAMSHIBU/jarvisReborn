@@ -21,12 +21,14 @@ package jarvisReborn;
 import javax.swing.UIManager;
 
 import Config.ConfigParse;
+import Sockets.PythonServer;
 import Sockets.Telnet;
 import Sockets.TelnetServer;
 import tg.SSALTeleInit;
 
 public class Core {
 	static Thread tele;
+	public static PythonServer python;
 	public static Thread telnetThread;
 	public static Telnet telnet[];
 	public static void main(String[] args) {
@@ -58,6 +60,15 @@ public class Core {
 		 * Should be seperated with single space.
 		 */
 		ConfigParse configParse = new ConfigParse();
+		
+		Thread py = new Thread() {
+    		public void run() {
+    			new PythonServer(9999);
+    		}
+    	};
+    	py.start();
+    	System.out.println("Python server has started");
+    	
 		telnet = new Telnet[50];        //Supports 50 clients
 		for (int i=0;i<configParse.data.size();i++) {
 			int id=configParse.data.get(i).id;
@@ -65,6 +76,7 @@ public class Core {
 			System.out.println("Starting telnet for id:"+id+" ip:"+ip);
 			telnet[configParse.data.get(i).id] = new Telnet(configParse.data.get(i).ip,23);
 		}
-		new TelnetServer(8000);
+		new TelnetServer(9998);
+		
 	}
 }
