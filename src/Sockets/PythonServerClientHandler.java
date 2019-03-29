@@ -54,7 +54,7 @@ public class PythonServerClientHandler extends Thread {
 			    		writeEnable=false;
 			    		
 			    		//System.exit(0);
-		    		writeString=null;
+			    		writeString=null;
 			    	}
 //		    		if(readEnable) {
 //		    			System.out.println("In called");
@@ -68,6 +68,7 @@ public class PythonServerClientHandler extends Thread {
 //			    		}
 //			    	}
 				}
+		    	Thread.sleep(1);
 		    }	
 		}
 		catch (Exception e) {

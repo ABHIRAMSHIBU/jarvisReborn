@@ -90,10 +90,10 @@ def response(sentence, userID='123', show_details=False):
                         return (random.choice(i['responses']),i['tag'])
 
             results.pop(0)
-while(True):
-    data=input("Wait:")
-    data=data.split("^")
-    print("Ans:",response(data[0],data[1]))
+#while(True):
+#    data=input("Wait:")
+#    data=data.split("^")
+#    print("Ans:",response(data[0],data[1]))
     
 #while(True):
 #	print(response(input("YOU:")))
