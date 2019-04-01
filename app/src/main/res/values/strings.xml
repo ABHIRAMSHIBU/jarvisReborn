@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SAL</string>
+    <string name="imp">Import</string>
+
+    <string name="gallery">Gallery</string>
+
+    <string name="slideshow">Slideshow</string>
+    <string name="tools">Tools</string>
+
+    <string name="settings">Settings</string>
+</resources>
