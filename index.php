@@ -121,7 +121,7 @@
     <?php
     $servername = "localhost";
     $username = "ssal";
-    $password = "PZR9qiAxzOEYmZTu";
+    $password = "PqOnei4xt973wToR";
     $dbname = "ssal";
 
     // Create connection
