@@ -119,11 +119,7 @@
         </div>
     </div>
     <?php
-    $servername = "localhost";
-    $username = "ssal";
-    $password = "PqOnei4xt973wToR";
-    $dbname = "ssal";
-
+    require 'config.php';
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection

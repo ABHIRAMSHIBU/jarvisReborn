@@ -1,10 +1,7 @@
 <?php
+    require 'config.php';
     $room_name=($_GET["room_name"]);
     $room_number=($_GET["room_number"]);
-    $servername = "localhost";
-    $username = "ssal";
-    $password = "PZR9qiAxzOEYmZTu";
-    $dbname = "ssal";
 
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
