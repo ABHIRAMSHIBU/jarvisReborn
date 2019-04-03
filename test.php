@@ -9,6 +9,6 @@
     //echo $reply;
     //echo "<br>";
     $i=2;
-    setPin($socket, '1',$i,'1','10');
+    echo setPin($socket, '1',$i,'1','10');
     endSocket($socket);
 ?>

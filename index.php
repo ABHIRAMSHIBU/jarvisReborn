@@ -106,6 +106,12 @@
                 popE=false;
             }
         }
+        function submit(i) {
+            var form=document.getElementById("hiddenForm");
+            var hiddenEle=document.getElementsByName("devID")[0];
+            hiddenEle.value=i;
+            form.submit();
+        }
     </script>
 </head>
 <body>
@@ -146,7 +152,7 @@
             }
             $i+=1;
             echo "<td>";
-            echo "<button class='button medRoundbutton' name=".$row["id"].">";
+            echo "<button class='button medRoundbutton' name=".$row["id"]." onclick=submit(".$row["id"].");".">";
             echo $row["name"];
             echo "<br><br>";
             echo $row["id"];
@@ -162,5 +168,8 @@
     <div class="addbutton">
         <button class="button roundbutton" onclick="popUP();">+</button>
     </div>
+        <form method="post" action="switches.php" id="hiddenForm" hidden>
+		<input type="hidden" name="devID" value="" ></input>
+	</form>
 </body>
 </html>

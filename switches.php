@@ -37,7 +37,9 @@
 .button:hover span {
   padding-right: 25px;
 }
-
+.button:hover{
+    color:green;
+}
 .button:hover span:after {
   opacity: 1;
   right: 0;
@@ -97,51 +99,57 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+.center {
+    text-align:center;
+}
+h2{
+    text-align:center;   
+    font-size:40px;
+}
+hr{
+    color:lightgreen;
+    background: lightgreen;
+    height: 2px;
+}
+body{
+    font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+}
 </style>
 </head>
 <body bgcolor="black">
-<font color="white">
-<h2>Toggle Switch</h2>
-</font>
-<!--
-<label class="switch">
-  <input type="checkbox">
-  <span class="slider"></span>
-</label>
-
-<label class="switch">
-  <input type="checkbox" checked>
-  <span class="slider"></span>
-</label><br><br>
-
-<label class="switch">
-  <input type="checkbox">
-  <span class="slider round"></span>
-</label>
-
-<label class="switch">
-  <input type="checkbox" checked> 
-  <span class="slider round"></span>
-</label> 
--->
-
-<form action="handle.php" method="post">
+    <font color="white">
+    <h2>Toggle Switch</h2>
+    </font>
+    <form action="handle.php" method="post">
 	    <?php
 	    echo "<center><hr>";
+	    $devID=$_POST["devID"];
+	    echo "<input type='hidden' name='devID' value='$devID'>";
+	    echo "<table cellpadding=20%>";
+	    $start=true;
 	    for($i=0;$i<10;$i++){
+	        if($i%2==0){
+	            if(!$start){
+	                echo "</tr>";
+	            }
+	            echo "<tr>";
+	        }
+	        echo "<td>";
             echo "<span style='color: white; font-size: 45px;'>Pin $i\t:\t</span>";
             echo '<label class="switch">';
-            echo "<input type='checkbox' name='$i' value='Yes' />";
+            echo "<input type='checkbox' name='$i' />";
             echo '<span class="slider round"></span>';
             echo '</label>';
-            echo "<br><br>";
+            echo "</td>";
         }
+        echo "</tr>";
+        echo "</table>";
         echo "</center>"
 	    ?>
-	    <center>
-	    <span class="button">
-	    <input type="Submit" class = "button" style="vertical-align:middle" value="Submit" ></input></span></center>
-
+	    <div class="center">
+    	    <span class="button">
+    	    <input type="Submit" class = "button" style="vertical-align:middle" value="Submit" ></input></span></center>
+		</div>
 </form>
 </body>
 </html> 
