@@ -3,6 +3,21 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+.popup{
+    width:100%;
+    height:100%;
+    opacity:.95;
+    display:none;
+    position:fixed;
+    background-color:#313131;
+    overflow:auto;
+    font-color:white;
+}
+.inpopup{
+    font-size:40px;
+    text-align:center;
+    color:white;
+}
 .button {
   display: inline-block;
   border-radius: 4px;
@@ -102,6 +117,16 @@ input:checked + .slider:before {
 .center {
     text-align:center;
 }
+.addbutton{
+    position:fixed;
+    right:5%;
+    bottom:5%;
+}
+.roundbutton {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
 h2{
     text-align:center;   
     font-size:40px;
@@ -115,8 +140,40 @@ body{
     font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
 }
 </style>
+	<script>
+		var popE=false;
+    	function popUP(){
+            if(popE==false){
+                 popE=true;
+                 var slider=document.getElementsByClassName("slider")
+                 var pop=document.getElementById("popup");
+                 for(var i=0;i<slider.length;i++){ 
+                     slider[i].hidden=true; 
+                 }
+                 pop.style.display="block";
+                 var inpop=document.getElementById("inpopup")
+                 inpop.innerHTML="Add ROOM";
+                 inpop.innerHTML+="<form method=GET action='add.php'><br><br><label>Enter pin name:<input type='text' name='room_name'></input></label><br><br><label>Enter pin number:<input type='text' name='room_number'></input></label><br><br><center><input type='Submit' class='button' value='Add'></input></center></form>";
+             }
+             else{
+                 var pop=document.getElementById("popup");
+                 var slider=document.getElementsByClassName("slider")
+                 for(var i=0;i<slider.length;i++){ 
+                     slider[i].hidden=false; 
+                 }
+                 pop.style.display="none";
+                 var inpop=document.getElementById("inpopup")
+                 inpop.innerHTML="";
+                 popE=false;
+             }
+        }
+	</script>
 </head>
 <body bgcolor="black">
+	<div class=popup id=popup hidden=true>
+        <div class=inpopup id=inpopup>
+        </div>
+    </div>
     <font color="white">
     <h2>Toggle Switch</h2>
     </font>
@@ -151,7 +208,7 @@ body{
 	        $name=$row['name'];
 	        $id=$row['id_switch'];
 	        echo "<td>";
-	        echo "<span style='color: white; font-size: 45px;'>$name\t:\t</span>";
+	        echo "<span class='sldr' style='color: white; font-size: 45px;'>$name\t:\t</span>";
 	        echo '<label class="switch">';
 	        echo "<input type='checkbox' name='$id' />";
 	        echo '<span class="slider round"></span>';
@@ -182,8 +239,12 @@ body{
 	    ?>
 	    <div class="center">
     	    <span class="button">
-    	    <input type="Submit" class = "button" style="vertical-align:middle" value="Submit" ></input></span></center>
+    	    <input type="submit" class = "button" style="vertical-align:middle" value="Submit" ></input>
+    	    </span>
 		</div>
-</form>
+	</form>
+	<div class="addbutton">
+    	<button class="button roundbutton" onclick="popUP();">+</button>
+	</div>
 </body>
 </html> 
