@@ -126,22 +126,56 @@ body{
 	    $devID=$_POST["devID"];
 	    echo "<input type='hidden' name='devID' value='$devID'>";
 	    echo "<table cellpadding=20%>";
+	    
+	    require 'config.php';
+	    // Create connection
+	    $conn = new mysqli($servername, $username, $password, $dbname);
+	    // Check connection
+	    if ($conn->connect_error) {
+	        die("Connection failed: " . $conn->connect_error);
+	    }
+	    
+	    $sql = "SELECT * from ssal_switches where id=$devID";
+	    $result = $conn->query($sql);
+	    file_put_contents('php://stderr', print_r($result, TRUE));
+	    $i=0;
 	    $start=true;
-	    for($i=0;$i<10;$i++){
+	    while($row = $result->fetch_assoc())
+	    {file_put_contents('php://stderr', print_r($row, TRUE));
 	        if($i%2==0){
 	            if(!$start){
 	                echo "</tr>";
 	            }
 	            echo "<tr>";
 	        }
+	        $name=$row['name'];
+	        $id=$row['id_switch'];
 	        echo "<td>";
-            echo "<span style='color: white; font-size: 45px;'>Pin $i\t:\t</span>";
-            echo '<label class="switch">';
-            echo "<input type='checkbox' name='$i' />";
-            echo '<span class="slider round"></span>';
-            echo '</label>';
-            echo "</td>";
-        }
+	        echo "<span style='color: white; font-size: 45px;'>$name\t:\t</span>";
+	        echo '<label class="switch">';
+	        echo "<input type='checkbox' name='$id' />";
+	        echo '<span class="slider round"></span>';
+	        echo '</label>';
+	        echo "</td>";
+	        $i++;
+	    }
+	    
+	    
+// 	    for($i=0;$i<10;$i++){
+// 	        if($i%2==0){
+// 	            if(!$start){
+// 	                echo "</tr>";
+// 	            }
+// 	            echo "<tr>";
+// 	        }
+// 	        echo "<td>";
+//             echo "<span style='color: white; font-size: 45px;'>Pin $i\t:\t</span>";
+//             echo '<label class="switch">';
+//             echo "<input type='checkbox' name='$i' />";
+//             echo '<span class="slider round"></span>';
+//             echo '</label>';
+//             echo "</td>";
+//         }
         echo "</tr>";
         echo "</table>";
         echo "</center>"
