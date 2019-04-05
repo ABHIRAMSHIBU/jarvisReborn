@@ -1,0 +1,80 @@
+body{
+    padding: 50px 0px 0px 0px;
+    z-index: 0;
+}
+.row-header{
+    margin: 0px auto;
+    padding: 0px auto;   
+}
+.row-content{
+    margin: 0px auto;
+    padding: 50px 0px 50px 0px;
+    border-bottom: 2px ridge;
+    min-height: 350px;
+}
+.popup{
+width:30%;
+height:30%;
+opacity:.50;
+display:none;
+position:fixed;
+background-color:#313131;
+overflow:auto;
+font-color:white;
+}
+.inpopup{
+font-size:40px;
+text-align:center;
+color:white;
+}
+.medRoundbutton{
+border-radius: 50%;
+background-color: #1C2833;
+color:white;
+width:110px;
+height:110px;
+}
+.medRoundbutton:hover{
+color:#E74C3C;
+}
+.addbutton{
+    position:fixed;
+    right:5%;
+    bottom:5%;
+}
+.header {
+list-style-type: none;
+margin: 0;
+padding: 0;
+overflow: hidden;
+background-color: #333;
+}
+.headerEle {
+float: left;
+}
+.headerEle {
+font-size:25px;
+display: block;
+color: white;
+text-align: center;
+padding: 20px 16px;
+text-decoration: none;
+font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+}
+.footer{
+    background-color: #F1C40F;
+    margin: 0px auto;
+    padding: 20px 0px 20px 0px;
+}
+.button {
+    background-color: #1C2833;
+    border: none; 
+    color:white;   
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 2px 2px;
+  }
+.button1 {border-radius: 50%;}

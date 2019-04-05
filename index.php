@@ -1,7 +1,14 @@
 <html>
 <head>
     <title> SAL REMOTE UI </title>
-    <style>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title> SAL REMOTE UI </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="text/javascript" src="script/script.js"></script>
+    <!--<style>
         body{
             background:url("space.png");
             background-repeat: initial;
@@ -76,54 +83,31 @@
         text-decoration: none;
         font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
         }
-    </style>
-    <script>
-        var popE=false;
-        function loadDoc() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("demo").innerHTML = this.responseText;
-            }
-        };
-        xhttp.open("GET", "demo_get.asp", true);
-        xhttp.send();
-        }
-        function popUP(){
-           if(popE==false){
-                popE=true;
-                var pop=document.getElementById("popup");
-                pop.style.display="block";
-                var inpop=document.getElementById("inpopup")
-                inpop.innerHTML="Add ROOM";
-                inpop.innerHTML+="<form method=GET action='add.php'><br><br><label>Enter room name:<input type='text' name='room_name'></input></label><br><br><label>Enter room number:<input type='text' name='room_number'></input></label><br><br><center><input type='Submit' class='button' value='Add'></input></center></form>";
-            }
-            else{
-                var pop=document.getElementById("popup");
-                pop.style.display="none";
-                var inpop=document.getElementById("inpopup")
-                inpop.innerHTML="";
-                popE=false;
-            }
-        }
-        function submit(i) {
-            var form=document.getElementById("hiddenForm");
-            var hiddenEle=document.getElementsByName("devID")[0];
-            hiddenEle.value=i;
-            form.submit();
-        }
-    </script>
+    </style>-->
 </head>
 <body>
-    <div class=popup id=popup>
-        <div class=inpopup id=inpopup>
+    <header class="jumbotron">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <h1>SSAL Remote Dashboard</h1>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="img/ssal.png" class="img-fluid" style="height:20%">
+                    </div>
+                </div>
+            </div>
+    </header>
+    <div class="container">
+        <div class="popup" id="popup" align="right">
+                <div class="inpopup" id="inpopup">
+                </div>
         </div>
-    </div>
-    <div class=header>
-        <div class=headerEle>
-        SSAL REMOTE UI
-        </div>
-    </div>
+        <div class="row row-content align-content-center">
+            <div class="addbutton">
+                    <button class="button button1 btn-primary" onclick="popUP();">+</button>
+            </div>
     <?php
     require 'config.php';
     // Create connection
@@ -138,38 +122,45 @@
     $i=0;
     if ($result->num_rows > 0) {
         // output data of each row
-        echo "<table  width=100% height=100%>";
-        $startFlag=true;
+        //echo "<table  width=100% height=100%>";
         while($row = $result->fetch_assoc()) {
             //echo "id: " . $row["id"]. " - Name: " . $row["name"]. "<br>";
             if($i%4==0){
                 echo " ";
-                if(startFlag!=true){
-                    echo "</tr>";
+                if($i!=0){
+                    echo "</div>";
                 }
-                echo "<tr align=center>";
-                $startFlag=false;
+                echo "<div class='row'><br><br><br></div><div class='row'>";
             }
             $i+=1;
-            echo "<td>";
-            echo "<button class='button medRoundbutton' name=".$row["id"]." onclick=submit(".$row["id"].");".">";
-            echo $row["name"];
-            echo "<br><br>";
+            //echo "<td>";
+            //<div class="col-md-3 col-sm-6"><button class="button medRoundbutton" name="1">Bed Room 1</button></div>
+            echo "<div class='col-md-3 col-sm-6'><button class='button medRoundbutton' name=".$row["id"]." onclick=submit(".$row["id"].");".">";
+            echo $row["name"]." ";
             echo $row["id"];
             echo '</button>';
             //echo '<br>';
-            echo "</td>";
+            echo "</div>";
         }
+        echo "<div class='row'><br><br><br></div>";
+        echo "<div class='row'><br><br><br></div>";
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
     } else {
         echo "0 results";
     }
     $conn->close();
     ?>
-    <div class="addbutton">
-        <button class="button roundbutton" onclick="popUP();">+</button>
-    </div>
-        <form method="post" action="switches.php" id="hiddenForm" hidden>
+     <form method="post" action="switches.php" id="hiddenForm" hidden>
 		<input type="hidden" name="devID" value="" ></input>
-	</form>
+</form>
+	<footer class="footer">
+            <div class="row justify-content-center">             
+                    <div class="col-auto " align="center">
+                        <p> © Copyright 2018 SSAL Automation</p>
+                    </div>
+               </div>
+    </footer>
 </body>
 </html>
