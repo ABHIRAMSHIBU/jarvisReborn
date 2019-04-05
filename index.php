@@ -169,6 +169,7 @@
                 <div class="form-group">
                   <form style="text-align: center;" method=GET action='add.php'>
                   	<br><br>
+                  	<input type="hidden" name="type" value="0">
                   	<label>Room Name:<input class="form-control" type='text' name='room_name' placeholder="Enter room name."></input></label><br>
                   	<small id="emailHelp" class="form-text text-muted">Example : Bed Room</small>
                   	<br><br>

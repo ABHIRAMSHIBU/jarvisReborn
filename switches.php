@@ -153,7 +153,7 @@ body{
                  pop.style.display="block";
                  var inpop=document.getElementById("inpopup")
                  inpop.innerHTML="Add ROOM";
-                 inpop.innerHTML+="<form method=GET action='add.php'><br><br><label>Enter pin name:<input type='text' name='room_name'></input></label><br><br><label>Enter pin number:<input type='text' name='room_number'></input></label><br><br><center><input type='Submit' class='button' value='Add'></input></center></form>";
+                 inpop.innerHTML+="<form method=GET action='add.php'><br><br><input type='hidden' name='type' value=1><input name='devID' type='hidden' value=<?php $devID=$_POST['devID']; echo $devID;?> <label>Enter pin name:<input type='text' name='pin_name'></input></label><br><br><label>Enter pin number:<input type='text' name='pin_number'></input></label><br><br><center><input type='Submit' class='button' value='Add'></input></center></form>";
              }
              else{
                  var pop=document.getElementById("popup");
