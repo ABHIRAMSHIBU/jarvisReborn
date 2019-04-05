@@ -86,6 +86,9 @@
     </style>-->
 </head>
 <body>
+	<form method="post" action="switches.php" id="hiddenForm" hidden=true>
+		<input type="hidden" name="devID" value="" ></input>
+	</form>
     <header class="jumbotron">
             <div class="container-fluid">
                 <div class="row">
@@ -106,7 +109,7 @@
         </div>
         <div class="row row-content align-content-center">
             <div class="addbutton">
-                    <button class="button button1 btn-primary" onclick="popUP();">+</button>
+                    <button class="button button1 btn-primary" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">+</button>
             </div>
     <?php
     require 'config.php';
@@ -152,13 +155,41 @@
     }
     $conn->close();
     ?>
-     <form method="post" action="switches.php" id="hiddenForm" hidden>
-		<input type="hidden" name="devID" value="" ></input>
-</form>
-	<footer class="footer">
+	<!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Add Room Dialogue</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                  <form style="text-align: center;" method=GET action='add.php'>
+                  	<br><br>
+                  	<label>Room Name:<input class="form-control" type='text' name='room_name' placeholder="Enter room name."></input></label><br>
+                  	<small id="emailHelp" class="form-text text-muted">Example : Bed Room</small>
+                  	<br><br>
+                  	<label>Room Number:<input class="form-control" type='text' name='room_number' placeholder="Enter room number."></input></label><br>
+                  	<small id="emailHelp" class="form-text text-muted">Example : 0</small>
+                  	<br><br><input type='Submit' class='button' value='Add'></input>
+                  </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+    
+    <footer class="footer">
             <div class="row justify-content-center">             
                     <div class="col-auto " align="center">
-                        <p> © Copyright 2018 SSAL Automation</p>
+                        <p> © Copyright 2019 BrainNet Technologies</p>
                     </div>
                </div>
     </footer>
