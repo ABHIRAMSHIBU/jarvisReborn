@@ -41,6 +41,9 @@ public class MainCMDHandler {
 		else if(input.contains("$reset")) {
 			parseRESET(input.substring(input.indexOf(" ")+1));
 		}
+		else if(input.contains("$get")) {
+			parseGET(input.substring(input.indexOf(" ")+1));
+		}
 	}
 	public void parseTEST(String input) {
 		parsed=true;
@@ -48,11 +51,13 @@ public class MainCMDHandler {
 		int pin=Integer.valueOf(input.substring(0, space1)), 
 				mcu=Integer.valueOf(input.substring(space1+1));
 		try {
-			if(Core.telnet[mcu].checkTelnet(0)) {
-				output=Core.telnet[mcu].echo(pin+"\r");
-			}
-			else {
-				output="Telnet faild to reconnect, giving up!";
+			synchronized (Core.telnet[mcu]) {
+				if(Core.telnet[mcu].checkTelnet(0)) {
+					output=Core.telnet[mcu].echo(pin+"\r");
+				}
+				else {
+					output="Telnet faild to reconnect, giving up!";
+				}
 			}
 		}
 		catch(Exception e){
@@ -100,16 +105,38 @@ public class MainCMDHandler {
 		//System.out.println("Pin is:"+pin+" operation is:"+operation+" mcu is:"+mcu);
 		parsed=true;
 		try {
-			if(Core.telnet[mcu].checkTelnet(0)) {
-				output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
-			}
-			else {
-				output="Telnet faild to reconnect, giving up!";
+			synchronized (Core.telnet[mcu]) {
+				if(Core.telnet[mcu].checkTelnet(0)) {
+					output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+					if(output!="No input available") {
+						if(pin-1<=10 && pin-1>0) {
+							Core.pinData[mcu][pin-1]=(operation==1);
+						}
+					}
+				}
+				else {
+					output="Telnet faild to reconnect, giving up!";
+				}
 			}
 		}
 		catch(Exception e) {
 			output="Error contacting ESP";
 		}
 		//Im gonna make that text view bigger
+	}
+	public void parseGET(String input) {
+		parsed=true;
+		int space1=input.indexOf(" ");
+		int pin=Integer.valueOf(input.substring(0, space1)), 
+				mcu=Integer.valueOf(input.substring(space1+1));
+		if(pin-1<=10 && pin-1>0) {
+			output=Core.pinData[mcu][pin-1].toString();
+		}
+		else {
+			output="Out of range";
+		}
+		if(!Core.telnet[mcu].run) {
+			output="Error contacting ESP";
+		}
 	}
 }

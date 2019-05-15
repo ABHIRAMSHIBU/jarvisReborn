@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package jarvisReborn;
 
+import dbHandlers.dbInit;
 import javax.swing.UIManager;
-
 import Config.ConfigParse;
 import Sockets.PythonServer;
 import Sockets.Telnet;
@@ -31,6 +31,7 @@ public class Core {
 	public static PythonServer python;
 	public static Thread telnetThread;
 	public static Telnet telnet[];
+	public static Boolean pinData[][];
 	public static void main(String[] args) {
 		System.out.println("SSAL version 1, Copyleft (C) 2018 Abhiram Shibu\n" + 
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
@@ -68,15 +69,29 @@ public class Core {
     	};
     	py.start();
     	System.out.println("Python server has started");
-    	
+    	pinData=new Boolean[50][10];
 		telnet = new Telnet[50];        //Supports 50 clients
+		dbInit db[]=new dbInit[50];
+		int dbc=0;
 		for (int i=0;i<configParse.data.size();i++) {
 			int id=configParse.data.get(i).id;
 			String ip=configParse.data.get(i).ip;
 			System.out.println("Starting telnet for id:"+id+" ip:"+ip);
 			telnet[configParse.data.get(i).id] = new Telnet(configParse.data.get(i).ip,23);
+			db[dbc]=new dbInit(configParse.data.get(i).id);
+			db[dbc].start();
+			dbc++;
+			
 		}
 		new TelnetServer(9998);
-		
+		for (int i=0;i<dbc;i++) {
+			try {
+				db[i].join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("SSAL System Active!");
 	}
 }
