@@ -122,14 +122,13 @@ public class MainCMDHandler {
 		catch(Exception e) {
 			output="Error contacting ESP";
 		}
-		//Im gonna make that text view bigger
 	}
 	public void parseGET(String input) {
 		parsed=true;
 		int space1=input.indexOf(" ");
 		int pin=Integer.valueOf(input.substring(0, space1)), 
 				mcu=Integer.valueOf(input.substring(space1+1));
-		if(pin-1<=10 && pin-1>0) {
+		if(pin-1<=10 && pin-1>=0) {
 			output=Core.pinData[mcu][pin-1].toString();
 		}
 		else {
