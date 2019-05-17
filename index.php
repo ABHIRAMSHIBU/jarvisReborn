@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="script/BootstrapMenu.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script type="text/javascript" src="script/script.js"></script>
     <!--<style>
@@ -108,8 +109,11 @@
                 </div>
         </div>
         <div class="row row-content align-content-center">
-            <div class="addbutton">
+            <div class="addbutton" id="addbutton">
                     <button class="button button1 btn-primary" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">+</button>
+            </div>
+            <div class="remButton" id="remButton">
+                    <button class="button button1 btn-primary" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModa2">-</button>
             </div>
     <?php
     require 'config.php';
@@ -176,6 +180,55 @@
                   	<label>Room Number:<input class="form-control" type='text' name='room_number' placeholder="Enter room number."></input></label><br>
                   	<small id="emailHelp" class="form-text text-muted">Example : 0</small>
                   	<br><br><input type='Submit' class='button' value='Add'></input>
+                  </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+    <div class="modal fade" id="myModa2" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Remove Room Dialogue</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                  <form style="text-align: center;" method=GET action='add.php'>
+                  	<br><br>
+                  	<input type="hidden" name="type" value="2">
+                  	<select class="form-control form-control-lg" id="sel1" name="devID">
+                  		<?php 
+                      		$conn = new mysqli($servername, $username, $password, $dbname);
+                      		// Check connection
+                      		if ($conn->connect_error) {
+                      		    die("Connection failed: " . $conn->connect_error);
+                      		} 
+                  		    $result = $conn->query($sql);
+                  		    if ($result->num_rows > 0) {
+                  		        while($row = $result->fetch_assoc()) {
+                  		            echo "<option value=";
+                  		            echo $row['id'];
+                  		            echo ">";
+                  		            echo $row['name'];
+                  		            echo " ";
+                  		            echo $row['id'];
+                  		            echo "</option>";
+                  		        }
+                  		    }
+                  		    $conn->close();
+                  		?>
+                  	
+                  	</select>
+                  	
+                  	<br><br><input type='Submit' class='button' value='Remove'></input>
                   </form>
                 </div>
             </div>

@@ -21,6 +21,17 @@
         $sql = "insert into ssal_switches values ($devID,$pin_number,'$pin_name')";
         $result = $conn->query($sql);
     }
+    else if($type=="2"){
+        $devID=$_GET['devID'];
+        $sql = "delete from ssal_rooms where id=".$devID.";";
+        $result = $conn->query($sql);
+    }
+    else if($type=="3"){
+        $devID=$_GET['devID'];
+        $pin_number=($_GET["pin_number"]);
+        $sql = "delete from ssal_switches where id_switch=".$pin_number." and id=".$devID.";";
+        $result = $conn->query($sql);
+    }
     else{
         echo "Type error, GOT ".$type;
     }

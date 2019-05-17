@@ -1,0 +1,26 @@
+body{
+    padding: 0px 0px 0px 0px;
+    z-index: 0;
+}
+.footer{
+    background-color: #F1C40F;
+    margin: 0px auto;
+    padding: 20px 0px 20px 0px;
+}
+.btn.active {                
+	display: none;		
+}
+
+.btn span:nth-of-type(1)  {            	
+	display: none;
+}
+.btn span:last-child  {            	
+	display: block;		
+}
+
+.btn.active  span:nth-of-type(1)  {            	
+	display: block;		
+}
+.btn.active span:last-child  {            	
+	display: none;			
+}

@@ -7,14 +7,14 @@
         if ($socket === false) {
             echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
         } else {
-            echo "Socket created.\n";
+//            echo "Socket created.\n";
         }
-        echo "Attempting to connect to '$address' on port '$service_port'...";
+//         echo "Attempting to connect to '$address' on port '$service_port'...";
         $result = socket_connect($socket, $address, $service_port);
         if ($result === false) {
             echo "socket_connect() failed.\nReason: ($result) " . socket_strerror(socket_last_error($socket)) . "\n";
         } else {
-            echo "Socket connected.\n";
+//             echo "Socket connected.\n";
         }
         //Read SSAL Command line ready and trash it
         socket_read($socket, 500);
@@ -61,16 +61,19 @@
         if($retries==-1){
             return "Error";
         }
-        $string='$test ';
+        $string='$get ';
         $string.=$pinNo." ";
         $string.=$devID;
         //var_dump($string);
         $expOut='>';
-        $expOut1=$expOut."1\n";
-        $expOut2=$expOut."0\n";
+        $expOut1=$expOut."true\n";
+        $expOut2=$expOut."false\n";
         $reply=echoSocket($socket, $string);
-        if($expOut1==$reply || $expOut2==$reply){
-            return $reply;
+        if($expOut1==$reply){
+            return 1;
+        }
+        else if($expOut2==$reply){
+            return 0;
         }
         return getPin($socket,$devID,$pinNo,$retries-1);
     }
