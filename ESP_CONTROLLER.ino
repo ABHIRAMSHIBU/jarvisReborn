@@ -1,4 +1,4 @@
-//Project SSAL IoT Core VERSION
+//Project SSAL IoT Core
 /* Author Abhiram Shibu, Preet Patel
  * Previous Author Abhijith N Raj
  * Copyright (c) TeamDestroyer Projects 2018
@@ -15,7 +15,8 @@
 #include<MemoryFree.h>
 #include<Wire.h>
 #include<avr/wdt.h>
-//Convience Variables
+
+//Convience Definitions
 #define True 1
 #define False 0
 #define ESPTX 11
@@ -24,6 +25,7 @@
 #define BAUD 115200
 #define DEBUG true
 #define VERSION 2.1
+#define INSPECT 180619
 SoftwareSerial ESP(ESPTX,ESPRX);
 bool checkESP=true;
 int ROM_ADDRESS = 0;
@@ -63,6 +65,8 @@ int findLocation(){
     }
     return i;
 }
+
+/* Needs a improvement */ //Overflow is there
 void dumpToEEPROM(){
     byte val=encodeByteArray(pins,2);
     int loc=findLocation();
@@ -113,7 +117,15 @@ String readESP(){            //Data from ESP save and return
 //    readESP();
 //    Serial.println(F("Exited"));
 // }
+
 // WatchDog Stuff
+/* -----------------------*
+ * Setup Watch dog timer  *
+ * Watch Dog should reset *
+ * CPU on overflow of     *
+ * timer. Can be reset by *
+ * WDTCSR function        *
+ * -----------------------*/
 void setupWatchDog(){
     wdt_reset();
     MCUSR|=_BV(WDRF);
@@ -125,7 +137,6 @@ void setupWatchDog(){
 //Wire Stuff
 void sendData(){
   Wire.write("1");
-  //Wire.write("01010101");
   String pinsString="";
     pinsString.reserve(20);
   for(int i=2;i<12;i++){ // IDK why it needs 12 instead of 11
@@ -139,7 +150,6 @@ void sendData(){
   char buff[20];
   pinsString.toCharArray(buff,pinsString.length());
   Wire.write(buff);
-  //Serial.println("Writing : "+String(buff));
 }
 void receiveData(int howMany) {
   char c[14];
@@ -154,20 +164,17 @@ void receiveData(int howMany) {
   }
   c[i]='\0';
   if(i){
-//     Serial.println(c);
     temp=0;
     for(int j=0;j<3;j++){
         temp+=int(c[i-3+j]-48);
         temp*=10;
     }
     temp/=100;
-//     Serial.print("Temp =");
-//     Serial.println(temp);
   }
 }
 void initializeWire(){
   Wire.begin(8);
-    Wire.onRequest(sendData); //Get data from I2C
+    Wire.onRequest(sendData);         //Get data from I2C
     Wire.onReceive(receiveData);
 }
 // END WIRE STUFF
@@ -222,10 +229,8 @@ void initializeESP(){
     }
     writeESP(F("AT+CIPMUX=1\r\n"));   //Set mux to 1 thereby allowing multi connection
     delay(200);
-//     Serial.print("Data:");
     data =readESP();
-//     Serial.println(data);
-    /* Detect error and try to fix by restarting the function */
+    /* REST ESP ON UNKNOWN STATE */
     if(data.indexOf(F("ERROR"))>-1){
       if(data.indexOf(F("builded")>-1)){
         counter++;
@@ -244,7 +249,7 @@ void initializeESP(){
     Serial.print(F("Data:"));
     data =readESP();
     Serial.println(data);
-    /* Detect error and restart function */
+    /* REST ESP ON UNKNOWN STATE */
     if(data.indexOf(F("ERROR"))>-1){
       if(data.indexOf(F("builded")>-1)){
         counter++;
@@ -262,7 +267,7 @@ void initializeESP(){
 }
 bool led=False;
 
-/* Interrupt Service Routine for timer one, ESP reset check routine */
+/* Interrupt Service Routine for legacy timer one, ESP reset check routine */
 void CUSTOM_ISR(void){
   if(led){
     led=False;
@@ -292,7 +297,7 @@ void setup() {
   }
   ESP.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
-  ESP.setTimeout(100);   // Up
+  ESP.setTimeout(100);   // Reduce rx tx timeout, we dont have decades to wait.
   initializeESP();
   Serial.println(F("Welcome to SSAL IoT Core"));
   for(int i=0;i<11;i++){
@@ -305,10 +310,10 @@ void setup() {
 }
 long time=millis();
 void loop() {
-  //ISR treggers this function indirectly
-  if((millis()-time)>5000){
-    CUSTOM_ISR();
-    time=millis();
+  //ISR is now replaced by millis watchdog
+  if((millis()-time)>5000){ // Run timer every 5 seconds
+    CUSTOM_ISR();  //Call legacy ISR
+    time=millis(); //Reset virtual timer 
   }
   if(checkESP){
       /* ESP RESET/SERVER CHECK */
@@ -382,13 +387,9 @@ void loop() {
   }
   passThrough();                         //Pass data from one serial to another
   if(!dataSerial.equals("")){            //Data from serial is available
-//     Serial.print("Captured data from Serial :");
-//     Serial.println(dataSerial);
     dataSerial="";
   }
   if(!dataESP.equals("")){               //Data from ESP available
-//     Serial.print("Captured data from ESP :");
-//     Serial.println(dataESP);
     if(dataESP.indexOf(F("CONNECT"))>-1){   //Check if there is a connection and absorb next line
       delay(100);                        //Wait for some time
       readESP();
@@ -407,10 +408,6 @@ void loop() {
         int space = dataESP.indexOf(F(" "));
         int pin=dataESP.substring(0,space).toInt();
         bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
-//           Serial.print(F("Pin Set Request, PIN:"));
-//           Serial.print(pin);
-//           Serial.print(F(" Operation:"));
-//           Serial.println(operation);
         digitalWrite(pin,operation); // do operation
         pins[pin]=operation;// update internal DB
         dumpToEEPROM();
@@ -448,8 +445,6 @@ void loop() {
         else{
         /* Here pin status is retrived and send to the SSAL Core */
         int pin=dataESP.substring(0,dataESP.length()-2).toInt();
-//           Serial.print(F("Pin get Request, PIN:"));
-//           Serial.println(pin);
         
         //SendData - Because ardunio dont like functions
         String pinString;
@@ -475,12 +470,12 @@ void loop() {
         }
       }
       else{
-        /* Kick trustpassers */
+        /* There can be only one active connection */
         String pinString=F("Not allowed!");
         //SendData 
           String temp;
           temp.reserve(50);
-          temp="AT+CIPSEND=";//<link ID>,<length>
+          temp="AT+CIPSEND="; //<link ID>,<length>
           temp.concat(id);
           temp.concat(",");
           temp.concat(pinString.length()+2);
