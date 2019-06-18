@@ -2,8 +2,8 @@
 /* Author Abhiram Shibu, Preet Patel
  * Previous Author Abhijith N Raj
  * Copyright (c) TeamDestroyer Projects 2018
- * Copyright (c) 2018 SSAL
- * Copyright (c) 2018 BrainNet Technlogies
+ * Copyright (c) 2019 SSAL
+ * Copyright (c) 2019 BrainNet Technlogies
  * Copyright (c) 2018 ARCTotal
  * For queries goto https://forums.arctotal.com
  */
@@ -11,7 +11,7 @@
 #include<string.h>
 #include<SoftwareSerial.h>
 #include<EEPROM.h>
-#include<TimerOne.h>
+//#include<TimerOne.h> - Timer Depriciation, interfering with i2c.
 #include<MemoryFree.h>
 #include<Wire.h>
 #include<avr/wdt.h>
@@ -207,7 +207,7 @@ void initializeESP(){
     data=readESP();
     if(data.indexOf("CWMODE:1")==-1){
         writeESP(F("AT+CWMODE=1\r\n"));
-        Serial.println(F("Setting ap mode"));
+        Serial.println(F("Setting ap mode")); //Need to be removed..
         delay(200);
         Serial.println(readESP());
         count++;
@@ -275,12 +275,12 @@ void CUSTOM_ISR(void){
   checkESP=true;
 }
 
-/* Interrupt initialization code for above ISR */
-void initializeInterrupt(){
-  pinMode(13,1);
-  Timer1.initialize(10000000); //Heart Beat ( ESP refresh signal.. )
-  Timer1.attachInterrupt(CUSTOM_ISR); 
-}
+/* Interrupt initialization code for above ISR */ // Depricated!
+// void initializeInterrupt(){
+//   pinMode(13,1);
+//   Timer1.initialize(10000000); //Heart Beat ( ESP refresh signal.. )
+//   Timer1.attachInterrupt(CUSTOM_ISR); 
+// }
 
 void setup() {
   loadFromEEPROM();
@@ -294,20 +294,22 @@ void setup() {
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
   ESP.setTimeout(100);   // Up
   initializeESP();
-  initializeInterrupt();
-  noInterrupts();        // Dont interrupt
   Serial.println(F("Welcome to SSAL IoT Core"));
   for(int i=0;i<11;i++){
     digitalWrite(i,pins[i]);
   }
   Serial.print(F("freeMemory()="));
-  Serial.println(freeMemory());  // Print free memory ocationally
-  interrupts();                  // Can interrupt
+  Serial.println(freeMemory());  // Print free memory ocationally  // Can interrupt
   initializeWire();
   setupWatchDog();
 }
+long time=millis();
 void loop() {
   //ISR treggers this function indirectly
+  if((millis()-time)>5000){
+    CUSTOM_ISR();
+    time=millis();
+  }
   if(checkESP){
       /* ESP RESET/SERVER CHECK */
     writeESP(F("AT+CIPMUX?\r\n"));  //Check MUX status, for server to run it should be 1
@@ -378,7 +380,6 @@ void loop() {
         }
     }
   }
-  interrupts();                          //Code can be interrupted
   passThrough();                         //Pass data from one serial to another
   if(!dataSerial.equals("")){            //Data from serial is available
 //     Serial.print("Captured data from Serial :");
