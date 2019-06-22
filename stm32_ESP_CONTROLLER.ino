@@ -9,12 +9,18 @@
  */
 //Includes
 #include<string.h>
-#include<SoftwareSerial.h>
+
+/* STM32 */
+// #include<SoftwareSerial.h>
+
 #include<EEPROM.h>
 //#include<TimerOne.h> - Timer Depriciation, interfering with i2c.
 #include<MemoryFree.h>
-#include<Wire.h>
-#include<avr/wdt.h>
+/* STM32 */
+#include<Wire_slave.h>
+
+/* STM32 */
+// #include<avr/wdt.h>
 
 //Convience Definitions
 #define True 1
@@ -26,7 +32,10 @@
 #define DEBUG true
 #define VERSION 2.1
 #define INSPECT 180619
-SoftwareSerial ESP(ESPTX,ESPRX);
+
+/* STM32 */
+// SoftwareSerial ESP(ESPTX,ESPRX);
+
 bool checkESP=true;
 int ROM_ADDRESS = 0;
 int counter=0;
@@ -93,7 +102,8 @@ String readSerial(){          //Data from serial Save and return
   return dataSerial;
 }
 String readESP(){            //Data from ESP save and return
-  dataESP=ESP.readString();
+  /* STM32 */
+  dataESP=Serial1.readString();
   dataESP.reserve(100);
   return dataESP;
 }
@@ -126,12 +136,13 @@ String readESP(){            //Data from ESP save and return
  * timer. Can be reset by *
  * WDTCSR function        *
  * -----------------------*/
-void setupWatchDog(){
-    wdt_reset();
-    MCUSR|=_BV(WDRF);
-    WDTCSR = _BV(WDCE) | _BV(WDE);
-    WDTCSR = _BV(WDE) | _BV(WDCE) | _BV(WDP0) |_BV(WDP3);
-}
+/* STM32 */
+// void setupWatchDog(){
+//     wdt_reset();
+//     MCUSR|=_BV(WDRF);
+//     WDTCSR = _BV(WDCE) | _BV(WDE);
+//     WDTCSR = _BV(WDE) | _BV(WDCE) | _BV(WDP0) |_BV(WDP3);
+// }
 // END WatchDog Stuff
 
 //Wire Stuff
@@ -180,7 +191,8 @@ void initializeWire(){
 // END WIRE STUFF
 
 void writeESP(String data){           //String to ESP
-  ESP.print(data);
+  /* STM32 */
+  Serial1.print(data);
 }
 void writeSerial(String data){        //String to Serial
   Serial.print(data);
@@ -189,12 +201,14 @@ void passThrough(){                    // Serial -> ESP, ESP -> Serial
   if(Serial.available()){
     writeESP(readSerial());
   }
-  if(ESP.available()){
+  /* STM32 */
+  if(Serial1.available()){
     writeSerial(readESP());
   }
 }
 void serialClear(){                     // Clear extra data
-  ESP.flush();
+  /* STM32 */
+  Serial1.flush();
   Serial.flush();
 }
 void echoSerial(){                      // Test function Serial->Serial
@@ -232,7 +246,7 @@ void initializeESP(){
     data =readESP();
     /* REST ESP ON UNKNOWN STATE */
     if(data.indexOf(F("ERROR"))>-1){
-      if(data.indexOf(F("builded")>-1)){
+      if(data.indexOf(F("builded"))>-1){
         counter++;
         if(counter==3){
           writeESP(F("AT+RST\r\n"));
@@ -251,7 +265,7 @@ void initializeESP(){
     Serial.println(data);
     /* REST ESP ON UNKNOWN STATE */
     if(data.indexOf(F("ERROR"))>-1){
-      if(data.indexOf(F("builded")>-1)){
+      if(data.indexOf(F("builded"))>-1){
         counter++;
         if(counter==3){
           writeESP(F("AT+RST\r\n"));
@@ -290,14 +304,15 @@ void CUSTOM_ISR(void){
 void setup() {
   loadFromEEPROM();
   for(int i=2;i<11;i++){
-    pinMode(i,1);
+    pinMode(i,OUTPUT);
   }
   if(DEBUG){
   Serial.begin(BAUD); //Serial to debugger 0,1
   }
-  ESP.begin(ESPBAUD); //Serial to ESP mainly 11,12
+  /* STM32 */
+  Serial1.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
-  ESP.setTimeout(100);   // Reduce rx tx timeout, we dont have decades to wait.
+  Serial1.setTimeout(100);   // Reduce rx tx timeout, we dont have decades to wait.
   initializeESP();
   Serial.println(F("Welcome to SSAL IoT Core"));
   for(int i=0;i<11;i++){
@@ -306,7 +321,8 @@ void setup() {
   Serial.print(F("freeMemory()="));
   Serial.println(freeMemory());  // Print free memory ocationally  // Can interrupt
   initializeWire();
-  setupWatchDog();
+  /* STM32 */
+//   setupWatchDog();
 }
 long time=millis();
 void loop() {
@@ -432,7 +448,7 @@ void loop() {
         writeESP(temp);
         delay(100);
         String inputData=readESP();
-        if(inputData.indexOf(F("OK")>-1)){
+        if(inputData.indexOf(F("OK"))>-1){
             pinString.concat(F("\r\n"));
             writeESP(pinString);
         }
@@ -459,7 +475,7 @@ void loop() {
         writeESP(temp);
         delay(100);
         String inputData=readESP();
-        if(inputData.indexOf("OK">-1)){
+        if(inputData.indexOf("OK")>-1){
             pinString.concat("\r\n");
             writeESP(pinString);
         }
@@ -483,7 +499,7 @@ void loop() {
           writeESP(temp);
           delay(100);
           String inputData=readESP();
-          if(inputData.indexOf(F("OK")>-1)){
+          if(inputData.indexOf(F("OK"))>-1){
             pinString.concat(F("\r\n"));
             writeESP(pinString);
           }
@@ -493,7 +509,8 @@ void loop() {
       }
     }
     dataESP="";       //ESP data never got logged wink wink
-    wdt_reset();
+    /* STM32 */
+    //     wdt_reset();
     Wire.onRequest(sendData); //Get data from I2C
     Wire.onReceive(receiveData);
   }
