@@ -32,17 +32,26 @@
 #define DEBUG true
 #define VERSION 2.1
 #define INSPECT 180619
-
+#define PageBaseZero 0x801F800 //PageBase0
+#define PageBaseOne 0x801FC00  //PageBase1
 /* STM32 */
 // SoftwareSerial ESP(ESPTX,ESPRX);
 
 bool checkESP=true;
-int ROM_ADDRESS = 0;
 int counter=0;
 int counter_disconnect=0;
 bool pins[11];    // Pin stats are stored here
 float temp;
 /** EEPROM BEGIN **/
+bool PROGMEM EEPROMFormat=True;
+void EEPROMinit(){
+    EEPROM.PageBase0=0x800F000;
+    EEPROM.PageBase1=0x800F400;
+    if(EEPROMFormat==True){
+        EEPROM.format();
+        EEPROMFormat=False;
+    }
+}
 byte encodeByteArray(bool * pin,int offset){
   byte val=0;
   for(int i=0;i<8;i++){
@@ -62,34 +71,31 @@ void decodeIntAndRestore(bool * pin,byte val,int offset){
     }
   }
 }
-int findLocation(){
-    int i;
-    for(i=0;i<1024;i+=2){
-        if(EEPROM.read(i)!=0){
-            break;
-        }
-    }
-    if(i>1024){
-        i=0;
-    }
-    return i;
-}
 
-/* Needs a improvement */ //Overflow is there
+/* Depriciated No more stm32 need software wearleavelling*/
+// int findLocation(){
+//     int i;
+//     for(i=0;i<1024;i+=2){
+//         if(EEPROM.read(i)!=0){
+//             break;
+//         }
+//     }
+//     if(i>1024){
+//         i=0;
+//     }
+//     return i;
+// }
+
+/* Needs a improvement */ //STM32 has wearleavelling
 void dumpToEEPROM(){
     byte val=encodeByteArray(pins,2);
-    int loc=findLocation();
-    EEPROM.write((loc)%1024,0);
-    EEPROM.write((loc+1)%1024,0);
-    EEPROM.write((loc+2)%1024,10);
-    EEPROM.write((loc+3)%1024,val);
+    EEPROM.write(0,val);
     Serial.print(F("Write location:"));
-    Serial.println(loc);
 }
 void loadFromEEPROM(){
     byte val;
-    int loc=findLocation();
-    val=EEPROM.read(loc+1);
+    int loc=0;
+    val=EEPROM.read(loc);
     decodeIntAndRestore(pins,val,2);
 }
 /** END EEPROM **/
@@ -302,6 +308,7 @@ void CUSTOM_ISR(void){
 // }
 
 void setup() {
+  EEPROMinit();
   loadFromEEPROM();
   for(int i=2;i<11;i++){
     pinMode(i,OUTPUT);
