@@ -9,7 +9,6 @@
  */
 //Includes
 #include<string.h>
-
 /* STM32 */
 // #include<SoftwareSerial.h>
 
@@ -34,8 +33,25 @@
 #define INSPECT 180619
 #define PageBaseZero 0x801F800 //PageBase0
 #define PageBaseOne 0x801FC00  //PageBase1
-/* STM32 */
-// SoftwareSerial ESP(ESPTX,ESPRX);
+
+/*------Pin Maps---------
+*-----------------------*
+|        0 -> PB2       |
+|        1 -> PB2       |
+|        2 -> PB3       |
+|        3 -> PB4       |
+|        4 -> PB5       |
+|        5 -> PB6       |
+|        6 -> PB7       |
+|        7 -> PB8       |
+|        8 -> PB9       |
+|        9 -> PC14      |
+|        10 -> PC15     |
+|        11 -> PB2      |
+|        12 -> PB2      |
+|        13 -> PC13     |
+*-----------------------*
+---End pinMaps DOC ------*/
 
 bool checkESP=true;
 int counter=0;
@@ -291,11 +307,11 @@ bool led=False;
 void CUSTOM_ISR(void){
   if(led){
     led=False;
-    digitalWrite(13,led);
+    digitalWrite(pinmap(13),led);
   }
   else{
     led=True;
-    digitalWrite(13,led);
+    digitalWrite(pinmap(13),led);
   }
   checkESP=true;
 }
@@ -307,12 +323,95 @@ void CUSTOM_ISR(void){
 //   Timer1.attachInterrupt(CUSTOM_ISR); 
 // }
 
+/* pinmap definition */
+/* 
+ * Standard Map for pins from stm32 to arduino
+ * PA0  0
+ * PA1  1
+ * PA2  2
+ * PA3  3
+ * PA4  4
+ * PA5  5
+ * PA6  6
+ * PA7  7
+ * PA8  8
+ * PA9  9
+ * PA10 10
+ * PA11 11
+ * PA12 12
+ * PA13 13
+ * PA14 14
+ * PA15 15
+ * PB0  16
+ * PB1  17
+ * PB2  18
+ * PB3  19
+ * PB4  20
+ * PB5  21
+ * PB6  22
+ * PB7  23
+ * PB8  24  
+ * PB9  25
+ * PB10 26
+ * PB11 27
+ * PB12 28
+ * PB13 29
+ * PB14 30
+ * PB15 31
+ * PC0  32
+ * PC1  33
+ * PC2  34
+ * PC3  35 
+ * PC4  36
+ * PC5  37
+ * PC6  38
+ * PC7  39
+ * PC8  40
+ * PC9  41
+ * PC10 42
+ * PC11 43
+ * PC12 44
+ * PC13 45
+ * PC14 46
+ * PC15 47
+ */
+int pinmap(int x){
+    short pin[13]; // No std cpp libs in arduino, implementing map from scratch
+    pin[0]=PB2;  // PB2 Boot 1 jumper.. Too much in need for pins.
+    pin[1]=PB2;  // PB2
+    pin[2]=PB3;  // PB3
+    pin[3]=PB4;  // PB4
+    pin[4]=PB5;  // PB5
+    pin[5]=PB6;  // PB6
+    pin[6]=PB7;  // PB7
+    pin[7]=PB8;  // PB8
+    pin[8]=PB9;  // PB9
+    pin[9]=PC14; // PC14
+    pin[10]=PC15;// PC15
+    pin[11]=PB2; // PB2 
+    pin[12]=PB2; // PB2
+    pin[13]=PC13; // PC13 // LED
+    // PB10 and PB11 is used for i2c
+    return pin[x];
+}
+/* END pinmap */
+
+/* pin initialization */
+void pinInit(){
+    for(int i=0;i<=13;i++){
+        pinMode(pinmap(i),OUTPUT);
+    }
+    for(int i=0;i<=13;i++){
+        digitalWrite(pinmap(i),pins[i]);
+    }
+}
+/* END pin initialization */
+
+
 void setup() {
   EEPROMinit();
+  pinInit();
   loadFromEEPROM();
-  for(int i=2;i<11;i++){
-    pinMode(i,OUTPUT);
-  }
   if(DEBUG){
   Serial.begin(BAUD); //Serial to debugger 0,1
   }
@@ -322,9 +421,6 @@ void setup() {
   Serial1.setTimeout(100);   // Reduce rx tx timeout, we dont have decades to wait.
   initializeESP();
   Serial.println(F("Welcome to SSAL IoT Core"));
-  for(int i=0;i<11;i++){
-    digitalWrite(i,pins[i]);
-  }
   Serial.print(F("freeMemory()="));
   Serial.println(freeMemory());  // Print free memory ocationally  // Can interrupt
   initializeWire();
@@ -334,7 +430,7 @@ void setup() {
 long time=millis();
 void loop() {
   //ISR is now replaced by millis watchdog
-  if((millis()-time)>5000){ // Run timer every 5 seconds
+  if((millis()-time)>60000){ // Run timer every 5 seconds
     CUSTOM_ISR();  //Call legacy ISR
     time=millis(); //Reset virtual timer 
   }
@@ -431,7 +527,8 @@ void loop() {
         int space = dataESP.indexOf(F(" "));
         int pin=dataESP.substring(0,space).toInt();
         bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
-        digitalWrite(pin,operation); // do operation
+        pinMode(pinmap(pin),OUTPUT);
+        digitalWrite(pinmap(pin),operation); // do operation
         pins[pin]=operation;// update internal DB
         dumpToEEPROM();
         String pinString;
