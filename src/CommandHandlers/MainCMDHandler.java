@@ -106,16 +106,11 @@ public class MainCMDHandler {
 		parsed=true;
 		try {
 			synchronized (Core.telnet[mcu]) {
-				if(Core.telnet[mcu].checkTelnet(0)) {
-					output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
-					if(output!="No input available") {
-						if(pin-1<=10 && pin-1>0) {
-							Core.pinData[mcu][pin-1]=(operation==1);
-						}
+				output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+				if(output!="No input available") {
+					if(pin-1<=10 && pin-1>0) {
+						Core.pinData[mcu][pin-1]=(operation==1);
 					}
-				}
-				else {
-					output="Telnet faild to reconnect, giving up!";
 				}
 			}
 		}
