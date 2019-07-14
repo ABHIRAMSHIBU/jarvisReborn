@@ -56,10 +56,10 @@
 bool checkESP=true;
 int counter=0;
 int counter_disconnect=0;
-bool pins[11];    // Pin stats are stored here
+bool pins[16];    // Pin stats are stored here
 float temp;
 /** EEPROM BEGIN **/
-bool PROGMEM EEPROMFormat=True;
+bool PROGMEM EEPROMFormat=False;
 void EEPROMinit(){
     EEPROM.PageBase0=0x800F000;
     EEPROM.PageBase1=0x800F400;
@@ -70,14 +70,14 @@ void EEPROMinit(){
 }
 byte encodeByteArray(bool * pin,int offset){
   byte val=0;
-  for(int i=0;i<8;i++){
+  for(int i=0;i<16;i++){
       val|=pin[i+offset]<<i;
   }
   return val;
 }
 void decodeIntAndRestore(bool * pin,byte val,int offset){
   byte temp;
-  for(int i=0;i<8;i++){
+  for(int i=0;i<16;i++){
     temp=val&(1<<i);
     if(temp==(1<<i)){
       pin[i+offset]=1;
@@ -86,23 +86,13 @@ void decodeIntAndRestore(bool * pin,byte val,int offset){
       pin[i+offset]=0;
     }
   }
+  Serial.print("Restore:");
+  for(int i=0;i<16;i++){
+  Serial.print(pin[i]);    
+ }
+ Serial.println("");
 }
 
-/* Depriciated No more stm32 need software wearleavelling*/
-// int findLocation(){
-//     int i;
-//     for(i=0;i<1024;i+=2){
-//         if(EEPROM.read(i)!=0){
-//             break;
-//         }
-//     }
-//     if(i>1024){
-//         i=0;
-//     }
-//     return i;
-// }
-
-/* Needs a improvement */ //STM32 has wearleavelling
 void dumpToEEPROM(){
     byte val=encodeByteArray(pins,2);
     EEPROM.write(0,val);
@@ -410,8 +400,8 @@ void pinInit(){
 
 void setup() {
   EEPROMinit();
-  pinInit();
   loadFromEEPROM();
+  pinInit();
   if(DEBUG){
   Serial.begin(BAUD); //Serial to debugger 0,1
   }
