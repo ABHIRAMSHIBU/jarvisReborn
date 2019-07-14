@@ -107,7 +107,7 @@ void wireBody(){
     Wire.beginTransmission(8);  
     int error = Wire.endTransmission();
     if(error==0){
-        Wire.requestFrom(8,11);
+        Wire.requestFrom(8,16);
         wireData=F("");
         wireData.reserve(20);
         int wait=0;
@@ -151,13 +151,13 @@ void wireBody(){
 //     Serial.print("Ending transmission:");
 //     Serial.println(Wire.endTransmission());    // stop transmitting
 }
-int pinID=2;
+int pinID=0;
 long timeProcessData=millis();
 String processData(){
 	wireData.remove(0,1);
 	pinData=String(wireData);
     pinData.reserve(20);
-	int pinMode=wireData.substring(0+pinID-2,1+pinID-2).toInt();
+	int pinMode=wireData.substring(0+pinID,1+pinID).toInt();
 	String pinModeStr;
     pinModeStr.reserve(4);
 	if(pinMode==1){
@@ -174,8 +174,8 @@ String processData(){
 	output+=pinModeStr;
 	if((millis()-timeProcessData)>1000){
 		pinID++;
-		if(pinID==11){
-			pinID=2;
+		if(pinID==14){
+			pinID=0;
 		}
 		timeProcessData=millis();
 	}
