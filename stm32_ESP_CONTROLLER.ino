@@ -366,7 +366,7 @@ void CUSTOM_ISR(void){
  * PC15 47
  */
 int pinmap(int x){
-    short pin[13]; // No std cpp libs in arduino, implementing map from scratch
+    short pin[14]; // No std cpp libs in arduino, implementing map from scratch
     pin[0]=PB2;  // PB2 Boot 1 jumper.. Too much in need for pins.
     pin[1]=PB2;  // PB2
     pin[2]=PB3;  // PB3
@@ -392,7 +392,12 @@ void pinInit(){
         pinMode(pinmap(i),OUTPUT);
     }
     for(int i=0;i<=13;i++){
-        digitalWrite(pinmap(i),pins[i]);
+        if(pins[i]==1){
+            digitalWrite(pinmap(i),HIGH);
+        }
+        else{
+            digitalWrite(pinmap(i),LOW);
+        }
     }
 }
 /* END pin initialization */
