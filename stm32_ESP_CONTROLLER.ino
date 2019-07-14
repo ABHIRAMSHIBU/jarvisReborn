@@ -159,10 +159,10 @@ String readESP(){            //Data from ESP save and return
 
 //Wire Stuff
 void sendData(){
-  Wire.write("1");
+  Wire1.write("1");
   String pinsString="";
     pinsString.reserve(20);
-  for(int i=2;i<12;i++){ // IDK why it needs 12 instead of 11
+  for(int i=0;i<15;i++){ // IDK why it needs 12 instead of 11
     if(pins[i]){
       pinsString=pinsString+"1";
     }
@@ -172,7 +172,7 @@ void sendData(){
   }
   char buff[20];
   pinsString.toCharArray(buff,pinsString.length());
-  Wire.write(buff);
+  Wire1.write(buff);
 }
 void receiveData(int howMany) {
   char c[14];
@@ -181,8 +181,8 @@ void receiveData(int howMany) {
     c[i]=' ';
   }
   i=0;
-  while (0 < Wire.available()) { // loop through all but the last
-    c[i] = Wire.read(); // receive byte as a character
+  while (0 < Wire1.available()) { // loop through all but the last
+    c[i] = Wire1.read(); // receive byte as a character
     i++;
   }
   c[i]='\0';
@@ -196,9 +196,9 @@ void receiveData(int howMany) {
   }
 }
 void initializeWire(){
-  Wire.begin(8);
-    Wire.onRequest(sendData);         //Get data from I2C
-    Wire.onReceive(receiveData);
+  Wire1.begin(8);
+    Wire1.onRequest(sendData);         //Get data from I2C
+    Wire1.onReceive(receiveData);
 }
 // END WIRE STUFF
 
