@@ -45,10 +45,10 @@
         $expOut='>';
         $expOut.=$pinNo;
         if((int)$state == 1){
-            $expOut.=" on\n";
+            $expOut.=" 1\n";
         }
         else{
-            $expOut.=" off\n";
+            $expOut.=" 0\n";
         }
         //file_put_contents('php://stderr', print_r($string, TRUE));
         $reply=echoSocket($socket, $string);
