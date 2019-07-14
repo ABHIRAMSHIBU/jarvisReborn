@@ -27,7 +27,7 @@
 #define ESPTX 11
 #define ESPRX 12
 #define ESPBAUD 19200
-#define BAUD 115200
+#define BAUD 2000000
 #define DEBUG true
 #define VERSION 2.1
 #define INSPECT 180619
@@ -511,11 +511,11 @@ void loop() {
     if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
       dataESP.remove(0,dataESP.indexOf(",")+1); //Remove header
       int id=dataESP.substring(0,1).toInt();  // Get id
-      Serial.print(F("ID :"));       
-      Serial.println(id);
+      //Serial.print(F("ID :"));       
+      //Serial.println(id);
       dataESP.remove(0,dataESP.indexOf(":")+1);  //Remove id
-      Serial.print(F("Trimmed data:"));
-      Serial.println(dataESP);     //Now u have data\r\n left
+      //Serial.print(F("Trimmed data:"));
+      //Serial.println(dataESP);     //Now u have data\r\n left
       if(id==0){                   // Allow only id 0
         if(dataESP.indexOf(F(" "))>-1){
         /* Find space split into pin and operation, then compile and send */
@@ -528,14 +528,16 @@ void loop() {
         dumpToEEPROM();
         String pinString;
         pinString.reserve(10);
-        pinString=String(pin);
-        pinString.concat(F(" "));
-        if(operation){
-            pinString.concat(F("on"));
-        }
-        else{
-            pinString.concat(F("off"));
-        }
+        pinString=dataESP.substring(0,dataESP.length()-2);
+/* Depreciated for faster reply */
+//         pinString=String(pin);
+//         pinString.concat(F(" "));
+//         if(operation){
+//             pinString.concat(F("on"));
+//         }
+//         else{
+//             pinString.concat(F("off"));
+//         }
         /* Send assembled reply */
         
         //SendData - Because ardunio dont like functions
