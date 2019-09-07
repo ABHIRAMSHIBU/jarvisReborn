@@ -1,11 +1,12 @@
 //Project SSAL IoT Core
+//Project SSAL IoT Helper [Merge]
 /* Author Abhiram Shibu, Preet Patel
  * Previous Author Abhijith N Raj
  * Copyright (c) TeamDestroyer Projects 2018
  * Copyright (c) 2019 SSAL
  * Copyright (c) 2019 BrainNet Technlogies
- * Copyright (c) 2018 ARCTotal
- * For queries goto https://forums.arctotal.com
+ * Copyright (c) 2019 TUXFourm
+ * For queries goto https://tuxforum.com
  */
 //Includes
 #include<string.h>
@@ -17,6 +18,7 @@
 #include<MemoryFree.h>
 /* STM32 */
 #include<Wire_slave.h>
+#include <LiquidCrystal_I2C.h>
 
 /* STM32 */
 // #include<avr/wdt.h>
@@ -41,8 +43,8 @@
 |        2 -> PB3       |
 |        3 -> PB4       |
 |        4 -> PB5       |
-|        5 -> PB6       |
-|        6 -> PB7       |
+|        5 -> PB10      |
+|        6 -> PB11      |
 |        7 -> PB8       |
 |        8 -> PB9       |
 |        9 -> PC14      |
@@ -53,6 +55,15 @@
 *-----------------------*
 ---End pinMaps DOC ------*/
 
+//LCD VARIABLES
+    LiquidCrystal_I2C lcd(0x27, 16, 2);
+    int count=0;
+    int count_wait=0;
+    int pinNow=0;
+    long time1=millis();
+    long time2=millis();
+//END LCD VARIABLES
+    
 bool checkESP=true;
 int counter=0;
 int counter_disconnect=0;
@@ -158,47 +169,86 @@ String readESP(){            //Data from ESP save and return
 // END WatchDog Stuff
 
 //Wire Stuff
-void sendData(){
-  Wire1.write("1");
-  String pinsString="";
-    pinsString.reserve(20);
-  for(int i=0;i<15;i++){ // IDK why it needs 12 instead of 11
-    if(pins[i]){
-      pinsString=pinsString+"1";
+void initWire(){
+    Wire.begin();
+}
+bool checkLCD(){
+    Serial.println("Begining transmission");
+    Wire.beginTransmission(39);
+    Serial.println("Ending transmission");
+    if(Wire.endTransmission()==0){
+        return true;
     }
     else{
-      pinsString=pinsString+"0";
+        return false;
     }
-  }
-  char buff[20];
-  pinsString.toCharArray(buff,pinsString.length());
-  Wire1.write(buff);
 }
-void receiveData(int howMany) {
-  char c[14];
-  int i=0;
-  for(i=0;i<14;i++){
-    c[i]=' ';
-  }
-  i=0;
-  while (0 < Wire1.available()) { // loop through all but the last
-    c[i] = Wire1.read(); // receive byte as a character
-    i++;
-  }
-  c[i]='\0';
-  if(i){
-    temp=0;
-    for(int j=0;j<3;j++){
-        temp+=int(c[i-3+j]-48);
-        temp*=10;
+void initLCD(){
+    Serial.println("Check lcd calling");
+    if(checkLCD()){
+        Serial.println("Starting LCD");
+        lcd.begin();
+        lcd.print("Welcome to SSAL");
+        lcd.setCursor(0,1);
+        lcd.print("Loading...");
     }
-    temp/=100;
-  }
 }
-void initializeWire(){
-  Wire1.begin(8);
-    Wire1.onRequest(sendData);         //Get data from I2C
-    Wire1.onReceive(receiveData);
+String pinData(){
+    String temp;
+    temp.reserve(20);
+    temp=String(pinNow);
+    if(pins[pinNow]==true){
+        temp+=" is on";
+    }
+    else{
+        temp+=" is off";
+    }
+    if((millis()-time2)>500){
+        time2=millis();
+        if(pinNow++==13){
+            pinNow=0;
+        }
+        return temp;
+    }
+}
+String assembleMessage(){
+    String MSG;
+//    main_message.reserve(100);
+	MSG=F("SSAL System UI  Status:");
+	MSG+=F("Active");
+	MSG+=F(", IoT Core:");
+	MSG+=F("Active");
+// 	main_message+=F(", Temp:");
+// 	main_message+=String(temp)+F("C");
+	MSG+=F(" ");
+    return MSG;
+}
+void updateLCD(){
+	if((millis()-time1)>300){ //Scroll and set if update time exceeds..
+		time1=millis();
+		String main_message=assembleMessage();
+		String temp_message;
+        temp_message.reserve(100);
+		temp_message=String(main_message);
+		String t=temp_message.substring(0,count);
+		temp_message.remove(0,count);
+		temp_message=temp_message+t;
+		lcd.setCursor(0,0);
+		lcd.print(temp_message.substring(0,16));
+		if(count==0&&count_wait<10){
+			count_wait++;
+		}
+		else{
+			count_wait=0;
+			count++;
+			if(count==main_message.length()){
+				count=0;
+			}
+			//Serial.println(main_message);
+		}
+	}
+	lcd.setCursor(0,1);
+	lcd.print(pinData()+"  ");
 }
 // END WIRE STUFF
 
@@ -372,11 +422,11 @@ int pinmap(int x){
     pin[2]=PB3;  // PB3
     pin[3]=PB4;  // PB4
     pin[4]=PB5;  // PB5
-    pin[5]=PB6;  // PB6
-    pin[6]=PB7;  // PB7
+    pin[5]=PB10;  // PB6
+    pin[6]=PB11;  // PB7
     pin[7]=PB8;  // PB8
     pin[8]=PB9;  // PB9
-    pin[9]=PC14; // PC14
+    pin[9]=PB14; // PC14
     pin[10]=PC15;// PC15
     pin[11]=PB2; // PB2 
     pin[12]=PB2; // PB2
@@ -404,6 +454,8 @@ void pinInit(){
 
 
 void setup() {
+  initWire();
+  initLCD();
   EEPROMinit();
   loadFromEEPROM();
   pinInit();
@@ -418,12 +470,12 @@ void setup() {
   Serial.println(F("Welcome to SSAL IoT Core"));
   Serial.print(F("freeMemory()="));
   Serial.println(freeMemory());  // Print free memory ocationally  // Can interrupt
-  initializeWire();
   /* STM32 */
 //   setupWatchDog();
 }
 long time=millis();
 void loop() {
+  updateLCD();
   //ISR is now replaced by millis watchdog
   if((millis()-time)>60000){ // Run timer every 5 seconds
     CUSTOM_ISR();  //Call legacy ISR
@@ -612,7 +664,5 @@ void loop() {
     dataESP="";       //ESP data never got logged wink wink
     /* STM32 */
     //     wdt_reset();
-    Wire.onRequest(sendData); //Get data from I2C
-    Wire.onReceive(receiveData);
   }
 }
