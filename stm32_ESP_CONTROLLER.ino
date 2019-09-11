@@ -56,12 +56,13 @@
 ---End pinMaps DOC ------*/
 
 //LCD VARIABLES
-    LiquidCrystal_I2C lcd(0x27, 16, 2);
     int count=0;
     int count_wait=0;
     int pinNow=0;
     long time1=millis();
     long time2=millis();
+    int LCD_AVAIL;
+    LiquidCrystal_I2C *lcd;
 //END LCD VARIABLES
     
 bool checkESP=true;
@@ -171,27 +172,22 @@ String readESP(){            //Data from ESP save and return
 //Wire Stuff
 void initWire(){
     Wire.begin();
-}
-bool checkLCD(){
-    Serial.println("Begining transmission");
-    Wire.beginTransmission(39);
-    Serial.println("Ending transmission");
-    if(Wire.endTransmission()==0){
-        return true;
+    Wire.beginTransmission(0x27);
+    int error = Wire.endTransmission();
+    if(error ==0){
+        LCD_AVAIL=true;
+        lcd=new LiquidCrystal_I2C(0x27,16,2);
     }
     else{
-        return false;
+        LCD_AVAIL=false;
     }
 }
 void initLCD(){
-    Serial.println("Check lcd calling");
-    if(checkLCD()){
-        Serial.println("Starting LCD");
-        lcd.begin();
-        lcd.print("Welcome to SSAL");
-        lcd.setCursor(0,1);
-        lcd.print("Loading...");
-    }
+    Serial.println("Starting LCD");
+    lcd->begin();
+    lcd->print("Welcome to SSAL");
+    lcd->setCursor(0,1);
+    lcd->print("Loading...");
 }
 String pinData(){
     String temp;
@@ -233,8 +229,8 @@ void updateLCD(){
 		String t=temp_message.substring(0,count);
 		temp_message.remove(0,count);
 		temp_message=temp_message+t;
-		lcd.setCursor(0,0);
-		lcd.print(temp_message.substring(0,16));
+		lcd->setCursor(0,0);
+		lcd->print(temp_message.substring(0,16));
 		if(count==0&&count_wait<10){
 			count_wait++;
 		}
@@ -247,8 +243,8 @@ void updateLCD(){
 			//Serial.println(main_message);
 		}
 	}
-	lcd.setCursor(0,1);
-	lcd.print(pinData()+"  ");
+	lcd->setCursor(0,1);
+	lcd->print(pinData()+"  ");
 }
 // END WIRE STUFF
 
@@ -454,18 +450,18 @@ void pinInit(){
 
 
 void setup() {
-  initWire();
-  initLCD();
   EEPROMinit();
   loadFromEEPROM();
   pinInit();
   if(DEBUG){
-  Serial.begin(BAUD); //Serial to debugger 0,1
+    Serial.begin(BAUD); //Serial to debugger 0,1
   }
   /* STM32 */
   Serial1.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
   Serial1.setTimeout(100);   // Reduce rx tx timeout, we dont have decades to wait.
+  initWire();
+  initLCD();
   initializeESP();
   Serial.println(F("Welcome to SSAL IoT Core"));
   Serial.print(F("freeMemory()="));
