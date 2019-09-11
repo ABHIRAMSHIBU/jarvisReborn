@@ -454,8 +454,8 @@ void pinInit(){
 
 
 void setup() {
-  initWire();
-  initLCD();
+//   initWire();
+//   initLCD();
   EEPROMinit();
   loadFromEEPROM();
   pinInit();
@@ -475,7 +475,7 @@ void setup() {
 }
 long time=millis();
 void loop() {
-  updateLCD();
+//   updateLCD();
   //ISR is now replaced by millis watchdog
   if((millis()-time)>60000){ // Run timer every 5 seconds
     CUSTOM_ISR();  //Call legacy ISR
