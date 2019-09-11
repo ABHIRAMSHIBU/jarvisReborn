@@ -117,7 +117,14 @@ void loadFromEEPROM(){
     decodeIntAndRestore(pins,val,2);
 }
 /** END EEPROM **/
-
+/* Sensor Handlers */
+float readCurrent(int analogInput){
+    int sensorVal=analogRead(analogInput);
+    float voltage= (sensorVal*3.3)/4096; //STM32 3.3 v reference.
+    float amps=(1.65-voltage)/0.07;
+    return amps;
+}
+/* END Sensor */
 /* Serial Communication Handlers */
 String dataESP,dataSerial;
 String readSerial(){          //Data from serial Save and return
@@ -445,6 +452,8 @@ void pinInit(){
             digitalWrite(pinmap(i),LOW);
         }
     }
+    pinMode(PA0,INPUT);
+    pinMode(PA1,INPUT);
 }
 /* END pin initialization */
 
@@ -552,6 +561,7 @@ void loop() {
     dataSerial="";
   }
   if(!dataESP.equals("")){               //Data from ESP available
+    bool sensorFlag=false;
     if(dataESP.indexOf(F("CONNECT"))>-1){   //Check if there is a connection and absorb next line
       delay(100);                        //Wait for some time
       readESP();
@@ -566,77 +576,85 @@ void loop() {
       //Serial.println(dataESP);     //Now u have data\r\n left
       if(id==0){                   // Allow only id 0
         if(dataESP.indexOf(F(" "))>-1){
-        /* Find space split into pin and operation, then compile and send */
-        int space = dataESP.indexOf(F(" "));
-        int pin=dataESP.substring(0,space).toInt();
-        bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
-        pinMode(pinmap(pin),OUTPUT);
-        digitalWrite(pinmap(pin),operation); // do operation
-        pins[pin]=operation;// update internal DB
-        dumpToEEPROM();
-        String pinString;
-        pinString.reserve(10);
-        pinString=dataESP.substring(0,dataESP.length()-2);
-/* Depreciated for faster reply */
-//         pinString=String(pin);
-//         pinString.concat(F(" "));
-//         if(operation){
-//             pinString.concat(F("on"));
-//         }
-//         else{
-//             pinString.concat(F("off"));
-//         }
-        /* Send assembled reply */
-        
-        //SendData - Because ardunio dont like functions
-        String temp="AT+CIPSEND=";//<link ID>,<length>
-        temp.concat(id);
-        temp.concat(F(","));
-        temp.concat(pinString.length()+2);
-        temp.concat(F("\r\n"));
-        writeESP(temp);
-        delay(100);
-        String inputData=readESP();
-        if(inputData.indexOf(F("OK"))>-1){
-            pinString.concat(F("\r\n"));
-            writeESP(pinString);
-        }
-        delay(100);
-        readESP();
-        //End SendData
-        
-        
+            /* Find space split into pin and operation, then compile and send */
+            int space = dataESP.indexOf(F(" "));
+            int pin=dataESP.substring(0,space).toInt();
+            bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
+            pinMode(pinmap(pin),OUTPUT);
+            sensorFlag=false;
+            digitalWrite(pinmap(pin),operation); // do operation
+            pins[pin]=operation;// update internal DB
+            dumpToEEPROM();
+            String pinString;
+            pinString.reserve(10);
+            pinString=dataESP.substring(0,dataESP.length()-2);
+    /* Depreciated for faster reply */
+    //         pinString=String(pin);
+    //         pinString.concat(F(" "));
+    //         if(operation){
+    //             pinString.concat(F("on"));
+    //         }
+    //         else{
+    //             pinString.concat(F("off"));
+    //         }
+            /* Send assembled reply */
+            
+            //SendData - Because ardunio dont like functions
+            String temp="AT+CIPSEND=";//<link ID>,<length>
+            temp.concat(id);
+            temp.concat(F(","));
+            temp.concat(pinString.length()+2);
+            temp.concat(F("\r\n"));
+            writeESP(temp);
+            delay(100);
+            String inputData=readESP();
+            if(inputData.indexOf(F("OK"))>-1){
+                pinString.concat(F("\r\n"));
+                writeESP(pinString);
+            }
+            delay(100);
+            readESP();
+            //End SendData
+            
+            
         }
         else{
         /* Here pin status is retrived and send to the SSAL Core */
-        int pin=dataESP.substring(0,dataESP.length()-2).toInt();
-        
-        //SendData - Because ardunio dont like functions
-        String pinString;
-        pinString.reserve(10);
-        pinString=String(pins[pin]);
-        String temp="AT+CIPSEND=";//<link ID>,<length>
-        temp.reserve(50);
-        temp.concat(id);
-        temp.concat(",");
-        temp.concat(pinString.length()+2);
-        temp.concat(F("\r\n"));
-        writeESP(temp);
-        delay(100);
-        String inputData=readESP();
-        if(inputData.indexOf("OK")>-1){
-            pinString.concat("\r\n");
-            writeESP(pinString);
-        }
-        delay(100);
-        readESP();
-        //End SendData
-        
+            if(dataESP.indexOf(F("sensor"))==-1){
+            
+                int pin=dataESP.substring(0,dataESP.length()-2).toInt();
+                
+                //SendData - Because ardunio dont like functions
+                String pinString;
+                pinString.reserve(10);
+                pinString=String(pins[pin]);
+                sensorFlag=false;
+                String temp="AT+CIPSEND=";//<link ID>,<length>
+                temp.reserve(50);
+                temp.concat(id);
+                temp.concat(",");
+                temp.concat(pinString.length()+2);
+                temp.concat(F("\r\n"));
+                writeESP(temp);
+                delay(100);
+                String inputData=readESP();
+                if(inputData.indexOf("OK")>-1){
+                    pinString.concat("\r\n");
+                    writeESP(pinString);
+                }
+                delay(100);
+                readESP();
+                //End SendData
+            }
+            else{
+                sensorFlag=true;
+            }
         }
       }
       else{
         /* There can be only one active connection */
         String pinString=F("Not allowed!");
+        sensorFlag=false;
         //SendData 
           String temp;
           temp.reserve(50);
@@ -656,6 +674,32 @@ void loop() {
           readESP();
           //End SendData
       }
+    }
+    writeESP(F("AT+CIPSTATUS\r\n"));
+    delay(300);
+    String data = readESP();
+    if(data.indexOf(F(":3"))>-1 && sensorFlag){
+        //Write Sensor Data
+        String senseData=String(readCurrent(PA0));
+        senseData+="\t";
+        senseData+=String(readCurrent(PA1));
+        senseData+="\n";
+        String temp;
+        temp.reserve(50);
+        temp="AT+CIPSEND="; //<link ID>,<length>
+        temp.concat(0);
+        temp.concat(",");
+        temp.concat(senseData.length()+2);
+        temp.concat("\r\n");
+        writeESP(temp);
+        delay(100);
+        String inputData=readESP();
+        if(inputData.indexOf(F("OK"))>-1){
+            senseData.concat(F("\r\n"));
+            writeESP(senseData);
+        }
+        delay(100);
+        readESP();
     }
     dataESP="";       //ESP data never got logged wink wink
     /* STM32 */
