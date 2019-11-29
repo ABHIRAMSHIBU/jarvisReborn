@@ -28,17 +28,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import org.telegram.telegrambots.api.methods.GetFile;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.meta.api.methods.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiValidationException;
 import CommandHandlers.MainCMDHandler;
 import Sockets.PythonServer;
 
 import java.lang.Runtime;
-
 public class Telegram extends TelegramLongPollingBot {
 	GUI gui;
 	PythonServer python;
@@ -67,7 +66,7 @@ public class Telegram extends TelegramLongPollingBot {
 				file.setFileId(update.getMessage().getVoice().getFileId()); // set the file id in getfile
 				try {
 					file.validate(); // Idk why we even need this shit
-					org.telegram.telegrambots.api.objects.File teleTempFile = null; // Create a (telegram)File pointer
+					org.telegram.telegrambots.meta.api.objects.File teleTempFile = null; // Create a (telegram)File pointer
 					try {
 						teleTempFile = execute(file); // Execute GetFile and we get (telegram)File pointer
 					} catch (TelegramApiException e) {

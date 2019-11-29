@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package tg;
 
 import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import jarvisReborn.GUI;
 

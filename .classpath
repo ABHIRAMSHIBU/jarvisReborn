@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry excluding="jarvisReborn/NewJFrame.java" kind="src" path="src"/>
-	<classpathentry kind="lib" path="telegrambots-3.6-jar-with-dependencies.jar"/>
 	<classpathentry exported="true" kind="lib" path="src/javaFlacEncoder-0.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="telegrambots-4.4.0.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="output" path="bin"/>
