@@ -39,6 +39,10 @@ public class dbInit extends Thread{
 					}
 				}
 			}
+			for(int i=0;i<10;i++) {
+				System.out.println("dbInit : MCU "+mcu+" Pin "+(i+1)+" "+Core.pinData[mcu][i]);
+			}
+			System.out.println("dbInit : Finished for MCU "+mcu);
 		}
 	}
 	public dbInit(int id) {

@@ -51,11 +51,10 @@ public class MainCMDHandler {
 				mcu=Integer.valueOf(input.substring(space1+1));
 		try {
 			synchronized (Core.telnet[mcu]) {
-				if(Core.telnet[mcu].checkTelnet(0)) {
+				output=Core.telnet[mcu].echo(pin+"\r");
+				if(output.equals("No input available")) {
+					Core.telnet[mcu].checkTelnet(0);
 					output=Core.telnet[mcu].echo(pin+"\r");
-				}
-				else {
-					output="Telnet faild to reconnect, giving up!";
 				}
 			}
 		}

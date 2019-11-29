@@ -56,24 +56,24 @@ public class Telnet{
 	public boolean checkTelnet(int n) {
 		String reply = echo("13\r");
 		int z=5;
-		if(failed==true) {
-			z=1;
-		}
-		if(n<z) {
+		while(n<z) {
 			if(reply.equals("No input available")) {
 				//System.out.println("Iteration "+n);
 				reconnect();
-				if(n==4) {
-					failed=true;
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return checkTelnet(n+1);
 			}
-			failed=false;
-			return true;
+			else {
+				return true;
+			}
+			reply = echo("13\r");
+			n++;
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 	public void close() {
 		try {
