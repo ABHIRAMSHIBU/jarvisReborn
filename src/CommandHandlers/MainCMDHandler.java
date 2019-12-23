@@ -43,6 +43,29 @@ public class MainCMDHandler {
 		else if(input.contains("$get")) {
 			parseGET(input.substring(input.indexOf(" ")+1));
 		}
+		else if(input.contains("$sensors")) {
+			parseSensors(input.substring(input.indexOf(" ")+1));
+		}
+	}
+	public void parseSensors(String input) {
+		parsed=true;
+		int mcu=Integer.valueOf(input);
+				//mcu=Integer.valueOf(input.substring(space1+1));
+		try {
+			synchronized (Core.telnet[mcu]) {
+				output=Core.telnet[mcu].echo("sensor"+"\r");
+				if(output.equals("No input available")) {
+					Core.telnet[mcu].checkTelnet(0);
+					output=Core.telnet[mcu].echo("sensor"+"\r");
+				}
+			}
+		}
+		catch(Exception e){
+			output="Error contacting ESP";
+		}
+		if(!Core.telnet[mcu].run) {
+			output="Error contacting ESP";
+		}
 	}
 	public void parseTEST(String input) {
 		parsed=true;
