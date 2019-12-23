@@ -1,11 +1,11 @@
 //Project SSAL IoT Core
 //Project SSAL IoT Helper [Merge]
 /* Author Abhiram Shibu, Preet Patel
- * Previous Author Abhijith N Raj
+ * Author Abhijith N Raj (Bug Fixes)
  * Copyright (c) TeamDestroyer Projects 2018
- * Copyright (c) 2019 SSAL
- * Copyright (c) 2019 BrainNet Technlogies
- * Copyright (c) 2019 TUXFourm
+ * Copyright (c) 2020 SSAL
+ * Copyright (c) 2020 BrainNet Technlogies
+ * Copyright (c) 2020 TUXFourm
  * For queries goto https://tuxforum.com
  */
 //Includes
@@ -28,13 +28,14 @@
 #define False 0
 #define ESPTX 11
 #define ESPRX 12
-#define ESPBAUD 19200
+#define ESPBAUD 250000
 #define BAUD 2000000
 #define DEBUG true
 #define VERSION 2.1
 #define INSPECT 180619
 #define PageBaseZero 0x801F800 //PageBase0
 #define PageBaseOne 0x801FC00  //PageBase1
+#define ESPWriteDelay 20
 
 /*------Pin Maps---------
 *-----------------------*
@@ -62,6 +63,7 @@
     long time1=millis();
     long time2=millis();
     int LCD_AVAIL;
+    int LCD_UPDATE_ENABLE=true;
     LiquidCrystal_I2C *lcd;
 //END LCD VARIABLES
     
@@ -227,6 +229,9 @@ String assembleMessage(){
     return MSG;
 }
 void updateLCD(){
+    if(LCD_UPDATE_ENABLE==false){
+        return; // no need to update
+    }
 	if((millis()-time1)>300){ //Scroll and set if update time exceeds..
 		time1=millis();
 		String main_message=assembleMessage();
@@ -468,7 +473,7 @@ void setup() {
   /* STM32 */
   Serial1.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
-  Serial1.setTimeout(100);   // Reduce rx tx timeout, we dont have decades to wait.
+  Serial1.setTimeout(10);   // Reduce rx tx timeout, we dont have decades to wait.
   initWire();
   initLCD();
   initializeESP();
@@ -481,12 +486,15 @@ void setup() {
 long time=millis();
 void loop() {
   updateLCD();
+  //Serial.println("After UpdateLCD");
   //ISR is now replaced by millis watchdog
   if((millis()-time)>60000){ // Run timer every 5 seconds
     CUSTOM_ISR();  //Call legacy ISR
     time=millis(); //Reset virtual timer 
+    LCD_UPDATE_ENABLE=true;
   }
   if(checkESP){
+    Serial.println("CheckESP");
       /* ESP RESET/SERVER CHECK */
     writeESP(F("AT+CIPMUX?\r\n"));  //Check MUX status, for server to run it should be 1
     delay(300);
@@ -525,7 +533,7 @@ void loop() {
             long time=millis();
             while((millis()-time)<60000){
         //Wire.onRequest(sendData);
-                passThrough();
+                //passThrough();
                 if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
                     dataESP.remove(0,dataESP.indexOf(F(","))+1); //Remove header
                     int id=dataESP.substring(0,1).toInt();  // Get id
@@ -556,6 +564,7 @@ void loop() {
         }
     }
   }
+  //Serial.println("passThrough");
   passThrough();                         //Pass data from one serial to another
   if(!dataSerial.equals("")){            //Data from serial is available
     dataSerial="";
@@ -563,10 +572,13 @@ void loop() {
   if(!dataESP.equals("")){               //Data from ESP available
     bool sensorFlag=false;
     if(dataESP.indexOf(F("CONNECT"))>-1){   //Check if there is a connection and absorb next line
-      delay(100);                        //Wait for some time
+      delay(ESPWriteDelay);                        //Wait for some time
       readESP();
     }
-    if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
+    //Serial.println("After ESTABLISHING Connection");
+    if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL System is available
+      time=millis(); //Reset virtual timer of ISR
+      LCD_UPDATE_ENABLE=false; //Stop LCD update, give priority to calls
       dataESP.remove(0,dataESP.indexOf(",")+1); //Remove header
       int id=dataESP.substring(0,1).toInt();  // Get id
       //Serial.print(F("ID :"));       
@@ -606,17 +618,15 @@ void loop() {
             temp.concat(pinString.length()+2);
             temp.concat(F("\r\n"));
             writeESP(temp);
-            delay(100);
+            delay(ESPWriteDelay);
             String inputData=readESP();
             if(inputData.indexOf(F("OK"))>-1){
                 pinString.concat(F("\r\n"));
                 writeESP(pinString);
             }
-            delay(100);
+            delay(ESPWriteDelay);
             readESP();
             //End SendData
-            
-            
         }
         else{
         /* Here pin status is retrived and send to the SSAL Core */
@@ -636,13 +646,13 @@ void loop() {
                 temp.concat(pinString.length()+2);
                 temp.concat(F("\r\n"));
                 writeESP(temp);
-                delay(100);
+                delay(ESPWriteDelay);
                 String inputData=readESP();
                 if(inputData.indexOf("OK")>-1){
                     pinString.concat("\r\n");
                     writeESP(pinString);
                 }
-                delay(100);
+                delay(ESPWriteDelay);
                 readESP();
                 //End SendData
             }
@@ -650,6 +660,7 @@ void loop() {
                 sensorFlag=true;
             }
         }
+        //Serial.println("After Main Command Processing");
       }
       else{
         /* There can be only one active connection */
@@ -664,19 +675,19 @@ void loop() {
           temp.concat(pinString.length()+2);
           temp.concat("\r\n");
           writeESP(temp);
-          delay(100);
+          delay(ESPWriteDelay);
           String inputData=readESP();
           if(inputData.indexOf(F("OK"))>-1){
             pinString.concat(F("\r\n"));
             writeESP(pinString);
           }
-          delay(100);
+          delay(ESPWriteDelay);
           readESP();
           //End SendData
       }
     }
     writeESP(F("AT+CIPSTATUS\r\n"));
-    delay(300);
+    delay(ESPWriteDelay);
     String data = readESP();
     if(data.indexOf(F(":3"))>-1 && sensorFlag){
         //Write Sensor Data
@@ -692,14 +703,15 @@ void loop() {
         temp.concat(senseData.length()+2);
         temp.concat("\r\n");
         writeESP(temp);
-        delay(100);
+        delay(ESPWriteDelay);
         String inputData=readESP();
         if(inputData.indexOf(F("OK"))>-1){
             senseData.concat(F("\r\n"));
             writeESP(senseData);
         }
-        delay(100);
+        delay(ESPWriteDelay);
         readESP();
+        //Serial.println("After Sensor Command Processing");
     }
     dataESP="";       //ESP data never got logged wink wink
     /* STM32 */
