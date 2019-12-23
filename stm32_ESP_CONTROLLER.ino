@@ -31,7 +31,7 @@
 #define ESPBAUD 250000
 #define BAUD 2000000
 #define DEBUG true
-#define VERSION 2.1
+#define VERSION 2.2 // Version from Arduino code
 #define INSPECT 180619
 #define PageBaseZero 0x801F800 //PageBase0
 #define PageBaseOne 0x801FC00  //PageBase1
