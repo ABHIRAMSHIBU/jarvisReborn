@@ -1,4 +1,5 @@
 import re
+import random
 class Device:
     def __init__(self,name,sensor1,sensor2):
         self.name=name
@@ -20,8 +21,10 @@ class Device:
                     return str(words[0])+" "+str(self.state[int(words[0])])
                 else:
                     print(words,"not both are digits")
-            
+
         elif(msg=="sensor"): #input sennsor output self.sensor
+            self.sensor1 = random.uniform(0,3.3)
+            self.sensor2 = random.uniform(0,3.3)
             return str(self.sensor1)+" "+str(self.sensor2)
         else:
             return -1

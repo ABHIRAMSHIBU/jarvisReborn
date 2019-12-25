@@ -21,7 +21,7 @@ def handle_client(conn,addr,ID):
                 print("decode error handled")
     if(ID==0):
         pwf.write("idzf")
-        pwrf.flush()
+        pwf.flush()
 
 
 
