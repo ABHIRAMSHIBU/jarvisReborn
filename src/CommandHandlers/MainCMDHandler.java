@@ -20,6 +20,8 @@ package CommandHandlers;
 
 import javax.swing.JTextArea;
 
+import org.jfree.ui.RefineryUtilities;
+
 import Config.ConfigParse;
 import Sockets.Telnet;
 import jarvisReborn.Core;
@@ -52,9 +54,46 @@ public class MainCMDHandler {
 			System.out.println(input.substring(input.indexOf(" ")+1));
 		}
 		else if(input.contains("$plot")) {
-			System.out.println("Plot command recieved");
-			plotSensors(input.substring(input.indexOf(" ")+1));
+			try {
+				System.out.println("Plot command recieved");
+				plotSensors2(input.substring(input.indexOf(" ")+1));
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
+	}
+	private void plotSensors2(String substring) {
+		parsed=true;
+		
+		output = "Plot displayed in seperate window";
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				Details.plotInput=substring;
+				JFreeChartSensor chart = new JFreeChartSensor("Sensor Plot", "Plotting Sensor Data ");
+				chart.pack( );
+				RefineryUtilities.centerFrameOnScreen( chart );
+				chart.setVisible( true );
+				while(chart.exitCondition==false) {
+			    	  try {
+						Thread.sleep(1000);
+						System.out.println("What");
+					      chart.update();
+					      chart.setVisible(true);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			      }
+			}
+		}
+		);
+		t.start();
+		System.out.println("This completed");
+		
+	      
+		
+		
 	}
 	public void parseSensors(String input) {
 		parsed=true;
