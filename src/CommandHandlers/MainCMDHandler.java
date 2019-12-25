@@ -23,8 +23,12 @@ import javax.swing.JTextArea;
 import Config.ConfigParse;
 import Sockets.Telnet;
 import jarvisReborn.Core;
+import jarvisReborn.Details;
 
 public class MainCMDHandler {
+	
+	
+	
 	public boolean parsed=false;
 	public String output=""; 
 	JTextArea ta;
@@ -45,6 +49,11 @@ public class MainCMDHandler {
 		}
 		else if(input.contains("$sensors")) {
 			parseSensors(input.substring(input.indexOf(" ")+1));
+			System.out.println(input.substring(input.indexOf(" ")+1));
+		}
+		else if(input.contains("$plot")) {
+			System.out.println("Plot command recieved");
+			plotSensors(input.substring(input.indexOf(" ")+1));
 		}
 	}
 	public void parseSensors(String input) {
@@ -154,4 +163,30 @@ public class MainCMDHandler {
 			output="Error contacting ESP";
 		}
 	}
+	public void plotSensors(String input) {
+		
+		parsed=true;
+//		System.out.println("About to call Parse Sensors with argument "+args[1]);
+//		parseSensors(args[1]);
+//		System.out.println("The output is here "+output);
+		System.out.println("The arg value passed is "+input);
+		Details.plotInput=input;
+		Thread plotThread = new Thread(new Runnable() {
+			public void run() {
+				SensorPlot sp = new SensorPlot();
+				sp.plot();
+				
+			};
+			});
+		plotThread.start();
+//		try {
+//			plotThread.join();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		System.out.println("Now it is here ");
+		output = "The data is plotted in seperate Window";
+	}	
+	
 }

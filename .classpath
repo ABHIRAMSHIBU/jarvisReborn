@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry excluding="jarvisReborn/NewJFrame.java" kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="src/javaFlacEncoder-0.3.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="telegrambots-4.4.0.1-jar-with-dependencies.jar"/>
+	<classpathentry excluding="jarvisReborn/NewJFrame.java|SensorPlot.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="src/javaFlacEncoder-0.3.2.jar"/>
+	<classpathentry kind="lib" path="telegrambots-4.4.0.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JAVAFX13"/>
+	<classpathentry kind="lib" path="/home/abhijithnraj/Downloads/jcommon-1.0.8.jar"/>
+	<classpathentry kind="lib" path="/home/abhijithnraj/Downloads/jfreechart.jar"/>
+	<classpathentry kind="lib" path="/home/abhijithnraj/Downloads/xchart-3.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
