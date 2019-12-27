@@ -69,7 +69,7 @@ public class JFreeChartSensor extends JFrame {
   }
  
   Double getSensorData() {
-	  System.out.println("Called GetSensorData with input="+Details.plotInput);
+	 // System.out.println("Called GetSensorData with input="+Details.plotInput);
 	    String input = Details.plotInput;
 	    String[] args = input.split("\\s+");
 	    Integer mcu = Integer.parseInt(args[1]);
@@ -91,14 +91,18 @@ public class JFreeChartSensor extends JFrame {
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
 		}
-		System.out.println("output reieved from sensor "+output);
+		//System.out.println("output reieved from sensor "+output);
 		String[] sensorData = output.split("\\s+");
 		
 		if(sensorData.length!=2) {
 			System.out.println("Error occured while getting sensor data");
 			return (double)0;
 		}
-		System.out.println("SensorIndex data is "+sensorData[sensorIndex]);
+		else if(output.contains("allowed")) {
+			System.out.println("Not Allowed Error occured while getting sensor data");
+			return (double)0;
+		}
+		//System.out.println("SensorIndex data is "+sensorData[sensorIndex]);
 	
 		return Double.parseDouble(sensorData[sensorIndex]);
 		
@@ -114,7 +118,7 @@ public class JFreeChartSensor extends JFrame {
       this.addWindowListener(new WindowAdapter() {
     	  @Override
     	public void windowClosing(WindowEvent e) {
-    		  System.out.println("Close button clicked");
+    		  //System.out.println("Close button clicked");
     		  userCloseButtonClick=true;
     		  frame.dispose();
     		

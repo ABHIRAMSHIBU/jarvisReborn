@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="jarvisReborn/NewJFrame.java|SensorPlot.java" kind="src" path="src"/>
+	<classpathentry excluding="jarvisReborn/NewJFrame.java|SensorPlot.java|CommandHandlers/SensorPlot.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
