@@ -65,7 +65,6 @@ public class MainCMDHandler {
 	}
 	private void plotSensors2(String substring) {
 		parsed=true;
-		
 		output = "Plot displayed in seperate window";
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -73,15 +72,13 @@ public class MainCMDHandler {
 				JFreeChartSensor chart = new JFreeChartSensor("Sensor Plot", "Plotting Sensor Data ");
 				chart.pack( );
 				RefineryUtilities.centerFrameOnScreen( chart );
-				chart.setVisible( true );
-				while(chart.exitCondition==false) {
+				chart.setVisible(true);
+				chart.update();
+				while(chart.userCloseButtonClick==false) {
 			    	  try {
 						Thread.sleep(1000);
-						System.out.println("What");
-					      chart.update();
-					      chart.setVisible(true);
+					      chart.update();				
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 			      }
@@ -89,16 +86,10 @@ public class MainCMDHandler {
 		}
 		);
 		t.start();
-		System.out.println("This completed");
-		
-	      
-		
-		
 	}
 	public void parseSensors(String input) {
 		parsed=true;
 		int mcu=Integer.valueOf(input);
-				//mcu=Integer.valueOf(input.substring(space1+1));
 		try {
 			synchronized (Core.telnet[mcu]) {
 				output=Core.telnet[mcu].echo("sensor"+"\r");
@@ -210,11 +201,10 @@ public class MainCMDHandler {
 //		System.out.println("The output is here "+output);
 		System.out.println("The arg value passed is "+input);
 		Details.plotInput=input;
+		SensorPlot sp = new SensorPlot();
 		Thread plotThread = new Thread(new Runnable() {
 			public void run() {
-				SensorPlot sp = new SensorPlot();
-				sp.plot();
-				
+					sp.plot();
 			};
 			});
 		plotThread.start();
