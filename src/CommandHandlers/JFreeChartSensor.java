@@ -35,6 +35,8 @@ public class JFreeChartSensor extends JFrame {
    final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
    ChartPanel chartPanel;
    boolean userCloseButtonClick=false;
+   String xAxisString="Time";
+   String yAxisString="Current";
    
  JFreeChart setAxes(JFreeChart lineChart) {
 	    CategoryPlot xyPlot = lineChart.getCategoryPlot();
@@ -53,18 +55,8 @@ public class JFreeChartSensor extends JFrame {
 		  y.add(i,(double) 0);
 	   }
 		y.add(0,getSensorData());
-		  
-	      lineChart = ChartFactory.createLineChart(
-	         chartTitle,
-	         "Years","Number of Schools",
-	         getNextDataSet(x,y),
-	         PlotOrientation.VERTICAL,
-	         true,true,false);
-	      
-	      lineChart = setAxes(lineChart);
-	      chartPanel = new ChartPanel( lineChart );
-	      chartPanel.setPreferredSize( new java.awt.Dimension( 1200 ,760) );
-	      add( chartPanel );
+		 setNewLineChart();
+		 chartPanel.setPreferredSize( new java.awt.Dimension( 1200 ,760) );
 	      
   }
  
@@ -126,17 +118,20 @@ public class JFreeChartSensor extends JFrame {
 	});
 
    }
-
-   void update() {
+   void setNewLineChart() {
 	   lineChart = ChartFactory.createLineChart(
 		         chartTitle,
-		         "Years","Number of Schools",
+		         xAxisString,yAxisString,
 		         getNextDataSet(x,y),
 		         PlotOrientation.VERTICAL,
 		         true,true,false);
 	   	lineChart = setAxes(lineChart);
 	      chartPanel = new ChartPanel( lineChart );
 	      add( chartPanel );
+
+   }
+   void update() {
+	   	  setNewLineChart();
 	      this.revalidate();
 		         
    }

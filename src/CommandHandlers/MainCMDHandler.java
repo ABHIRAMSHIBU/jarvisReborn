@@ -75,7 +75,6 @@ public class MainCMDHandler {
 			Thread t = new Thread(new Runnable() {
 				public void run() {
 					Details.plotInput=substring;
-					System.out.println("Inside here");
 					JFreeChartSensor chart = new JFreeChartSensor("Sensor Plot "+substringCuts[0]+" "+substringCuts[1], "MCU "+substringCuts[1]+" Sensor "+substringCuts[0]);
 					
 					chart.pack( );
