@@ -6,7 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/javaFlacEncoder-0.3.2.jar"/>
 	<classpathentry kind="lib" path="telegrambots-4.4.0.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="jcommon-1.0.8.jar"/>
 	<classpathentry kind="lib" path="jfreechart.jar"/>
