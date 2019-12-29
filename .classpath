@@ -8,9 +8,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="src/javaFlacEncoder-0.3.2.jar"/>
 	<classpathentry kind="lib" path="telegrambots-4.4.0.1-jar-with-dependencies.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JAVAFX13"/>
-	<classpathentry kind="lib" path="/home/abhijithnraj/Downloads/jcommon-1.0.8.jar"/>
-	<classpathentry kind="lib" path="/home/abhijithnraj/Downloads/jfreechart.jar"/>
-	<classpathentry kind="lib" path="/home/abhijithnraj/Downloads/xchart-3.6.0.jar"/>
+	<classpathentry kind="lib" path="jcommon-1.0.8.jar"/>
+	<classpathentry kind="lib" path="jfreechart.jar"/>
+	<classpathentry kind="lib" path="xchart-3.6.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JFX"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
