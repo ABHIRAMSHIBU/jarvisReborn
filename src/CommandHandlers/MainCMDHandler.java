@@ -51,54 +51,54 @@ public class MainCMDHandler {
 		}
 		else if(input.contains("$sensors")) {
 			parseSensors(input.substring(input.indexOf(" ")+1));
-			System.out.println(input.substring(input.indexOf(" ")+1));
+			//System.out.println(input.substring(input.indexOf(" ")+1));
 		}
 		else if(input.contains("$plot")) {
 			try {
 				System.out.println("Plot command recieved");
-				plotSensors2(input.substring(input.indexOf(" ")+1));
+				plotSensors(input.substring(input.indexOf(" ")+1));
 			}
 			catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	private void plotSensors2(String substring) {
+	private void plotSensors(String substring) {
 		parsed=true;
-		
-		output = "Plot displayed in seperate window";
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				Details.plotInput=substring;
-				JFreeChartSensor chart = new JFreeChartSensor("Sensor Plot", "Plotting Sensor Data ");
-				chart.pack( );
-				RefineryUtilities.centerFrameOnScreen( chart );
-				chart.setVisible( true );
-				while(chart.exitCondition==false) {
-			    	  try {
-						Thread.sleep(1000);
-						System.out.println("What");
-					      chart.update();
-					      chart.setVisible(true);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			      }
-			}
+		String[] substringCuts = substring.split("\\s+");
+		if(substringCuts.length!=2) {
+			output = "Unrecognizable command";
+			
 		}
-		);
-		t.start();
-		System.out.println("This completed");
-		
-	      
-		
-		
+		else {
+			output = "Plot displayed in the window Sensor Plot "+substringCuts[0]+" "+substringCuts[1];
+			Thread t = new Thread(new Runnable() {
+				public void run() {
+					Details.plotInput=substring;
+					JFreeChartSensor chart = new JFreeChartSensor("Sensor Plot "+substringCuts[0]+" "+substringCuts[1], "MCU "+substringCuts[1]+" Sensor "+substringCuts[0]);
+					
+					chart.pack( );
+					RefineryUtilities.centerFrameOnScreen( chart );
+					chart.setVisible(true);
+					chart.update();
+					while(chart.userCloseButtonClick==false) {
+				    	  try {
+							Thread.sleep(1000);
+						      chart.update();				
+						  } 
+				    	  catch (InterruptedException e) {
+							e.printStackTrace();
+						  }
+				    }
+			   }
+			}
+			);
+			t.start();
+		}
 	}
 	public void parseSensors(String input) {
 		parsed=true;
 		int mcu=Integer.valueOf(input);
-				//mcu=Integer.valueOf(input.substring(space1+1));
 		try {
 			synchronized (Core.telnet[mcu]) {
 				output=Core.telnet[mcu].echo("sensor"+"\r");
@@ -202,30 +202,6 @@ public class MainCMDHandler {
 			output="Error contacting ESP";
 		}
 	}
-	public void plotSensors(String input) {
-		
-		parsed=true;
-//		System.out.println("About to call Parse Sensors with argument "+args[1]);
-//		parseSensors(args[1]);
-//		System.out.println("The output is here "+output);
-		System.out.println("The arg value passed is "+input);
-		Details.plotInput=input;
-		Thread plotThread = new Thread(new Runnable() {
-			public void run() {
-				SensorPlot sp = new SensorPlot();
-				sp.plot();
-				
-			};
-			});
-		plotThread.start();
-//		try {
-//			plotThread.join();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		System.out.println("Now it is here ");
-		output = "The data is plotted in seperate Window";
-	}	
+
 	
 }

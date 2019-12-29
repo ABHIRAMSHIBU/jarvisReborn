@@ -4,25 +4,27 @@ import org.jfree.chart.ChartPanel;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.WindowConstants;
+import javax.swing.JFrame;
 
-import java.awt.Color;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 
 import jarvisReborn.Core;
 import jarvisReborn.Details;
 
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYDataset;
 
-public class JFreeChartSensor extends ApplicationFrame {
+
+public class JFreeChartSensor extends JFrame {
 
    ArrayList<String> x = new ArrayList<String>();
    ArrayList<Double> y = new ArrayList<Double>();
@@ -31,41 +33,35 @@ public class JFreeChartSensor extends ApplicationFrame {
    JFreeChart lineChart;
    String chartTitle;
    final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-   boolean exitCondition=false;
-
+   ChartPanel chartPanel;
+   boolean userCloseButtonClick=false;
+   String xAxisString="Time";
+   String yAxisString="Current";
+   
+ JFreeChart setAxes(JFreeChart lineChart) {
+	    CategoryPlot xyPlot = lineChart.getCategoryPlot();
+        NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
+        range.setRange(0.0, 3.5);
+        range.setTickUnit(new NumberTickUnit(0.1));
+        return lineChart;
+	 
+ }
        
   public void initXY() {
-
-
-	  
 	   for(int i=0;i<WINDOW;i++) {
 		  Date d = new Date();
 		  String s = simpleDateFormat.format(d);
 		  x.add(i,s);
-		  y.add(i,getSensorData());
+		  y.add(i,(double) 0);
 	   }
-	   
-	      for (String n:x) {
-	    	  System.out.println(n);
-	      }
-	      for (Double num:y) {
-	    	  System.out.println(num);
-	      }
-		   
-	      lineChart = ChartFactory.createLineChart(
-	         chartTitle,
-	         "Years","Number of Schools",
-	         getNextDataSet(x,y),
-	         PlotOrientation.VERTICAL,
-	         true,true,false);
-	         
-	      ChartPanel chartPanel = new ChartPanel( lineChart );
-	      chartPanel.setPreferredSize( new java.awt.Dimension( 1200 ,760) );
-	      setContentPane( chartPanel );
+		y.add(0,getSensorData());
+		 setNewLineChart();
+		 chartPanel.setPreferredSize( new java.awt.Dimension( 1200 ,760) );
+	      
   }
  
   Double getSensorData() {
-	  System.out.println("Called GetSensorData with input="+Details.plotInput);
+	 // System.out.println("Called GetSensorData with input="+Details.plotInput);
 	    String input = Details.plotInput;
 	    String[] args = input.split("\\s+");
 	    Integer mcu = Integer.parseInt(args[1]);
@@ -87,14 +83,18 @@ public class JFreeChartSensor extends ApplicationFrame {
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
 		}
-		System.out.println("output reieved from sensor "+output);
+		//System.out.println("output reieved from sensor "+output);
 		String[] sensorData = output.split("\\s+");
 		
 		if(sensorData.length!=2) {
 			System.out.println("Error occured while getting sensor data");
 			return (double)0;
 		}
-		System.out.println("SensorIndex data is "+sensorData[sensorIndex]);
+		else if(output.contains("allowed")) {
+			System.out.println("Not Allowed Error occured while getting sensor data");
+			return (double)0;
+		}
+		//System.out.println("SensorIndex data is "+sensorData[sensorIndex]);
 	
 		return Double.parseDouble(sensorData[sensorIndex]);
 		
@@ -105,32 +105,38 @@ public class JFreeChartSensor extends ApplicationFrame {
       super(applicationTitle);
       this.chartTitle=chartTitle;
       this.initXY();
+      this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+      JFrame frame = this;
       this.addWindowListener(new WindowAdapter() {
-    	  public void windowClosing(WindowEvent w) {
-    		  System.out.println("Doing this");
-    		  exitCondition=true;
-    	  }
+    	  @Override
+    	public void windowClosing(WindowEvent e) {
+    		  //System.out.println("Close button clicked");
+    		  userCloseButtonClick=true;
+    		  frame.dispose();
+    		
+    	}
 	});
 
    }
-
-   void update() {
-	   System.out.println("Called update");
+   void setNewLineChart() {
 	   lineChart = ChartFactory.createLineChart(
 		         chartTitle,
-		         "Years","Number of Schools",
+		         xAxisString,yAxisString,
 		         getNextDataSet(x,y),
 		         PlotOrientation.VERTICAL,
 		         true,true,false);
-	      ChartPanel chartPanel = new ChartPanel( lineChart );
-	      chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
-	      setContentPane( chartPanel );
+	   	lineChart = setAxes(lineChart);
+	      chartPanel = new ChartPanel( lineChart );
+	      add( chartPanel );
+
+   }
+   void update() {
+	   	  setNewLineChart();
+	      this.revalidate();
 		         
    }
    private DefaultCategoryDataset getNextDataSet(ArrayList<String> x,ArrayList<Double> y) {
-	   	  System.out.println("Called Get Next Dataset");
-	      DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
-	      
+	      DefaultCategoryDataset dataset = new DefaultCategoryDataset( );    
 	      Date d = new Date();
 	      String s = simpleDateFormat.format(d);
 	      x.add(s);
@@ -140,38 +146,8 @@ public class JFreeChartSensor extends ApplicationFrame {
 	      for(int i=0;i<x.size();i++) {
 	    	  dataset.addValue( y.get(i) , "Sensor" ,x.get(i)  );
 	      }
-	      for (String n:x) {
-	    	  System.out.println(n);
-	      }
-	      for (Double num:y) {
-	    	  System.out.println(num);
-	      }
 	      counter++;
-	      
-	      
 	      return dataset;
    }
    
-//   void plot() {
-//      JFreeChartSensor chart = new JFreeChartSensor(
-//         "School Vs Years" ,
-//         "Numer of Schools vs years");
-//      chart.pack( );
-//      RefineryUtilities.centerFrameOnScreen( chart );
-//      chart.setVisible( true );
-//      while(true) {
-//    	  try {
-//			Thread.sleep(10000);
-//			System.out.println("What");
-//		      chart.update();
-//		      chart.setVisible(true);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//      }
-//   }
-
-
-
 }
