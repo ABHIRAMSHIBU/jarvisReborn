@@ -1,6 +1,6 @@
 /*
-Copyleft (C) 2018  ARCtotal
-Copyleft (C) 2018  Abhiram Shibu
+Copyleft (C) 2020  TUXForums
+Copyleft (C) 2020  Abhiram Shibu
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ public class Core {
 	public static Telnet telnet[];
 	public static Boolean pinData[][];
 	public static void main(String[] args) {
-		System.out.println("SSAL version 1, Copyleft (C) 2018 Abhiram Shibu\n" + 
+		System.out.println("SSAL version 1.1, Copyleft (C) 2020 Abhiram Shibu\n" + 
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
 				"This is free software, and you are welcome\n" + 
 				"to redistribute it under certain conditions;");

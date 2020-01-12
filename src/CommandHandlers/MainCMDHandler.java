@@ -19,13 +19,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package CommandHandlers;
 
 import javax.swing.JTextArea;
-
 import org.jfree.ui.RefineryUtilities;
 
 import Config.ConfigParse;
 import Sockets.Telnet;
 import jarvisReborn.Core;
 import jarvisReborn.Details;
+import jarvisReborn.PlotCurrentGUI;
 
 public class MainCMDHandler {
 	
@@ -75,7 +75,7 @@ public class MainCMDHandler {
 			Thread t = new Thread(new Runnable() {
 				public void run() {
 					Details.plotInput=substring;
-					JFreeChartSensor chart = new JFreeChartSensor("Sensor Plot "+substringCuts[0]+" "+substringCuts[1], "MCU "+substringCuts[1]+" Sensor "+substringCuts[0]);
+					PlotCurrentGUI chart = new PlotCurrentGUI("Sensor Plot "+substringCuts[0]+" "+substringCuts[1], "MCU "+substringCuts[1]+" Sensor "+substringCuts[0]);
 					
 					chart.pack( );
 					RefineryUtilities.centerFrameOnScreen( chart );

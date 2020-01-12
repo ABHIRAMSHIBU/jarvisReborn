@@ -1,4 +1,4 @@
-package CommandHandlers;
+package jarvisReborn;
 import org.jfree.chart.ChartPanel;
 
 import java.util.ArrayList;
@@ -14,17 +14,13 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-
-import jarvisReborn.Core;
-import jarvisReborn.Details;
-
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 
-public class JFreeChartSensor extends JFrame {
+public class PlotCurrentGUI extends JFrame {
 
    ArrayList<String> x = new ArrayList<String>();
    ArrayList<Double> y = new ArrayList<Double>();
@@ -34,7 +30,7 @@ public class JFreeChartSensor extends JFrame {
    String chartTitle;
    final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
    ChartPanel chartPanel;
-   boolean userCloseButtonClick=false;
+   public boolean userCloseButtonClick=false;
    String xAxisString="Time";
    String yAxisString="Current";
    
@@ -100,7 +96,7 @@ public class JFreeChartSensor extends JFrame {
 		
 		
 	}
-   public JFreeChartSensor( String applicationTitle , String chartTitle ) {
+   public PlotCurrentGUI( String applicationTitle , String chartTitle ) {
 	   
       super(applicationTitle);
       this.chartTitle=chartTitle;
@@ -130,7 +126,7 @@ public class JFreeChartSensor extends JFrame {
 	      add( chartPanel );
 
    }
-   void update() {
+   public void update() {
 	   	  setNewLineChart();
 	      this.revalidate();
 		         
