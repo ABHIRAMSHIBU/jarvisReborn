@@ -55,7 +55,7 @@ public class MainCMDHandler {
 		}
 		else if(input.contains("$plot")) {
 			try {
-				System.out.println("Plot command recieved");
+				System.out.println("MainCMDHandler: Starting Plot");
 				plotSensors(input.substring(input.indexOf(" ")+1));
 			}
 			catch(Exception e) {
@@ -67,11 +67,11 @@ public class MainCMDHandler {
 		parsed=true;
 		String[] substringCuts = substring.split("\\s+");
 		if(substringCuts.length!=2) {
-			output = "Unrecognizable command";
+			output = "MainCMDHandler: PlotCurrent:Internal error ( Unknown format )";
 			
 		}
 		else {
-			output = "Plot displayed in the window Sensor Plot "+substringCuts[0]+" "+substringCuts[1];
+			output = "Plot will be displayed in a new window "+substringCuts[0]+" "+substringCuts[1];
 			Thread t = new Thread(new Runnable() {
 				public void run() {
 					Details.plotInput=substring;
