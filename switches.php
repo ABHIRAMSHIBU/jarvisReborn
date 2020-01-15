@@ -1,5 +1,6 @@
 <html>
 <head>
+<?php require 'auth.php' ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 .popup{
@@ -280,7 +281,6 @@ body{
     </font>
     <form target="_blank" action="handle.php" method="post">
 	    <?php
-	    require "auth.php";
 	    echo "<center><hr>";
 	    $devID=$_POST["devID"];
 	    echo "<input type='hidden' name='devID' value='$devID'>";
