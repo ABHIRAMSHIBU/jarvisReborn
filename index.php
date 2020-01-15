@@ -117,6 +117,7 @@
             </div>
     <?php
     require 'config.php';
+    require 'auth.php';
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
