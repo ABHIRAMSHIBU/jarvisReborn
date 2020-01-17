@@ -3,88 +3,12 @@
     <title> SAL REMOTE UI </title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title> SAL REMOTE UI </title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <script src="css/jquery.min.js"></script>
+    <script src="css/bootstrap.min.js"></script>
     <script src="script/BootstrapMenu.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script type="text/javascript" src="script/script.js"></script>
-    <!--<style>
-        body{
-            background:url("space.png");
-            background-repeat: initial;
-        }
-        .popup{
-        width:100%;
-        height:100%;
-        opacity:.95;
-        display:none;
-        position:fixed;
-        background-color:#313131;
-        overflow:auto;
-        font-color:white;
-        }
-        .inpopup{
-        font-size:40px;
-        text-align:center;
-        color:white;
-        }
-        .button {
-        background-color: #4CAF50; /* Green */
-        border: none;
-        color: white;
-        padding: 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        display: block;
-        cursor: pointer;
-        font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
-        }
-        .medRoundbutton{
-        border-radius: 25%;
-        background-image: linear-gradient(to bottom right,black, green);
-        color:white;
-        width:150px;
-        height:100px;
-        }
-        .medRoundbutton:hover{
-        border-radius: 25%;
-        background-image: linear-gradient(to bottom right,red, green);
-        color:white;
-        width:150px;
-        height:100px;
-        }
-        .roundbutton {
-        border-radius: 50%;
-        }
-        .addbutton{
-            position:fixed;
-            right:5%;
-            bottom:5%;
-        }
-        .header {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: #333;
-        }
-        .headerEle {
-        float: left;
-        }
-        .headerEle {
-        font-size:25px;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 20px 16px;
-        text-decoration: none;
-        font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
-        }
-    </style>-->
 </head>
 <body>
 	<form method="post" action="switches.php" id="hiddenForm" hidden=true>
@@ -150,8 +74,10 @@
             //echo '<br>';
             echo "</div>";
         }
+        //echo "<button type=\"button\" class=\"btn btn-danger\">Danger</button>";
         echo "<div class='row'><br><br><br></div>";
-        echo "<div class='row'><br><br><br></div>";
+        echo "<div class='row'><br><br>";
+        echo "<a href=\"logout.php\"><div class='row'><br><br><center><button onclick=\"logout.php\" type=\"button\" class=\"btn btn-danger\">Logout</button></center><br></div></a>";
         echo "</div>";
         echo "</div>";
         echo "</div>";
@@ -240,7 +166,7 @@
           
         </div>
     </div>
-    
+    </div>
     <footer class="footer">
             <div class="row justify-content-center">             
                     <div class="col-auto " align="center">
