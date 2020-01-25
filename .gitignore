@@ -4,4 +4,5 @@ scripts/processed/denoised/*
 scripts/processed/labelled_data/*
 scripts/processed/labels/*
 scripts/processed_backup/*
-script/disjoint/*
+scripts/disjoint/*
+scripts/processed/train/*
