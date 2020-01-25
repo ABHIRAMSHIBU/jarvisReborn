@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package jarvisReborn;
 
+import dbHandlers.InfluxDBClient;
 import dbHandlers.dbInit;
 import javax.swing.UIManager;
 import Config.ConfigParse;
@@ -32,6 +33,7 @@ public class Core {
 	public static Thread telnetThread;
 	public static Telnet telnet[];
 	public static Boolean pinData[][];
+	public static InfluxDBClient dbClient;
 	public static void main(String[] args) {
 		System.out.println("SSAL version 1.1, Copyleft (C) 2020 Abhiram Shibu\n" + 
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
@@ -92,6 +94,8 @@ public class Core {
 				e.printStackTrace();
 			}
 		}
+		dbClient = new InfluxDBClient();
+		dbClient.connect();
 		System.out.println("SSAL System Active!");
 	}
 }
