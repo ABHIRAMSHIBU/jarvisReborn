@@ -226,7 +226,7 @@ body{
     function reqListener () {
       console.log(this.responseText);
     }
-    var update=true;
+    var update=false;//true for auto update
     function setUpdate(){
         update=document.getElementById('update').checked;
         if(update==true){
@@ -279,7 +279,7 @@ body{
     <font color="white">
     <h2>Toggle Switch</h2>
     </font>
-    <form target="_blank" action="handle.php" method="post">
+    <form target="_blank" action="handle.php" method="post" id="forms">
 	    <?php
 	    echo "<center><hr>";
 	    $devID=$_POST["devID"];
@@ -309,10 +309,11 @@ body{
 	        }
 	        $name=$row['name'];
 	        $id=$row['id_switch'];
+	        
 	        echo "<td>";
-	        echo "<span class='sldr' style='color: white; font-size: 45px;'>$name\t:\t</span>";
+	        echo "<span class='sldr' style='color: white; font-size: 40px;'>$name\t:\t</span>";
 	        echo '<label class="switch">';
-	        echo "<input type='checkbox' name='$id' id='$id' class='chkbox' />";
+	        echo " <input type='checkbox' name='$id' id='$id' class='chkbox' onclick='document.getElementById(\"forms\").submit()'/> ";
 	        echo '<span class="slider round"></span>';
 	        echo '</label>';
 	        echo "</td>";
@@ -339,20 +340,20 @@ body{
         echo "</table>";
         echo "</center>"
 	    ?>
-	    <div class="center">
+<!--	    <div class="center">
     	    <span class="button">
-    	    <input type="submit" class = "button" style="vertical-align:middle" value="Submit" ></input>
-    	    </span>
+    	    <input type="submit" class = "button" style="vertical-align:middle" value="Submit" ></input> -->
     	    <br>
-    	    <?php 
-    	    echo "<span class='sldr' style='color: white; font-size: 45px;'>Auto Update\t:\t</span>";
-	        echo '<label class="switch">';
-	        echo "<input type='checkbox' id='update' class='chkbox' onclick='setUpdate();' checked=true/>";
-	        echo '<span class="slider round"></span>';
-	        echo '</label>';
-	        ?>
+    	    <?php
+//     	    echo "<span class='sldr' style='color: white; font-size: 45px;'>Auto Update\t:\t</span>";
+// 	        echo '<label class="switch">';
+// 	        echo "<input type='checkbox' id='update' class='chkbox' onclick='setUpdate();' checked=true/>";
+// 	        echo '<span class="slider round"></span>';
+// 	        echo '</label>';
+// 	        ?>
 		</div>
 	</form>
+<!-- 	<script> var forms = ;  </script> -->
 	<div class="addbutton">
     	<button class="button roundbutton" onclick="popUP();">+</button>
 	</div>
