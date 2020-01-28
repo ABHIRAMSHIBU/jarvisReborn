@@ -13,17 +13,18 @@ try:
 except:
     pass
 
-fin = open(JAVA_PIPE_FILE,"r")
 fout = open(PYTHON_PIPE_FILE,"w")
+fin = open(JAVA_PIPE_FILE,"r")
+
 try:
     while True:
-        fout.write("Hello")
+        fout.write("Hello\n")
         fout.flush()
-        z = fin.read()
+        z = fin.readline()
         while(z==""):
-            z = fin.read()
+            z = fin.readline()
+            # print("stuck")
         print(z)
-        break
 except KeyboardInterrupt:
     fin.close()
     fout.close()
