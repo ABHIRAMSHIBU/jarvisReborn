@@ -17,15 +17,13 @@ fin = open(JAVA_PIPE_FILE,"r")
 fout = open(PYTHON_PIPE_FILE,"w")
 try:
     while True:
-        fout.print("Hello")
+        fout.write("Hello")
         fout.flush()
-        while(True):
+        z = fin.read()
+        while(z==""):
             z = fin.read()
-            if(z==""):
-                continue
-            else:
-                print(z)
-                break
+        print(z)
+        break
 except KeyboardInterrupt:
     fin.close()
     fout.close()
