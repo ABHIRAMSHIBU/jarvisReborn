@@ -3,7 +3,6 @@ package javaPipe;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,19 +39,19 @@ public class Main {
 				
 				try {
 					BufferedReader br;
-					p = Runtime.getRuntime().exec("python3.7 src/python_pipe.py ");
+					p = Runtime.getRuntime().exec("python3 src/python_pipe.py ");
 					br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					br.readLine();
+					System.out.println(br.readLine());
 //					System.out.println(br.readLine());
 //					Thread.sleep(1000);
 					while(true){
 						Thread.sleep(10);
 						
-						br.readLine();
+						System.out.println(br.readLine());
 //						System.out.println(br.readLine());
 						if(!p.isAlive()) {
 							System.out.println("Python program has quit");
-							p = Runtime.getRuntime().exec("python3.7 src/python_pipe.py");
+							p = Runtime.getRuntime().exec("python3 src/python_pipe.py");
 							br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 							 
 							if(p.isAlive()) {

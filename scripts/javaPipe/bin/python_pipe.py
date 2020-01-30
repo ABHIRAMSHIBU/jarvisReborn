@@ -20,7 +20,8 @@ fin = open(JAVA_PIPE_FILE,"r")
 
 intial=True
 sensorList=None
-model = joblib.load("/home/abhijith/jarvisReborn/scripts/processed/models/LedOut_combined_SVM.model")
+os.chdir("../")
+model = joblib.load("processed/models/LedOut_combined_SVM.model")
 try:
     while True:
         # print("Inside python while",counter)
