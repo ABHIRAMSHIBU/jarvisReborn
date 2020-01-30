@@ -3,8 +3,8 @@ import joblib
 PIPE_DIRECTORY = "/run/user/"+str(os.getuid())+"/ssald"
 if(not os.path.exists(PIPE_DIRECTORY)):
     os.mkdir(PIPE_DIRECTORY)
-PYTHON_PIPE_FILE = PIPE_DIRECTORY+"/in"
-JAVA_PIPE_FILE = PIPE_DIRECTORY+"/out"
+PYTHON_PIPE_FILE = PIPE_DIRECTORY+"/EFPSin"
+JAVA_PIPE_FILE = PIPE_DIRECTORY+"/EFPSout"
 try:
     os.mkfifo(PYTHON_PIPE_FILE)
 except:
