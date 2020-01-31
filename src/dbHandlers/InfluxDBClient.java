@@ -37,10 +37,13 @@ public class InfluxDBClient {
 		QueryResult resultQuerry = db.query(new Query(arg0));
 		return resultQuerry;
 	}
-	public static void main(String[] args) {
-		InfluxDBClient client = new InfluxDBClient();
-		client.connect();
-		client.insert("test", 0, 0, 10);
-		
+	public InfluxDBClient(){
+		this.connect();	
 	}
+//	public static void main(String[] args) {
+//		InfluxDBClient client = new InfluxDBClient();
+//		client.connect();
+//		client.insert("test", 0, 0, 10);
+//		
+//	}
 }

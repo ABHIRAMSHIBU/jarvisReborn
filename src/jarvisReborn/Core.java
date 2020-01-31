@@ -21,6 +21,7 @@ package jarvisReborn;
 import dbHandlers.InfluxDBClient;
 
 import dbHandlers.dbInit;
+import logger.EFPSLogger;
 import timeSeries.PythonEFPS;
 
 import javax.swing.UIManager;
@@ -38,6 +39,7 @@ public class Core {
 	public static Boolean pinData[][];
 	public static InfluxDBClient dbClient;
 	public static PythonEFPS pythonEFPS ;
+	public static ConfigParse configParse ;
 	public static void main(String[] args) {
 		System.out.println("SSAL version 1.1, Copyleft (C) 2020 Abhiram Shibu\n" + 
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
@@ -66,7 +68,7 @@ public class Core {
 		 * ID IP PINS.
 		 * Should be seperated with single space.
 		 */
-		ConfigParse configParse = new ConfigParse();
+		configParse = new ConfigParse();
 		
 		Thread py = new Thread() {
     		public void run() {
@@ -89,8 +91,17 @@ public class Core {
 			dbc++;
 			
 		}
-		new TelnetServer(9998);
+		
+		Thread telnetServerThread = new Thread() {
+			public void run() {
+				new TelnetServer(9998);
+			}
+		};
+		telnetServerThread.start();
+		
+		
 		for (int i=0;i<dbc;i++) {
+			
 			try {
 				db[i].join();
 			} catch (InterruptedException e) {
@@ -98,9 +109,15 @@ public class Core {
 				e.printStackTrace();
 			}
 		}
+
 		dbClient = new InfluxDBClient();
 		dbClient.connect();
+		System.out.println("Core: influxdb active");
 		pythonEFPS = new PythonEFPS();
-		System.out.println("SSAL System Active!");
+		System.out.println("Core: python EFPS Pipe active");
+		EFPSLogger efpsLogger = new EFPSLogger();
+		System.out.println("Core: python EFPS Logger active");
+		System.out.println("Core: SSAL System Active!");
+		System.out.println("Core: Bye..");
 	}
 }
