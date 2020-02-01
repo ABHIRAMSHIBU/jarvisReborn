@@ -24,7 +24,7 @@ import org.jfree.ui.RefineryUtilities;
 import Config.ConfigParse;
 import Sockets.Telnet;
 import jarvisReborn.Core;
-import jarvisReborn.Details;
+import jarvisReborn.Specification;
 import jarvisReborn.PlotCurrentGUI;
 
 public class MainCMDHandler {
@@ -75,7 +75,7 @@ public class MainCMDHandler {
 			output = "Plot will be displayed in a new window "+substringCuts[0]+" "+substringCuts[1];
 			Thread t = new Thread(new Runnable() {
 				public void run() {
-					Details.plotInput=substring;
+					Specification.plotInput=substring;
 					PlotCurrentGUI chart = new PlotCurrentGUI("Sensor Plot "+substringCuts[0]+" "+substringCuts[1], "MCU "+substringCuts[1]+" Sensor "+substringCuts[0]);
 					
 					chart.pack( );

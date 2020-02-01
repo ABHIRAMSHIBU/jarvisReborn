@@ -58,7 +58,7 @@ public class PlotCurrentGUI extends JFrame {
  
   Double getSensorData() {
 	 // System.out.println("Called GetSensorData with input="+Details.plotInput);
-	    String input = Details.plotInput;
+	    String input = Specification.plotInput;
 	    String[] args = input.split("\\s+");
 	    Integer mcu = Integer.parseInt(args[1]);
 	    Integer sensorIndex = Integer.parseInt(args[0]); 

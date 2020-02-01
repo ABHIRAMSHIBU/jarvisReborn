@@ -27,7 +27,7 @@ import java.net.Socket;
 
 
 
-import jarvisReborn.Details;
+import jarvisReborn.Specification;
 
 
 public class Telnet{
@@ -140,7 +140,7 @@ public class Telnet{
 //		}
 		try {
 			int j=0;
-			int retryCount=Details.FETCH_RETRY_COUNT;
+			int retryCount=Specification.FETCH_RETRY_COUNT;
 			while(j<retryCount) {
 				if(socket.getInputStream().available()>0) {
 					z = (in.readLine());

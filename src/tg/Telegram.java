@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package tg;
 
 import jarvisReborn.Core;
-import jarvisReborn.Details;
+import jarvisReborn.Specification;
 import jarvisReborn.GUI;
 import java.io.BufferedReader;
 import java.io.File;
@@ -127,14 +127,14 @@ public class Telegram extends TelegramLongPollingBot {
 						// Cleanup needed
 						if (temp.toLowerCase().contains("light")) {
 							if (temp.toLowerCase().contains("on")) {
-								MainCMDHandler c = new MainCMDHandler("$set 13 1 " + Details.MCU, null);
+								MainCMDHandler c = new MainCMDHandler("$set 13 1 " + Specification.MCU, null);
 								if (c.output.contains("13 on")) {
 									temp = "Lights on";
 								} else {
 									temp = "Data mismatch! Error:3 Data:" + c.output;
 								}
 							} else if (temp.toLowerCase().contains("off")) {
-								MainCMDHandler c = new MainCMDHandler("$set 13 0 " + Details.MCU, null);
+								MainCMDHandler c = new MainCMDHandler("$set 13 0 " + Specification.MCU, null);
 								if (c.output.contains("13 off")) {
 									temp = "Lights off";
 								} else {
@@ -145,14 +145,14 @@ public class Telegram extends TelegramLongPollingBot {
 							}
 						} else if (temp.toLowerCase().contains("fan")) {
 							if (temp.toLowerCase().contains("on")) {
-								MainCMDHandler c = new MainCMDHandler("$set 14 1 " + Details.MCU, null);
+								MainCMDHandler c = new MainCMDHandler("$set 14 1 " + Specification.MCU, null);
 								if (c.output.contains("14 on")) {
 									temp = "Fan on";
 								} else {
 									temp = "Data mismatch! Error:3 Data:" + c.output;
 								}
 							} else if (temp.toLowerCase().contains("off")) {
-								MainCMDHandler c = new MainCMDHandler("$set 14 0 " + Details.MCU, null);
+								MainCMDHandler c = new MainCMDHandler("$set 14 0 " + Specification.MCU, null);
 								if (c.output.contains("14 off")) {
 									temp = "Fan off";
 								} else {
@@ -202,7 +202,7 @@ public class Telegram extends TelegramLongPollingBot {
 			} else if (data.equals("/about")) {
 				message = new SendMessage();
 				message.setChatId(update.getMessage().getChatId());
-				message.setText(Details.about);
+				message.setText(Specification.about);
 				gui.title.setText("About called");
 			} else if (data.toLowerCase().contains("run")) { // Cleanup needed
 				String recvMessage = data;
@@ -210,14 +210,14 @@ public class Telegram extends TelegramLongPollingBot {
 				recvMessage = recvMessage.substring(z + 1);
 				if (recvMessage.toLowerCase().contains("light")) {
 					if (recvMessage.toLowerCase().contains("on")) {
-						MainCMDHandler c = new MainCMDHandler("$set 13 1 " + Details.MCU, null);
+						MainCMDHandler c = new MainCMDHandler("$set 13 1 " + Specification.MCU, null);
 						if (c.output.contains("13 on")) {
 							recvMessage = "Lights on";
 						} else {
 							recvMessage = "Data mismatch! Error:3 Data:" + c.output;
 						}
 					} else if (recvMessage.toLowerCase().contains("off")) {
-						MainCMDHandler c = new MainCMDHandler("$set 13 0 " + Details.MCU, null);
+						MainCMDHandler c = new MainCMDHandler("$set 13 0 " + Specification.MCU, null);
 						if (c.output.contains("13 off")) {
 							recvMessage = "Lights off";
 						} else {
@@ -228,7 +228,7 @@ public class Telegram extends TelegramLongPollingBot {
 					}
 				} else if (recvMessage.toLowerCase().contains("fan")) {
 					if (recvMessage.toLowerCase().contains("on")) {
-						MainCMDHandler c = new MainCMDHandler("$set 14 1 " + Details.MCU, null);
+						MainCMDHandler c = new MainCMDHandler("$set 14 1 " + Specification.MCU, null);
 						if (c.output.contains("14 on")) {
 							recvMessage = "Fan on";
 
@@ -236,7 +236,7 @@ public class Telegram extends TelegramLongPollingBot {
 							recvMessage = "Data mismatch! Error:3 Data:" + c.output;
 						}
 					} else if (recvMessage.toLowerCase().contains("off")) {
-						MainCMDHandler c = new MainCMDHandler("$set 14 0 " + Details.MCU, null);
+						MainCMDHandler c = new MainCMDHandler("$set 14 0 " + Specification.MCU, null);
 						if (c.output.contains("14 off")) {
 							recvMessage = "Fan off";
 						} else {
@@ -254,7 +254,7 @@ public class Telegram extends TelegramLongPollingBot {
 			} else if (data.length() == 1) {
 				try {
 					int pin = Integer.valueOf(data);
-					Details.MCU = data;
+					Specification.MCU = data;
 					message = new SendMessage();
 					message.setChatId(update.getMessage().getChatId());
 					message.setText("ROOM set to " + data);

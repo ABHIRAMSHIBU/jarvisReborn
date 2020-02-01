@@ -2,11 +2,11 @@ package dbHandlers;
 
 import CommandHandlers.MainCMDHandler;
 import jarvisReborn.Core;
-import jarvisReborn.Details;
+import jarvisReborn.Specification;
 
 public class dbInit extends Thread{
 	int mcu=-1;
-	int retry=Details.FETCH_RETRY_COUNT;
+	int retry=Specification.FETCH_RETRY_COUNT;
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -22,7 +22,7 @@ public class dbInit extends Thread{
 					System.out.println("dbInit : Retry on mcu:"+mcu+" pin:"+i);
 					if(retry==0) {
 						System.out.println("dbInit : Gave up on mcu:"+mcu+" pin:"+i);
-						retry=Details.FETCH_RETRY_COUNT;
+						retry=Specification.FETCH_RETRY_COUNT;
 					}
 					else {
 						i--;
@@ -30,7 +30,7 @@ public class dbInit extends Thread{
 					}
 				}
 				else {
-					retry=Details.FETCH_RETRY_COUNT;
+					retry=Specification.FETCH_RETRY_COUNT;
 					if(cmd.output.charAt(0)=='1') {
 						Core.pinData[mcu][i-1]=true;
 					}

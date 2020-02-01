@@ -25,10 +25,10 @@ public class InfluxDBClient {
 		db = InfluxDBFactory.connect("http://127.0.0.1:8086");
 		db.setDatabase("ssal");
 	}
-	public void insert(String name,int mcu, int sensor,int value) {
+	public void insert(String name,int mcu, int sensor,float sensor2) {
 		db.write(Point.measurement(name)
 			    .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-			    .addField("value", value)
+			    .addField("value", sensor2)
 			    .tag("mcu", ""+mcu)
 			    .tag("sensor", ""+sensor)
 			    .build());
