@@ -33,6 +33,7 @@ public class MainCMDHandler {
 	
 	public boolean parsed=false;
 	public String output=""; 
+	public boolean error=false;
 	JTextArea ta;
 	public MainCMDHandler(String input,JTextArea ta) {
 		// TODO Auto-generated constructor stub
@@ -110,9 +111,11 @@ public class MainCMDHandler {
 		}
 		catch(Exception e){
 			output="Error contacting ESP";
+			error=true;
 		}
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
+			error=true;
 		}
 	}
 	public void parseTEST(String input) {
@@ -200,6 +203,7 @@ public class MainCMDHandler {
 		}
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
+			error=true;
 		}
 	}
 

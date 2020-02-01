@@ -21,14 +21,33 @@ public class EFPSLogger{
 				String message = "$sensors "+i;
 				String output = "";
 				public void run() {
-					MainCMDHandler mainCMDHandler = new MainCMDHandler(message, null);
-					if(mainCMDHandler.parsed) {
-						output = mainCMDHandler.output;
-						System.out.println("EFPS: OUTPUT "+output);
+					while(true) {
+						MainCMDHandler mainCMDHandler = new MainCMDHandler(message, null);
+						if(mainCMDHandler.parsed) {
+							output = mainCMDHandler.output;
+							System.out.println("EFPS: OUTPUT "+output);
+							if(mainCMDHandler.error==true) {
+								mainCMDHandler = new MainCMDHandler("$reset "+i, null);
+								output = mainCMDHandler.output;
+								mainCMDHandler = new MainCMDHandler(message, null);
+								output = mainCMDHandler.output;
+								if(mainCMDHandler.error==true) {
+									System.out.println("EFPS: Giving up on "+i);
+									break;
+								}
+							}
+						}
+						else {
+							System.out.println("EFPS: Parsing command "+message+" Failed");
+						}
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-					else {
-						System.out.println("EFPS: Parsing command "+message+" Failed");
-					}
+					System.out.println("EFPS: Thread for "+i+" diying..");
 
 				}
 			};
