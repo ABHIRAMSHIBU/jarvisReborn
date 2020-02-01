@@ -1,3 +1,4 @@
+package jarvisReborn;
 /*
 Copyleft (C) 2020  TUXForums
 Copyleft (C) 2020  Abhiram Shibu
@@ -16,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package jarvisReborn;
 
 import dbHandlers.InfluxDBClient;
 
