@@ -23,5 +23,5 @@ public class Specification {
 	public static String MCU="0";
 	public static int FETCH_RETRY_COUNT=10;
 	public static String plotInput;
-	public static int EFPSLoggerInterval=100; //ms
+	public static int EFPSLoggerInterval=1000; //ms
 }

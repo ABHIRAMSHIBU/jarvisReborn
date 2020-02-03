@@ -104,6 +104,7 @@ public class MainCMDHandler {
 			synchronized (Core.telnet[mcu]) {
 				output=Core.telnet[mcu].echo("sensor"+"\r");
 				if(output.equals("No input available")) {
+					error=true;
 					Core.telnet[mcu].checkTelnet(0);
 					output=Core.telnet[mcu].echo("sensor"+"\r");
 				}
@@ -134,9 +135,11 @@ public class MainCMDHandler {
 		}
 		catch(Exception e){
 			output="Error contacting ESP";
+			error=true;
 		}
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
+			error=true;
 		}
 	}
 	public void parseRESET(String input) {
@@ -164,6 +167,7 @@ public class MainCMDHandler {
 		}
 		catch(Exception e){
 			output="Reset Failure!";
+			error=true;
 		}
 		
 	}
@@ -200,6 +204,7 @@ public class MainCMDHandler {
 		}
 		else {
 			output="Out of range";
+			error=true;
 		}
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";

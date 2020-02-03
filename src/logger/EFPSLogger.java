@@ -3,7 +3,7 @@ package logger;
  * Copyleft 2020 
  * Project SSAL
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
+modify it under the terms of the GNU Generalsudi Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
@@ -45,25 +45,38 @@ public class EFPSLogger{
 							output = mainCMDHandler.output;
 							//System.out.println("EFPS: OUTPUT "+output);
 							if(mainCMDHandler.error==true) {
-								mainCMDHandler = new MainCMDHandler("$reset "+i, null);
-								output = mainCMDHandler.output;
+								//mainCMDHandler = new MainCMDHandler("$reset "+id, null);
+								//output = mainCMDHandler.output;
 								mainCMDHandler = new MainCMDHandler(message, null);
 								output = mainCMDHandler.output;
-								if(mainCMDHandler.error==true) {
-									System.out.println("EFPS: Giving up on "+i);
-									break;
-								}
+//								if(mainCMDHandler.error==true ) {
+//									System.out.println("EFPS: Giving up on "+i);
+//									break;
+//								}
 							}
 							else {
-								try {
-									int space = output.indexOf(" ");
-									float sensor1 = Float.parseFloat(output.substring(0,space));
-									float sensor2 = Float.parseFloat(output.substring(space+1));
+								try { 
+									System.out.println("EFPS: "+output);
+									String[] sensorData = output.split("\\s+");
+									float sensor1 = Float.parseFloat(sensorData[0]);
+									if(Math.abs((sensor1))>300) {
+										// Hardcoded Failure...
+										output="";
+										boolean error=false;
+										for(int j=0;j<3;j++) {
+											mainCMDHandler = new MainCMDHandler("$set 2 1 "+id, null);
+											output = mainCMDHandler.output;
+											error=mainCMDHandler.error;
+										}
+										
+									}
+									float sensor2 = Float.parseFloat(sensorData[1]);
 									System.out.println("EFPS: MCU "+id+" Sensor1 "+sensor1+" Sensor2 "+sensor2);
 									Core.dbClient.insert((id*2+0)+"", id, 0, sensor1);
 									Core.dbClient.insert((id*2+1)+"", id, 1, sensor2);
 								}
 								catch( Exception e){
+									mainCMDHandler = new MainCMDHandler("$reset "+id, null);
 									e.printStackTrace();
 								}
 							}
@@ -78,7 +91,7 @@ public class EFPSLogger{
 							e.printStackTrace();
 						}
 					}
-					System.out.println("EFPS: Thread for "+i+" diying..");
+//					System.out.println("EFPS: Thread for "+id+" diying..");
 
 				}
 			};
