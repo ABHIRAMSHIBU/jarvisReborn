@@ -111,7 +111,9 @@ font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
   text-decoration: none;
   display: block;
 }
-
+.navbar{
+    background-color:#512DAB;
+}
 .dropdown-content a:hover {background-color: #ddd;}
 
 .dropdown:hover .dropdown-content {display: block;}

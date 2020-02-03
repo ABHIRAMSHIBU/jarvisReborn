@@ -9,82 +9,6 @@
     <script src="script/BootstrapMenu.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script type="text/javascript" src="script/script.js"></script>
-    <!--<style>
-        body{
-            background:url("space.png");
-            background-repeat: initial;
-        }
-        .popup{
-        width:100%;
-        height:100%;
-        opacity:.95;
-        display:none;
-        position:fixed;
-        background-color:#313131;
-        overflow:auto;
-        font-color:white;
-        }
-        .inpopup{
-        font-size:40px;
-        text-align:center;
-        color:white;
-        }
-        .button {
-        background-color: #4CAF50; /* Green */
-        border: none;
-        color: white;
-        padding: 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        display: block;
-        cursor: pointer;
-        font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
-        }
-        .medRoundbutton{
-        border-radius: 25%;
-        background-image: linear-gradient(to bottom right,black, green);
-        color:white;
-        width:150px;
-        height:100px;
-        }
-        .medRoundbutton:hover{
-        border-radius: 25%;
-        background-image: linear-gradient(to bottom right,red, green);
-        color:white;
-        width:150px;
-        height:100px;
-        }
-        .roundbutton {
-        border-radius: 50%;
-        }
-        .addbutton{
-            position:fixed;
-            right:5%;
-            bottom:5%;
-        }
-        .header {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: #333;
-        }
-        .headerEle {
-        float: left;
-        }
-        .headerEle {
-        font-size:25px;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 20px 16px;
-        text-decoration: none;
-        font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
-        }
-    </style>-->
 </head>
 <body>
 	<form method="post" action="switches.php" id="hiddenForm" hidden=true>
@@ -103,6 +27,17 @@
                 </div>
             </div>
     </header>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!--<div class="navbar-header">
+                <a class="navbar-brand" href="#">WebSiteName</a>
+            </div>-->
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="index.php">Home</a></li>
+            <li><a href="powerpanel.php">Power panel</a></li>
+        </ul>
+        </div>
+    </nav>
     <div class="container">
         <div class="popup" id="popup" align="right">
                 <div class="inpopup" id="inpopup">
