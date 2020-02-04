@@ -31,7 +31,7 @@ import org.influxdb.dto.QueryResult.Series;
 public class InfluxDBClient {
 	public static InfluxDB db;
 	public List<List<Object>> getValues(String name,int limit){
-		QueryResult resultQuerry = db.query(new Query("SELECT * FROM " + name + " GROUP BY * ORDER BY DESC LIMIT "+limit));
+		QueryResult resultQuerry = db.query(new Query("SELECT * FROM " + "\"" +name + "\"" + " GROUP BY * ORDER BY DESC LIMIT "+limit));
 		List<Result> result = resultQuerry.getResults();
 		Result r = result.get(0);
 		Series series= r.getSeries().get(0);

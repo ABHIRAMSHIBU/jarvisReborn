@@ -33,7 +33,7 @@ public class PythonPipe {
 				
 				try {
 					BufferedReader br;
-					p = Runtime.getRuntime().exec("python3 "+file);
+					p = Runtime.getRuntime().exec("python3.7 "+file);
 					br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					while(p.getInputStream().available()>0) {
 						br.read();

@@ -22,6 +22,7 @@ import dbHandlers.InfluxDBClient;
 
 import dbHandlers.dbInit;
 import logger.EFPSLogger;
+import timeSeries.Predictor;
 import timeSeries.PythonEFPS;
 
 import java.sql.Date;
@@ -116,7 +117,8 @@ public class Core {
 		dbClient = new InfluxDBClient();
 		dbClient.connect();
 		System.out.println("Core: influxdb active");
-		pythonEFPS = new PythonEFPS();
+//		pythonEFPS = new PythonEFPS();
+		Predictor predictor = new Predictor();
 		System.out.println("Core: python EFPS Pipe active");
 		EFPSLogger efpsLogger = new EFPSLogger();
 		System.out.println("Core: python EFPS Logger active");
