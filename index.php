@@ -3,9 +3,9 @@
     <title> SAL REMOTE UI </title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title> SAL REMOTE UI </title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <script src="css/jquery.min.js"></script>
+    <script src="css/bootstrap.min.js"></script>
     <script src="script/BootstrapMenu.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script type="text/javascript" src="script/script.js"></script>
@@ -85,8 +85,10 @@
             //echo '<br>';
             echo "</div>";
         }
+        //echo "<button type=\"button\" class=\"btn btn-danger\">Danger</button>";
         echo "<div class='row'><br><br><br></div>";
-        echo "<div class='row'><br><br><br></div>";
+        echo "<div class='row'><br><br>";
+        echo "<a href=\"logout.php\"><div class='row'><br><br><center><button onclick=\"logout.php\" type=\"button\" class=\"btn btn-danger\">Logout</button></center><br></div></a>";
         echo "</div>";
         echo "</div>";
         echo "</div>";
@@ -175,7 +177,7 @@
           
         </div>
     </div>
-    
+    </div>
     <footer class="footer">
             <div class="row justify-content-center">             
                     <div class="col-auto " align="center">

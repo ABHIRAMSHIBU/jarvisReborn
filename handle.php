@@ -27,6 +27,7 @@
     }
     endSocket($socket);
     echo "Wait, your request is processing!";
+    //header("location: switches.php");
 ?>
 <br>
 <input type="button" value="Go Back" onclick="window.close();">
