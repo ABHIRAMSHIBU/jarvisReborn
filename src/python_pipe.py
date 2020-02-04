@@ -1,5 +1,8 @@
 import os
 import joblib
+from argparse import ArgumentParser
+parser.add_argument('--id', help='Id info for pipe')
+args = parser.parse_args()
 PIPE_DIRECTORY = "/run/user/"+str(os.getuid())+"/ssald"
 LOG_FILE = "/tmp/pythonPipe.log"
 f_log = open(LOG_FILE,"w")
