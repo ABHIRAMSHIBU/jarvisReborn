@@ -12,9 +12,13 @@ public class PythonPipe {
 	public FileInputStream inputFIS;
 	public BufferedReader input;
 	public PrintWriter output;
-	static Process p;
-	public PythonPipe(String pythonScript, String jPipeName, String pPipeName) {
+	Process p;
+	String id;
+	public PythonPipe(String pythonScript, String id) {
+		this.id=id;
 		startPython(pythonScript);
+		String jPipeName = "EFPSout"+id;
+	    String pPipeName =  "EFPSin"+id;
 		getPipe(jPipeName,pPipeName);
 	}
 	public void startPython(String file) {
@@ -23,6 +27,7 @@ public class PythonPipe {
 		
 			@Override
 			public void run() {
+					System.out.println("Intiated shutdown service");
 					p.destroyForcibly();
 			}
 			
@@ -33,7 +38,7 @@ public class PythonPipe {
 				
 				try {
 					BufferedReader br;
-					p = Runtime.getRuntime().exec("python3.7 "+file);
+					p = Runtime.getRuntime().exec("python3 "+file+" --id "+id);
 					br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					while(p.getInputStream().available()>0) {
 						br.read();
@@ -48,7 +53,7 @@ public class PythonPipe {
 	//							System.out.println(br.readLine());
 						if(!p.isAlive()) {
 							System.out.println("PythonPipe: Python process died, attempting to restart.");
-							p = Runtime.getRuntime().exec("python3 "+file);
+							p = Runtime.getRuntime().exec("python3 "+file+" --id "+id);
 							br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 							 
 							if(p.isAlive()) {

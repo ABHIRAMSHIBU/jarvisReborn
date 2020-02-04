@@ -12,13 +12,13 @@ public class PythonEFPS {
 	PythonPipe pythonPipe;
 	int mcu;
 	int sensor;
-	String outPipeName;
-	String inPipeName;
+
+	String id;
 	public PythonEFPS(int mcu, int sensor) {
 		this.mcu = mcu;
 		this.sensor = sensor;
-		outPipeName = "EFPSPredictorOut"+mcu+sensor;
-		inPipeName = "EFPSPredictorIn"+mcu+sensor;
+		this.id = Integer.toString(this.mcu)+Integer.toString(this.sensor);
+		pythonPipe = new PythonPipe("src/python_pipe.py",id);
 		
 	}
 	
@@ -29,36 +29,33 @@ public class PythonEFPS {
 			pointsString+=points.get(i).get(1)+",";
 		}
 		pointsString+=points.get(0).get(1);
-		System.out.println("Hello World");
-		System.out.println(pointsString);
 		return pointsString;
 		
 	}
-	public void testFailure() {
-		while(true) {
-			try {
-				Thread.sleep(Specification.EFPSLoggerInterval);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String data=pythonPipe.readPipe();
-			pythonPipe.writePipe(getNextPoints());
-			System.out.println(data);
-			if(data.equals("1")) {
-				System.out.println("LED Normal");
-			}
-			else if(data.equals("0")) {
-				System.out.println("LED Failure");
-			}
-			else {
-				System.out.println("Unknown output from Python Pipe");
-			}
-			
+	public boolean testFailure() {
+		try {
+			Thread.sleep(Specification.EFPSLoggerInterval);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		String data=pythonPipe.readPipe();
+		pythonPipe.writePipe(getNextPoints());
+		if(data.equals("1")) {
+			System.out.println("Device Normal");
+			return true;
+		}
+		else if(data.equals("0")) {
+			System.out.println("Device Failure");
+			return false;
+		}
+		else {
+			System.out.println("Unknown output from Python Pipe");
+			return true;
+		}
+
+
 	}
-	public PythonEFPS() {
-		pythonPipe = new PythonPipe("src/python_pipe.py",outPipeName,inPipeName);
-	}
+
 
 }

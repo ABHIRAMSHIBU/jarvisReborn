@@ -14,7 +14,17 @@ public class Predictor {
 				public void run() {
 					PythonEFPS pythonEFPSSensor1 = new PythonEFPS(i,0);
 					PythonEFPS pythonEFPSSensor2 = new PythonEFPS(i,1);
-					pythonEFPSSensor1.testFailure();
+					while(true) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						pythonEFPSSensor1.testFailure();
+						pythonEFPSSensor2.testFailure();
+					}
+
 					
 
 				}
