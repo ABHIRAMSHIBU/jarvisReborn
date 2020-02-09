@@ -2,6 +2,7 @@
 //Project SSAL IoT Helper [Merge]
 /* Author Abhiram Shibu, Preet Patel
  * Author Abhijith N Raj (Bug Fixes)
+ * Author Harikrishnan (Code Optimization)
  * Copyright (c) TeamDestroyer Projects 2018
  * Copyright (c) 2020 SSAL
  * Copyright (c) 2020 BrainNet Technlogies
@@ -12,10 +13,7 @@
 #include<string.h>
 /* STM32 */
 // #include<SoftwareSerial.h>
-
 #include<EEPROM.h>
-//#include<TimerOne.h> - Timer Depriciation, interfering with i2c.
-#include<MemoryFree.h>
 /* STM32 */
 #include<Wire_slave.h>
 #include <LiquidCrystal_I2C.h>
@@ -32,7 +30,7 @@
 #define BAUD 2000000
 #define DEBUG true
 #define VERSION 2.2 // Version from Arduino code
-#define INSPECT 180619
+#define INSPECT 09022020
 #define PageBaseZero 0x801F800 //PageBase0
 #define PageBaseOne 0x801FC00  //PageBase1
 #define ESPWriteDelay 20
@@ -60,16 +58,21 @@
     int count=0;
     int count_wait=0;
     int pinNow=0;
-    long time1=millis();
-    long time2=millis();
+    long time1=millis();     //LCD Scroll timer line 1
+    long time2=millis();     //LCD Scroll timer line 2
     int LCD_AVAIL;
     int LCD_UPDATE_ENABLE=true;
     LiquidCrystal_I2C *lcd;
 //END LCD VARIABLES
-    
+//ESP VARIABLES    
 bool checkESP=true;
 int counter=0;
 int counter_disconnect=0;
+//END ESP VARIABLES
+//HEART BEAT VARIABLE
+bool led=False;
+long time=millis();          //Heart beat timer
+//END HEART BEAT VARIABLE
 bool pins[16];    // Pin stats are stored here
 float temp;
 /** EEPROM BEGIN **/
@@ -141,43 +144,6 @@ String readESP(){            //Data from ESP save and return
   return dataESP;
 }
 
-/* Depricated because Arduino fucked up and idk sol */
-// String sendDataESP(int id,String data){  
-//   Serial.println(F("Entered"));
-//   String temp="AT+CIPSEND=";//<link ID>,<length>
-//   temp.concat(id);
-//   temp.concat(F(","));
-//   temp.concat(data.length()+2);
-//   temp.concat(F("\r\n"));
-//   writeESP(temp);
-//   delay(100);
-//   String inputData=readESP();
-//   if(inputData.indexOf(F("OK")>-1)){
-//     data.concat("\r\n");
-//     writeESP(data);
-//   }
-//    delay(100);
-//    readESP();
-//    Serial.println(F("Exited"));
-// }
-
-// WatchDog Stuff
-/* -----------------------*
- * Setup Watch dog timer  *
- * Watch Dog should reset *
- * CPU on overflow of     *
- * timer. Can be reset by *
- * WDTCSR function        *
- * -----------------------*/
-/* STM32 */
-// void setupWatchDog(){
-//     wdt_reset();
-//     MCUSR|=_BV(WDRF);
-//     WDTCSR = _BV(WDCE) | _BV(WDE);
-//     WDTCSR = _BV(WDE) | _BV(WDCE) | _BV(WDP0) |_BV(WDP3);
-// }
-// END WatchDog Stuff
-
 //Wire Stuff
 void initWire(){
     Wire.begin();
@@ -217,16 +183,15 @@ String pinData(){
     }
 }
 String assembleMessage(){
-    String MSG;
-//    main_message.reserve(100);
+  String MSG;
 	MSG=F("SSAL System UI  Status:");
 	MSG+=F("Active");
 	MSG+=F(", IoT Core:");
 	MSG+=F("Active");
-// 	main_message+=F(", Temp:");
-// 	main_message+=String(temp)+F("C");
+//MSG+=F(", Temp:");
+//MSG+=String(temp)+F("C");
 	MSG+=F(" ");
-    return MSG;
+  return MSG;
 }
 void updateLCD(){
     if(LCD_UPDATE_ENABLE==false){
@@ -236,7 +201,7 @@ void updateLCD(){
 		time1=millis();
 		String main_message=assembleMessage();
 		String temp_message;
-        temp_message.reserve(100);
+    temp_message.reserve(100);
 		temp_message=String(main_message);
 		String t=temp_message.substring(0,count);
 		temp_message.remove(0,count);
@@ -252,7 +217,6 @@ void updateLCD(){
 			if(count==main_message.length()){
 				count=0;
 			}
-			//Serial.println(main_message);
 		}
 	}
 	lcd->setCursor(0,1);
@@ -292,27 +256,27 @@ void initializeESP(){
     int count=0;
     mux:
     writeESP(F("AT+CWMODE?\r\n"));
-    delay(200);
+    delay(ESPWriteDelay);
     String data;
     data.reserve(100);
     data=readESP();
     if(data.indexOf("CWMODE:1")==-1){
         writeESP(F("AT+CWMODE=1\r\n"));
         Serial.println(F("Setting ap mode")); //Need to be removed..
-        delay(200);
+        delay(ESPWriteDelay);
         Serial.println(readESP());
         count++;
         if(count==10){
             writeESP(F("AT+RST\r\n"));
             Serial.println(F("Reset ESP"));
-            delay(200);
+            delay(ESPWriteDelay);
             Serial.println(readESP());
             count=0;
         }
         goto mux;
     }
     writeESP(F("AT+CIPMUX=1\r\n"));   //Set mux to 1 thereby allowing multi connection
-    delay(200);
+    delay(ESPWriteDelay);
     data =readESP();
     /* REST ESP ON UNKNOWN STATE */
     if(data.indexOf(F("ERROR"))>-1){
@@ -324,12 +288,9 @@ void initializeESP(){
         }
         goto mux;
       }
-      else{
-//         Serial.print("Link Active");
-      }
     }
     writeESP(F("AT+CIPSERVER=1,23\r\n"));  //Start server
-    delay(200);
+    delay(ESPWriteDelay);
     Serial.print(F("Data:"));
     data =readESP();
     Serial.println(data);
@@ -349,8 +310,23 @@ void initializeESP(){
     }
     counter=0;
 }
-bool led=False;
-
+/* ESP sendData function for automatically doing all sending procedure */
+void sendData(int id, String pinString){
+    String temp="AT+CIPSEND=";//<link ID>,<length>
+    temp.concat(id);
+    temp.concat(F(","));
+    temp.concat(pinString.length()+2);
+    temp.concat(F("\r\n"));
+    writeESP(temp);
+    delay(ESPWriteDelay);
+    String inputData=readESP();
+    if(inputData.indexOf(F("OK"))>-1){
+        pinString.concat(F("\r\n"));
+        writeESP(pinString);
+    }
+    delay(ESPWriteDelay);
+    readESP();
+}
 /* Interrupt Service Routine for legacy timer one, ESP reset check routine */
 void CUSTOM_ISR(void){
   if(led){
@@ -363,13 +339,6 @@ void CUSTOM_ISR(void){
   }
   checkESP=true;
 }
-
-/* Interrupt initialization code for above ISR */ // Depricated!
-// void initializeInterrupt(){
-//   pinMode(13,1);
-//   Timer1.initialize(10000000); //Heart Beat ( ESP refresh signal.. )
-//   Timer1.attachInterrupt(CUSTOM_ISR); 
-// }
 
 /* pinmap definition */
 /* 
@@ -464,6 +433,8 @@ void pinInit(){
 
 
 void setup() {
+  initWire();
+  initLCD();
   EEPROMinit();
   loadFromEEPROM();
   pinInit();
@@ -474,21 +445,13 @@ void setup() {
   Serial1.begin(ESPBAUD); //Serial to ESP mainly 11,12
   Serial.setTimeout(10); // Set string read timeout, without this readString is slow
   Serial1.setTimeout(10);   // Reduce rx tx timeout, we dont have decades to wait.
-  initWire();
-  initLCD();
   initializeESP();
   Serial.println(F("Welcome to SSAL IoT Core"));
-  Serial.print(F("freeMemory()="));
-  Serial.println(freeMemory());  // Print free memory ocationally  // Can interrupt
-  /* STM32 */
-//   setupWatchDog();
 }
-long time=millis();
 void loop() {
   updateLCD();
-  //Serial.println("After UpdateLCD");
   //ISR is now replaced by millis watchdog
-  if((millis()-time)>60000){ // Run timer every 5 seconds
+  if((millis()-time)>5000){ // Run timer every 5 seconds
     CUSTOM_ISR();  //Call legacy ISR
     time=millis(); //Reset virtual timer 
     LCD_UPDATE_ENABLE=true;
@@ -497,25 +460,20 @@ void loop() {
     Serial.println("CheckESP");
       /* ESP RESET/SERVER CHECK */
     writeESP(F("AT+CIPMUX?\r\n"));  //Check MUX status, for server to run it should be 1
-    delay(300);
+    delay(ESPWriteDelay);
     String data;
     data.reserve(100);
     data=readESP();
-//     Serial.print("Interrpt:");
-//     Serial.println(data);
     if(data.indexOf(F("+CIPMUX:1"))==-1){  // not 1 make it 1
-//       Serial.println("ESP RESET DETECTED!");
       initializeESP();                  //Reinitiallize there by making mux 1
       Serial.println(F("Re-initallized ESP"));
     }
     dataESP="";
-    Serial.print(F("Free RAM = "));
-    Serial.println(freeMemory());        //Print free ram periodically
     checkESP=false;
     
     /* ESP CONNECTION CHECK */
     writeESP(F("AT+CIPSTATUS\r\n"));
-    delay(300);
+    delay(ESPWriteDelay);
     data = readESP();
     Serial.print(F("Hotspot data:"));
     Serial.println(data);
@@ -524,51 +482,24 @@ void loop() {
         if(counter_disconnect==3){
             counter_disconnect=0;
             writeESP(F("AT+CWMODE_CUR=2\r\n"));
-            delay(300);
+            delay(ESPWriteDelay);
             readESP();
             writeESP(F("AT+CWDHCP_CUR=0,1\r\n"));
-            delay(300);
+            delay(ESPWriteDelay);
             readESP();
             Serial.println(F("Hotspot initallized!"));
             long time=millis();
             while((millis()-time)<60000){
-        //Wire.onRequest(sendData);
-                //passThrough();
-                if(dataESP.indexOf(F("+IPD,"))>-1){     //Check if data from SSAL Core is available
-                    dataESP.remove(0,dataESP.indexOf(F(","))+1); //Remove header
-                    int id=dataESP.substring(0,1).toInt();  // Get id
-                    Serial.print(F("ID :"));       
-                    Serial.println(id);
-                    dataESP.remove(0,dataESP.indexOf(":")+1);  //Remove id
-                    Serial.print(F("Trimmed data:"));
-                    Serial.println(dataESP);     //Now u have data\r\n left
-                    if(id==0){                   // Allow only id 0
-//                         if(dataESP.startsWith(F("writeAP="))){
-//                             //Syntax wiriteAP=ssid,pass no quotes needed
-//                             dataESP.remove(0,dataESP.indexOf(F("="))+1);
-//                             String SSID = dataESP.substring(0,dataESP.indexOf(F(",")));
-//                             String PASS = dataESP.substring(dataESP.indexOf(F(","))+1);
-//                             Serial.print(F("SSID ="));
-//                             writeESSID_EEPROM(SSID);
-//                             Serial.println(readESSID_EEPROM());
-//                             Serial.print(F("PASS ="));
-//                             writePass_EEPROM(PASS);
-//                             Serial.println(readPass_EEPROM());
-//                         }
-                    }
-                }
+              //Wait in hotspot mode
             }
             writeESP(F("AT+RST\r\n"));
-            delay(300);
+            delay(ESPWriteDelay);
             readESP();
         }
     }
   }
-  //Serial.println("passThrough");
   passThrough();                         //Pass data from one serial to another
-  if(!dataSerial.equals("")){            //Data from serial is available
-    dataSerial="";
-  }
+  dataSerial="";                         //Clear serial data
   if(!dataESP.equals("")){               //Data from ESP available
     bool sensorFlag=false;
     if(dataESP.indexOf(F("CONNECT"))>-1){   //Check if there is a connection and absorb next line
@@ -581,13 +512,10 @@ void loop() {
       LCD_UPDATE_ENABLE=false; //Stop LCD update, give priority to calls
       dataESP.remove(0,dataESP.indexOf(",")+1); //Remove header
       int id=dataESP.substring(0,1).toInt();  // Get id
-      //Serial.print(F("ID :"));       
-      //Serial.println(id);
       dataESP.remove(0,dataESP.indexOf(":")+1);  //Remove id
-      //Serial.print(F("Trimmed data:"));
-      //Serial.println(dataESP);     //Now u have data\r\n left
       if(id==0){                   // Allow only id 0
-        if(dataESP.indexOf(F(" "))>-1){
+        int dataESPLength=dataESP.length();
+        if(dataESPLength>=5 && dataESPLength<=6){
             /* Find space split into pin and operation, then compile and send */
             int space = dataESP.indexOf(F(" "));
             int pin=dataESP.substring(0,space).toInt();
@@ -600,90 +528,29 @@ void loop() {
             String pinString;
             pinString.reserve(10);
             pinString=dataESP.substring(0,dataESP.length()-2);
-    /* Depreciated for faster reply */
-    //         pinString=String(pin);
-    //         pinString.concat(F(" "));
-    //         if(operation){
-    //             pinString.concat(F("on"));
-    //         }
-    //         else{
-    //             pinString.concat(F("off"));
-    //         }
-            /* Send assembled reply */
-            
-            //SendData - Because ardunio dont like functions
-            String temp="AT+CIPSEND=";//<link ID>,<length>
-            temp.concat(id);
-            temp.concat(F(","));
-            temp.concat(pinString.length()+2);
-            temp.concat(F("\r\n"));
-            writeESP(temp);
-            delay(ESPWriteDelay);
-            String inputData=readESP();
-            if(inputData.indexOf(F("OK"))>-1){
-                pinString.concat(F("\r\n"));
-                writeESP(pinString);
-            }
-            delay(ESPWriteDelay);
-            readESP();
-            //End SendData
+            sendData(id,pinString);
         }
         else{
         /* Here pin status is retrived and send to the SSAL Core */
             if(dataESP.indexOf(F("sensor"))==-1){
-            
-                int pin=dataESP.substring(0,dataESP.length()-2).toInt();
-                
-                //SendData - Because ardunio dont like functions
+                int pin=dataESP.substring(0,dataESP.length()-2).toInt(); 
                 String pinString;
                 pinString.reserve(10);
                 pinString=String(pins[pin]);
                 sensorFlag=false;
-                String temp="AT+CIPSEND=";//<link ID>,<length>
-                temp.reserve(50);
-                temp.concat(id);
-                temp.concat(",");
-                temp.concat(pinString.length()+2);
-                temp.concat(F("\r\n"));
-                writeESP(temp);
-                delay(ESPWriteDelay);
-                String inputData=readESP();
-                if(inputData.indexOf("OK")>-1){
-                    pinString.concat("\r\n");
-                    writeESP(pinString);
-                }
-                delay(ESPWriteDelay);
-                readESP();
-                //End SendData
+                sendData(id,pinString);
             }
             else{
                 sensorFlag=true;
             }
         }
-        //Serial.println("After Main Command Processing");
       }
       else{
         /* There can be only one active connection */
         String pinString=F("Not allowed!");
         sensorFlag=false;
-        //SendData 
-          String temp;
-          temp.reserve(50);
-          temp="AT+CIPSEND="; //<link ID>,<length>
-          temp.concat(id);
-          temp.concat(",");
-          temp.concat(pinString.length()+2);
-          temp.concat("\r\n");
-          writeESP(temp);
-          delay(ESPWriteDelay);
-          String inputData=readESP();
-          if(inputData.indexOf(F("OK"))>-1){
-            pinString.concat(F("\r\n"));
-            writeESP(pinString);
-          }
-          delay(ESPWriteDelay);
-          readESP();
-          //End SendData
+        String temp;
+        sendData(id,pinString);
       }
     }
     writeESP(F("AT+CIPSTATUS\r\n"));
@@ -696,25 +563,8 @@ void loop() {
         senseData+=String(readCurrent(PA1));
         senseData+="\n";
         String temp;
-        temp.reserve(50);
-        temp="AT+CIPSEND="; //<link ID>,<length>
-        temp.concat(0);
-        temp.concat(",");
-        temp.concat(senseData.length()+2);
-        temp.concat("\r\n");
-        writeESP(temp);
-        delay(ESPWriteDelay);
-        String inputData=readESP();
-        if(inputData.indexOf(F("OK"))>-1){
-            senseData.concat(F("\r\n"));
-            writeESP(senseData);
-        }
-        delay(ESPWriteDelay);
-        readESP();
-        //Serial.println("After Sensor Command Processing");
+        sendData(0,senseData);
     }
     dataESP="";       //ESP data never got logged wink wink
-    /* STM32 */
-    //     wdt_reset();
   }
 }
