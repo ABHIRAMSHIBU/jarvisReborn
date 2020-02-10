@@ -52,8 +52,17 @@
 |        12 -> PB2      |
 |        13 -> PC13     |
 *-----------------------*
----End pinMaps DOC ------*/
 
+---End pinMaps DOC ------*/
+/*--ADC Sensor Map ------*/
+/*-----------------------*
+|        PA0->0          |
+|        PA1->1          |
+|        PB0->2          |
+|        PB1->3          |
+*------------------------*
+
+---End ADC Sensor Map    */
 //LCD VARIABLES
     int count=0;
     int count_wait=0;
@@ -64,6 +73,12 @@
     int LCD_UPDATE_ENABLE=true;
     LiquidCrystal_I2C *lcd;
 //END LCD VARIABLES
+//SENSOR VARIABLES
+    short sensor_buffer[10][4];
+    short sensor_buffer_front=-1;
+    short sensor_buffer_back=0;
+    long last_sample=millis();            //Timer to sample
+//END SENSOR VARIABLES
 //ESP VARIABLES    
 bool checkESP=true;
 int counter=0;
@@ -128,6 +143,48 @@ float readCurrent(int analogInput){
     float voltage= (sensorVal*3.3)/4096; //STM32 3.3 v reference.
     float amps=(1.65-voltage)/0.07;
     return amps;
+}
+String sendSensorBuffer(){
+  //send
+  String senseData="";
+  for(short i=0;i<10;i++){
+    short offset=(sensor_buffer_front+i)%10;
+    for(short j=0;j<4;j++){
+      senseData+= sensor_buffer[offset][j];
+      if(j!=3){
+        senseData+="\t";
+      }
+    }
+    if(i!=9){
+      senseData+="\n";
+    }
+  }
+  return senseData;
+}
+void insertSensorBuffer(short a, short b, short c, short d){
+  //insert
+  if(sensor_buffer_front==-1){
+    //first insert
+    sensor_buffer_front=0;
+    sensor_buffer[0][0]=a;
+    sensor_buffer[0][1]=b;
+    sensor_buffer[0][2]=c;
+    sensor_buffer[0][3]=d;
+    sensor_buffer_back+=1;
+  }
+  else{
+   //Normal
+   if(sensor_buffer_front==sensor_buffer_back){
+      sensor_buffer_front+=1;
+      sensor_buffer_front=sensor_buffer_front%10;
+   }
+   sensor_buffer[sensor_buffer_back][0]=a;
+   sensor_buffer[sensor_buffer_back][1]=b;
+   sensor_buffer[sensor_buffer_back][2]=c;
+   sensor_buffer[sensor_buffer_back][3]=d;
+   sensor_buffer_back+=1;
+   sensor_buffer_back=sensor_buffer_back%10;
+  }
 }
 /* END Sensor */
 /* Serial Communication Handlers */
@@ -428,6 +485,8 @@ void pinInit(){
     }
     pinMode(PA0,INPUT);
     pinMode(PA1,INPUT);
+    pinMode(PB0,INPUT);
+    pinMode(PB1,INPUT);
 }
 /* END pin initialization */
 
@@ -558,13 +617,17 @@ void loop() {
     String data = readESP();
     if(data.indexOf(F(":3"))>-1 && sensorFlag){
         //Write Sensor Data
-        String senseData=String(readCurrent(PA0));
-        senseData+="\t";
-        senseData+=String(readCurrent(PA1));
-        senseData+="\n";
-        String temp;
+        String senseData=sendSensorBuffer();
         sendData(0,senseData);
     }
     dataESP="";       //ESP data never got logged wink wink
+  }
+  if((millis()-last_sample)>=100){
+    short a = readCurrent(PA0)*1000;
+    short b = readCurrent(PA1)*1000;
+    short c = readCurrent(PB0)*1000;
+    short d = readCurrent(PB1)*1000;
+    insertSensorBuffer(a,b,c,d);
+    last_sample=millis();
   }
 }
