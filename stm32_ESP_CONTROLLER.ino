@@ -152,11 +152,11 @@ String sendSensorBuffer(){
     for(short j=0;j<4;j++){
       senseData+= sensor_buffer[offset][j];
       if(j!=3){
-        senseData+="\t";
+        senseData+=", ";
       }
     }
     if(i!=9){
-      senseData+="\n";
+      senseData+="\t";
     }
   }
   return senseData;
