@@ -25,8 +25,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
-
-
 import jarvisReborn.Specification;
 
 
@@ -105,10 +103,11 @@ public class Telnet{
 	}
 	public String echo(String data) {
 		PrintWriter out = null;
-		BufferedReader in = null;
+		java.util.Scanner in = null;
 		try {
 			out = new PrintWriter(socket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			in = new java.util.Scanner(new InputStreamReader(socket.getInputStream(), "ASCII"));
+			in.useDelimiter("\r\n");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -141,14 +140,18 @@ public class Telnet{
 		try {
 			int j=0;
 			int retryCount=Specification.FETCH_RETRY_COUNT;
+			z="";
+			boolean flag=false;
 			while(j<retryCount) {
 				if(socket.getInputStream().available()>0) {
-					z = (in.readLine());
+					z += in.nextLine();
+					System.out.println("Debug:"+z);
+					flag=true;
+				}
+				if(flag) {
 					break;
 				}
-				else {
-					z = "No input available";
-				}
+					
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -157,11 +160,15 @@ public class Telnet{
 				}
 				j++;
 			}
+			if(z=="") {
+				z="No input available";
+			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		run=true;
+		z.strip();
 		return z;
 	}
 	public Telnet() {

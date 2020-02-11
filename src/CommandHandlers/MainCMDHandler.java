@@ -18,6 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package CommandHandlers;
 
+import java.util.List;
+import jarvisReborn.Specification;
+
 import javax.swing.JTextArea;
 import org.jfree.ui.RefineryUtilities;
 
@@ -211,6 +214,11 @@ public class MainCMDHandler {
 			error=true;
 		}
 	}
-
+	static int[][] splitSensorValues(String input) {
+		String[] temp = input.split("\t");
+		while(int i=0;i<Specification.;i++) {
+			
+		}
+	}
 	
 }

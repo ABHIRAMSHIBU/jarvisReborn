@@ -24,4 +24,5 @@ public class Specification {
 	public static int FETCH_RETRY_COUNT=10;
 	public static String plotInput;
 	public static int EFPSLoggerInterval=1000; //ms
+	public static int SENSORCACHECOUNT=10;
 }
