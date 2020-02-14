@@ -168,7 +168,6 @@ public class Telnet{
 			e1.printStackTrace();
 		}
 		run=true;
-		z.strip();
 		return z;
 	}
 	public Telnet() {

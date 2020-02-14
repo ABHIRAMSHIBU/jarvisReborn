@@ -38,17 +38,20 @@ public class EFPSLogger{
 				int id=i;
 				String message = "$sensors "+i;
 				String output = "";
+				int arr[][];
 				public void run() {
 					while(true) {
 						MainCMDHandler mainCMDHandler = new MainCMDHandler(message, null);
 						if(mainCMDHandler.parsed) {
 							output = mainCMDHandler.output;
+							arr=mainCMDHandler.sensorParser.getArray();
 							//System.out.println("EFPS: OUTPUT "+output);
 							if(mainCMDHandler.error==true) {
 								//mainCMDHandler = new MainCMDHandler("$reset "+id, null);
 								//output = mainCMDHandler.output;
 								mainCMDHandler = new MainCMDHandler(message, null);
 								output = mainCMDHandler.output;
+								arr=mainCMDHandler.sensorParser.getArray();
 //								if(mainCMDHandler.error==true ) {
 //									System.out.println("EFPS: Giving up on "+i);
 //									break;
@@ -57,23 +60,13 @@ public class EFPSLogger{
 							else {
 								try { 
 									System.out.println("EFPS: "+output);
-									String[] sensorData = output.split("\\s+");
-									float sensor1 = Float.parseFloat(sensorData[0]);
-									if(Math.abs((sensor1))>300) {
-										// Hardcoded Failure...
-										output="";
-										boolean error=false;
-										for(int j=0;j<3;j++) {
-											mainCMDHandler = new MainCMDHandler("$set 2 1 "+id, null);
-											output = mainCMDHandler.output;
-											error=mainCMDHandler.error;
+									for(int i=0;i<Specification.sensorBufferLength;i++) {
+										for(int j=0;j<Specification.sensorCount;j++) {
+											int sensor = arr[i][j];
+											System.out.println("EFPS: MCU "+id+" Sensor"+j+" "+sensor);
+											Core.dbClient.insert((id*4+j)+"", id, 0, sensor);
 										}
-										
 									}
-									float sensor2 = Float.parseFloat(sensorData[1]);
-									System.out.println("EFPS: MCU "+id+" Sensor1 "+sensor1+" Sensor2 "+sensor2);
-									Core.dbClient.insert((id*2+0)+"", id, 0, sensor1);
-									Core.dbClient.insert((id*2+1)+"", id, 1, sensor2);
 								}
 								catch( Exception e){
 									mainCMDHandler = new MainCMDHandler("$reset "+id, null);

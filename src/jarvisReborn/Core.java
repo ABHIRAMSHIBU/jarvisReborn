@@ -120,7 +120,7 @@ public class Core {
 //		pythonEFPS = new PythonEFPS();
 		//Predictor predictor = new Predictor();
 		System.out.println("Core: python EFPS Pipe active");
-		//EFPSLogger efpsLogger = new EFPSLogger();
+		EFPSLogger efpsLogger = new EFPSLogger();
 		System.out.println("Core: python EFPS Logger active");
 		System.out.println("Core: SSAL System Active!");
 		System.out.println("Core: Bye..");

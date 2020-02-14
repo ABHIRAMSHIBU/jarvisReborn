@@ -29,6 +29,7 @@ import Sockets.Telnet;
 import jarvisReborn.Core;
 import jarvisReborn.Specification;
 import jarvisReborn.PlotCurrentGUI;
+import jarvisReborn.SensorParser;
 
 public class MainCMDHandler {
 	
@@ -37,6 +38,7 @@ public class MainCMDHandler {
 	public boolean parsed=false;
 	public String output=""; 
 	public boolean error=false;
+	public SensorParser sensorParser;
 	JTextArea ta;
 	public MainCMDHandler(String input,JTextArea ta) {
 		// TODO Auto-generated constructor stub
@@ -120,6 +122,10 @@ public class MainCMDHandler {
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
 			error=true;
+		}
+		if(error!=true) {
+			sensorParser=new SensorParser(output);
+			output=sensorParser.toString();
 		}
 	}
 	public void parseTEST(String input) {
@@ -212,12 +218,6 @@ public class MainCMDHandler {
 		if(!Core.telnet[mcu].run) {
 			output="Error contacting ESP";
 			error=true;
-		}
-	}
-	static int[][] splitSensorValues(String input) {
-		String[] temp = input.split("\t");
-		while(int i=0;i<Specification.;i++) {
-			
 		}
 	}
 	

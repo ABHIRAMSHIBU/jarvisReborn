@@ -25,4 +25,6 @@ public class Specification {
 	public static String plotInput;
 	public static int EFPSLoggerInterval=1000; //ms
 	public static int SENSORCACHECOUNT=10;
+	public static int sensorCount=4;
+	public static int sensorBufferLength=10;
 }
