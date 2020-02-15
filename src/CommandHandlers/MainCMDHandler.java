@@ -86,10 +86,11 @@ public class MainCMDHandler {
 					chart.pack( );
 					RefineryUtilities.centerFrameOnScreen( chart );
 					chart.setVisible(true);
+					System.out.println("Set Visible True");
 					chart.update();
 					while(chart.userCloseButtonClick==false) {
 				    	  try {
-							Thread.sleep(1000);
+							Thread.sleep(Specification.plotRefreshInterval);
 						      chart.update();				
 						  } 
 				    	  catch (InterruptedException e) {

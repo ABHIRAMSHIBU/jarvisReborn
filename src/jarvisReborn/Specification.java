@@ -27,4 +27,5 @@ public class Specification {
 	public static int SENSORCACHECOUNT=10;
 	public static int sensorCount=4;
 	public static int sensorBufferLength=10;
+	public static int plotRefreshInterval=750; //ms
 }
