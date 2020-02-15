@@ -17,18 +17,25 @@ public class PythonEFPS {
 	public PythonEFPS(int mcu, int sensor) {
 		this.mcu = mcu;
 		this.sensor = sensor;
-		this.id = Integer.toString(this.mcu)+Integer.toString(this.sensor);
+		this.id = Integer.toString(4*this.mcu)+"-"+Integer.toString(this.sensor);
 		pythonPipe = new PythonPipe("src/python_pipe.py",id);
 		
 	}
 	
 	String getNextPoints(){
-		List<List <Object>> points = Core.dbClient.getValues((mcu*2+sensor)+"", 100);
+		System.out.println("PythonEFPS: "+(mcu*4+sensor));
 		String pointsString = "";
-		for(int i=99;i>=1;i--) {
-			pointsString+=points.get(i).get(1)+",";
+		try {
+			List<List <Object>> points = Core.dbClient.getValues((mcu*4+sensor)+"", 100);
+			for(int i=99;i>=1;i--) {
+				pointsString+=points.get(i).get(1)+",";
+			}
+			pointsString+=points.get(0).get(1);
 		}
-		pointsString+=points.get(0).get(1);
+		catch (Exception e) {
+			System.out.println("pythonEFPS: DB error on "+(mcu*4+sensor));
+		}
+		
 		return pointsString;
 		
 	}
@@ -42,11 +49,11 @@ public class PythonEFPS {
 		String data=pythonPipe.readPipe();
 		pythonPipe.writePipe(getNextPoints());
 		if(data.equals("1")) {
-			System.out.println("Device Normal");
+			System.out.println("pythonEFPS:"+this.id+"Device Normal");
 			return true;
 		}
 		else if(data.equals("0")) {
-			System.out.println("Device Failure");
+			System.out.println("pythonEFPS:"+this.id+"Device Failure");
 			return false;
 		}
 		else {

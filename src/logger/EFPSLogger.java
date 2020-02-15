@@ -40,18 +40,53 @@ public class EFPSLogger{
 				String output = "";
 				int arr[][];
 				public void run() {
+					int retryCount=0;
 					while(true) {
 						MainCMDHandler mainCMDHandler = new MainCMDHandler(message, null);
 						if(mainCMDHandler.parsed) {
 							output = mainCMDHandler.output;
-							arr=mainCMDHandler.sensorParser.getArray();
+							try {
+								arr=mainCMDHandler.sensorParser.getArray();
+							}
+							catch(NullPointerException e) {
+								e.printStackTrace();
+								try {
+									Thread.sleep(100);
+								} catch (InterruptedException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								retryCount+=1;
+								if(retryCount==Specification.FETCH_RETRY_COUNT) {
+									break;
+								}
+								continue;
+							}
+							retryCount=0;
 							//System.out.println("EFPS: OUTPUT "+output);
 							if(mainCMDHandler.error==true) {
 								//mainCMDHandler = new MainCMDHandler("$reset "+id, null);
 								//output = mainCMDHandler.output;
 								mainCMDHandler = new MainCMDHandler(message, null);
 								output = mainCMDHandler.output;
-								arr=mainCMDHandler.sensorParser.getArray();
+								try {
+									arr=mainCMDHandler.sensorParser.getArray();
+								}
+								catch(NullPointerException e) {
+									e.printStackTrace();
+									try {
+										Thread.sleep(100);
+									} catch (InterruptedException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+									retryCount+=1;
+									if(retryCount==Specification.FETCH_RETRY_COUNT) {
+										break;
+									}
+									continue;
+								}
+								retryCount=0;
 //								if(mainCMDHandler.error==true ) {
 //									System.out.println("EFPS: Giving up on "+i);
 //									break;
@@ -63,7 +98,6 @@ public class EFPSLogger{
 									for(int i=0;i<Specification.sensorBufferLength;i++) {
 										for(int j=0;j<Specification.sensorCount;j++) {
 											int sensor = arr[i][j];
-											System.out.println("EFPS: MCU "+id+" Sensor"+j+" "+sensor);
 											Core.dbClient.insert((id*4+j)+"", id, 0, sensor);
 										}
 									}

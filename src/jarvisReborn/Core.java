@@ -117,8 +117,8 @@ public class Core {
 		dbClient = new InfluxDBClient();
 		dbClient.connect();
 		System.out.println("Core: influxdb active");
-//		pythonEFPS = new PythonEFPS();
-		//Predictor predictor = new Predictor();
+		pythonEFPS = new PythonEFPS(1,0);
+		Predictor predictor = new Predictor();
 		System.out.println("Core: python EFPS Pipe active");
 		EFPSLogger efpsLogger = new EFPSLogger();
 		System.out.println("Core: python EFPS Logger active");

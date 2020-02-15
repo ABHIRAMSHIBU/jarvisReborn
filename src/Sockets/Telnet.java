@@ -145,7 +145,6 @@ public class Telnet{
 			while(j<retryCount) {
 				if(socket.getInputStream().available()>0) {
 					z += in.nextLine();
-					System.out.println("Debug:"+z);
 					flag=true;
 				}
 				if(flag) {

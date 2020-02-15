@@ -8,6 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+
+import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
+
+import jarvisReborn.Specification;
 public class PythonPipe {
 	public FileInputStream inputFIS;
 	public BufferedReader input;
@@ -45,14 +49,16 @@ public class PythonPipe {
 					}
 	//						System.out.println(br.readLine());
 	//						Thread.sleep(1000);
+					int retryCount=0;
 					while(true){
-						Thread.sleep(10);
+						Thread.sleep(2000);
 						while(p.getInputStream().available()>0) {
 							br.read();
 						}
 	//							System.out.println(br.readLine());
 						if(!p.isAlive()) {
-							System.out.println("PythonPipe: Python process died, attempting to restart.");
+							retryCount++;
+							System.out.println("PythonPipe: Python process died for id=,"+id+ "attempting to restart.");
 							p = Runtime.getRuntime().exec("python3 "+file+" --id "+id);
 							br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 							 
@@ -60,6 +66,11 @@ public class PythonPipe {
 								System.out.println("PythonPipe: Python process restored to alive state.");
 								
 							}
+						}
+						else {
+						}
+						if(retryCount==Specification.FETCH_RETRY_COUNT) {
+							break;
 						}
 					}
 				}	
