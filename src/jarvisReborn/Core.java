@@ -58,13 +58,14 @@ public class Core {
 	}
 	Core(){
 		GUI gui = new GUI();
-		Thread telegram = new Thread() {
-			public void run() {
-				new SSALTeleInit(gui);
-			}
-		};
-		telegram.start();
-		tele=telegram;
+		/* Java based telegram bot is depricated  */
+//		Thread telegram = new Thread() {
+//			public void run() {
+//				new SSALTeleInit(gui);
+//			}
+//		};
+//		telegram.start();
+//		tele=telegram;
 		/** 
 		 * Config Section
 		 * File in /home/username/SSAL/ssal.conf 
