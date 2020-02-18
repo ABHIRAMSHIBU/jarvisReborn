@@ -171,6 +171,8 @@ public class MainCMDHandler {
 					System.out.println("Starting telnet for id:"+id+" ip:"+ip);
 					Core.telnet[configParse.data.get(i).id] = new Telnet(configParse.data.get(i).ip,23);
 					System.out.println("Reset Success!");
+					Core.efpsLogger.i=id;
+					Core.efpsLogger.createThread();
 					output="Reset Success!";
 				}
 			}

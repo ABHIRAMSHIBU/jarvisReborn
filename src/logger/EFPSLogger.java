@@ -24,7 +24,7 @@ import jarvisReborn.Specification;
 public class EFPSLogger{
 	static int mcuCount = Core.configParse.data.size();
 	public static Thread loggerThread[] = new Thread[mcuCount];
-	private static int i;
+	public static int i;
 	
 	public EFPSLogger() {
 		this.createThreads();
@@ -33,17 +33,45 @@ public class EFPSLogger{
 	public void createThreads() {
 		System.out.println("EFPS: createThreads function called");
 		for(i=0;i<Core.configParse.data.size();i++) {
-			System.out.println("EFPS: loop iterations 1");
-			loggerThread[i] = new Thread() {
-				int id=i;
-				String message = "$sensors "+i;
-				String output = "";
-				int arr[][];
-				public void run() {
-					int retryCount=0;
-					while(true) {
-						MainCMDHandler mainCMDHandler = new MainCMDHandler(message, null);
-						if(mainCMDHandler.parsed) {
+			createThread();
+		}
+		
+	}
+	public void createThread() {
+		loggerThread[i] = new Thread() {
+			int id=i;
+			String message = "$sensors "+i;
+			String output = "";
+			int arr[][];
+			public void run() {
+				int retryCount=0;
+				while(true) {
+					MainCMDHandler mainCMDHandler = new MainCMDHandler(message, null);
+					if(mainCMDHandler.parsed) {
+						output = mainCMDHandler.output;
+						try {
+							arr=mainCMDHandler.sensorParser.getArray();
+						}
+						catch(NullPointerException e) {
+							e.printStackTrace();
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							retryCount+=1;
+							if(retryCount==Specification.FETCH_RETRY_COUNT) {
+								break;
+							}
+							continue;
+						}
+						retryCount=0;
+						//System.out.println("EFPS: OUTPUT "+output);
+						if(mainCMDHandler.error==true) {
+							//mainCMDHandler = new MainCMDHandler("$reset "+id, null);
+							//output = mainCMDHandler.output;
+							mainCMDHandler = new MainCMDHandler(message, null);
 							output = mainCMDHandler.output;
 							try {
 								arr=mainCMDHandler.sensorParser.getArray();
@@ -63,69 +91,41 @@ public class EFPSLogger{
 								continue;
 							}
 							retryCount=0;
-							//System.out.println("EFPS: OUTPUT "+output);
-							if(mainCMDHandler.error==true) {
-								//mainCMDHandler = new MainCMDHandler("$reset "+id, null);
-								//output = mainCMDHandler.output;
-								mainCMDHandler = new MainCMDHandler(message, null);
-								output = mainCMDHandler.output;
-								try {
-									arr=mainCMDHandler.sensorParser.getArray();
-								}
-								catch(NullPointerException e) {
-									e.printStackTrace();
-									try {
-										Thread.sleep(100);
-									} catch (InterruptedException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-									retryCount+=1;
-									if(retryCount==Specification.FETCH_RETRY_COUNT) {
-										break;
-									}
-									continue;
-								}
-								retryCount=0;
-//								if(mainCMDHandler.error==true ) {
-//									System.out.println("EFPS: Giving up on "+i);
-//									break;
-//								}
-							}
-							else {
-								try { 
-									System.out.println("EFPS: "+output);
-									for(int i=0;i<Specification.sensorBufferLength;i++) {
-										for(int j=0;j<Specification.sensorCount;j++) {
-											int sensor = arr[i][j];
-											Core.dbClient.insert((id*4+j)+"", id, 0, sensor);
-										}
-									}
-								}
-								catch( Exception e){
-									mainCMDHandler = new MainCMDHandler("$reset "+id, null);
-									e.printStackTrace();
-								}
-							}
+//							if(mainCMDHandler.error==true ) {
+//								System.out.println("EFPS: Giving up on "+i);
+//								break;
+//							}
 						}
 						else {
-							System.out.println("EFPS: Parsing command "+message+" Failed");
-						}
-						try {
-							Thread.sleep(Specification.EFPSLoggerInterval);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							try { 
+								System.out.println("EFPS: "+output);
+								for(int i=0;i<Specification.sensorBufferLength;i++) {
+									for(int j=0;j<Specification.sensorCount;j++) {
+										int sensor = arr[i][j];
+										Core.dbClient.insert((id*4+j)+"", id, 0, sensor);
+									}
+								}
+							}
+							catch( Exception e){
+								mainCMDHandler = new MainCMDHandler("$reset "+id, null);
+								e.printStackTrace();
+							}
 						}
 					}
-//					System.out.println("EFPS: Thread for "+id+" diying..");
-
+					else {
+						System.out.println("EFPS: Parsing command "+message+" Failed");
+					}
+					try {
+						Thread.sleep(Specification.EFPSLoggerInterval);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			};
-			loggerThread[i].start();
-		}
-		
+//				System.out.println("EFPS: Thread for "+id+" diying..");
+
+			}
+		};
+		loggerThread[i].start();
 	}
-	
-	
 }
