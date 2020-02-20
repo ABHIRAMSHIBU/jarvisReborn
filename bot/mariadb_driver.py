@@ -11,6 +11,22 @@ class Driver:
             return dict(self.mycursor)[0]
         except:
             return None
+    def add_device(self,room_id,dev_id,dev_name):
+        query = "insert into ssal_switches(id,id_switch,name) values ("+str(room_id)+","+str(dev_id)+","+"\""+dev_name+"\");"
+        self.mycursor.execute(query);
+        self.mydb.commit()
+    def add_room(self,room_id,room_name):
+        query = "insert into ssal_rooms(id,name) values ("+str(room_id)+","+"\""+room_name+"\");"
+        self.mycursor.execute(query);
+        self.mydb.commit()
+    def delete_room(self,room_id):
+        query = "delete from ssal_rooms where id ="+str(room_id)+";"
+        self.mycursor.execute(query);
+        self.mydb.commit()
+    def delete_device(self,room_id,dev_id):
+        query = "delete from ssal_switches where id="+str(room_id)+" and id_switch="+str(dev_id)+";"
+        self.mycursor.execute(query);
+        self.mydb.commit()
     def room_to_id(self,room_name):
         query = "select id from ssal_rooms where lower(name) = \""+room_name+"\";"
         self.mycursor.execute(query)
@@ -69,6 +85,10 @@ class Driver:
     #print(room_to_id("drwaing room"))
     #print(switch_to_id("testpin",True))
 d = Driver()
+#d.add_device(0,6,"Cooler")
+#d.add_room(7,"Dining Room")
+#d.delete_room(7)
+d.delete_device(0,7)
 print(d.id_to_room(2))
 print(d.id_to_switches(2,2))
 print(d.room_to_id("drwaing room"))
