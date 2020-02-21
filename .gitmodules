@@ -1,6 +1,3 @@
-[submodule "bot/-b"]
-	path = bot/-b
-	url = https://gitlab.com/abhiramshibu/jarvisreborn
 [submodule "bot/chatbot"]
 	path = bot/chatbot
 	url = https://gitlab.com/abhiramshibu/jarvisreborn
