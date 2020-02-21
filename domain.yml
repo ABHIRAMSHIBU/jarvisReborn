@@ -1,0 +1,34 @@
+intents:
+- greet
+- goodbye
+- affirm
+- deny
+- mood_great
+- mood_unhappy
+- bot_challenge
+- intro
+- set_pin_on
+- set_pin_off
+templates:
+  utter_greet:
+  - text: Hey! How are you?
+  utter_intro:
+  - text: This is the SSAL here.
+  utter_goodbye:
+  - text: Bye
+  utter_iamabot:
+  - text: I am a bot, for SSAL
+  utter_on:
+  - text: okay, switching on
+  utter_off:
+  - text: okay,switching off
+actions:
+- utter_greet
+- utter_cheer_up
+- utter_did_that_help
+- utter_happy
+- utter_goodbye
+- utter_iamabot
+- utter_intro
+- utter_on
+- utter_off
