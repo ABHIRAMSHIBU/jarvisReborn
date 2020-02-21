@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-class Driver:
+class MariaDriver:
     def __init__(self):
         import mysql.connector
         self.mydb = mysql.connector.connect(host="localhost",user="ssal",password="PqOnei4xt973wToR",database="ssal")
@@ -11,7 +11,22 @@ class Driver:
             return dict(self.mycursor)[0]
         except:
             return None
+    def get_distinct_switch_from_room(self,room_id):
+        query = "select * from ssal_switches where id="+str(room_id)+";"
+        self.mycursor.execute(query)
+        try:
+            return list(self.mycursor)
+        except:
+            return None
+    def get_rooms(self):
+        query = "select distinct lower(name),id from ssal_rooms;"
+        self.mycursor.execute(query)
+        try:
+            return list(self.mycursor)
+        except:
+            return None
     def add_device(self,room_id,dev_id,dev_name):
+        #exception not handled ( room does not exist )
         query = "insert into ssal_switches(id,id_switch,name) values ("+str(room_id)+","+str(dev_id)+","+"\""+dev_name+"\");"
         self.mycursor.execute(query);
         self.mydb.commit()
@@ -84,12 +99,14 @@ class Driver:
     #print_all()
     #print(room_to_id("drwaing room"))
     #print(switch_to_id("testpin",True))
-d = Driver()
+d = MariaDriver()
 #d.add_device(0,6,"Cooler")
 #d.add_room(7,"Dining Room")
 #d.delete_room(7)
-d.delete_device(0,7)
-print(d.id_to_room(2))
-print(d.id_to_switches(2,2))
-print(d.room_to_id("drwaing room"))
-print(d.switch_to_id("testpin",True))
+# d.delete_device(0,7)
+# print(d.id_to_room(2))
+# print(d.id_to_switches(2,2))
+# print(d.room_to_id("drwaing room"))
+# print(d.switch_to_id("testpin",True))
+print(d.get_distinct_switch_from_room(1))
+print(d.get_rooms())
