@@ -67,3 +67,65 @@
     - utter_intro
 * set_pin_on
     - utter_on
+
+## New Story
+
+* set_pin_on
+    - utter_on
+* set_pin_on
+    - utter_on
+* greet
+    - utter_greet
+* intro
+    - utter_intro
+* set_pin_off
+    - utter_off
+* set_pin_on
+    - utter_on
+* goodbye
+    - utter_goodbye
+
+## New Story
+
+* greet
+    - utter_greet
+* set_pin_on
+    - utter_on
+* set_pin_on
+    - utter_on
+* set_pin_on
+    - utter_on
+* set_pin_off
+    - utter_off
+* set_pin_off
+    - utter_off
+
+## New Story
+
+* greet
+    - utter_greet
+* set_pin_on
+    - utter_on
+* set_pin_on
+    - utter_on
+* set_pin_off
+    - utter_off
+* set_pin_off
+    - utter_off
+* set_pin_on
+    - utter_on
+
+## New Story
+
+* greet
+    - utter_greet
+* set_pin_on
+    - utter_on
+* set_pin_on
+    - utter_on
+* set_pin_off
+    - utter_off
+* set_pin_on{"room":"room"}
+    - utter_on
+* set_pin_off{"room":"room"}
+    - utter_off
