@@ -240,8 +240,10 @@ body{
             currentDate = Date.now();
         } while (currentDate - date < milliseconds);
     } 
-    function delay_refresh(){
-        date = Date.now();
+    function delay_refresh(id){
+        x = document.getElementById('form_switches')
+        x.submit()
+        date = Date.now()-4500;
     }
     function check_timer(){
         currentDate = Date.now()
@@ -278,7 +280,7 @@ body{
             	window.location.reload();
             }
             console.log("Json Data :"+DATA);
-            for(var i=0;i<10;i++){
+            for(var i=0;i<=10;i++){
                 if(document.getElementById(i)!=null && update){
                     document.getElementById(i).checked=DATA[i];
                 }
@@ -299,7 +301,7 @@ body{
     <font color="white">
     <h2>Toggle Switch</h2>
     </font>
-    <form target="_blank" action="handle.php" method="post">
+    <form target="_blank" action="handle.php" method="post" id="form_switches">
 	    <?php
 	    echo "<center><hr>";
 	    $devID=$_POST["devID"];
@@ -332,7 +334,7 @@ body{
 	        echo "<td>";
 	        echo "<span class='sldr' style='color: white; font-size: 45px;'>$name\t:\t</span>";
 	        echo '<label class="switch">';
-	        echo "<input type='checkbox' name='$id' id='$id' class='chkbox' onclick=\"delay_refresh()\"/>";
+	        echo "<input type='checkbox' name='$id' id='$id' class='chkbox' onclick=\"delay_refresh($id)\"/>";
 	        echo '<span class="slider round"></span>';
 	        echo '</label>';
 	        echo "</td>";
@@ -359,12 +361,12 @@ body{
         echo "</table>";
         echo "</center>"
 	    ?>
-	    <div class="center">
+	   <!-- <div class="center">
     	    <span class="button">
     	    <input type="submit" class = "button" style="vertical-align:middle" value="Submit" ></input>
     	    </span>
     	    <br>
-		</div>
+		</div>-->
 	</form>
 	<div class="addbutton">
     	<button class="button roundbutton" onclick="popUP();">+</button>
