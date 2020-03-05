@@ -226,17 +226,37 @@ body{
     function reqListener () {
       console.log(this.responseText);
     }
-    var update=false;//true for auto update
+    var update=true;
     function setUpdate(){
         update=document.getElementById('update').checked;
         if(update==true){
             startRequest();
         }
     }
+    var date=Date.now()-5000;
+    function sleep(milliseconds) {
+        let currentDate = null;
+        do {
+            currentDate = Date.now();
+        } while (currentDate - date < milliseconds);
+    } 
+    function delay_refresh(){
+        date = Date.now();
+    }
+    function check_timer(){
+        currentDate = Date.now()
+        if(currentDate-date< 5000){
+            update=false;
+        }
+        else{
+            update=true;
+        }
+    }
     function startRequest(){
         var data;
         var oReq = new XMLHttpRequest();
         oReq.onload = function() {
+            check_timer();
             data=this.responseText; 
             try{
             	var DATA = JSON.parse(data);
@@ -279,22 +299,7 @@ body{
     <font color="white">
     <h2>Toggle Switch</h2>
     </font>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <!--<div class="navbar-header">
-                <a class="navbar-brand" href="#">WebSiteName</a>
-            </div>-->
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Home</a></li>
-<!--             <li><a href="powerpanel.php">Power panel</a></li> -->
-        </ul>
-        </div>
-        <form action="powerpanel.php" method="POST" >
-            <input type=hidden name="id" value="<?php echo $devID; ?>">
-            <input type="submit" value="Powerpanel">
-        </form>
-    </nav>
-    <form target="_blank" action="handle.php" method="post" id="forms">
+    <form target="_blank" action="handle.php" method="post">
 	    <?php
 	    echo "<center><hr>";
 	    $devID=$_POST["devID"];
@@ -324,34 +329,43 @@ body{
 	        }
 	        $name=$row['name'];
 	        $id=$row['id_switch'];
-	        
 	        echo "<td>";
-	        echo "<span class='sldr' style='color: white; font-size: 40px;'>$name\t:\t</span>";
+	        echo "<span class='sldr' style='color: white; font-size: 45px;'>$name\t:\t</span>";
 	        echo '<label class="switch">';
-	        echo " <input type='checkbox' name='$id' id='$id' class='chkbox' onclick='document.getElementById(\"forms\").submit()'/> ";
+	        echo "<input type='checkbox' name='$id' id='$id' class='chkbox' onclick=\"delay_refresh()\"/>";
 	        echo '<span class="slider round"></span>';
 	        echo '</label>';
 	        echo "</td>";
 	        $i++;
 	    }
+	    
+	    
+// 	    for($i=0;$i<10;$i++){
+// 	        if($i%2==0){
+// 	            if(!$start){
+// 	                echo "</tr>";
+// 	            }
+// 	            echo "<tr>";
+// 	        }
+// 	        echo "<td>";
+//             echo "<span style='color: white; font-size: 45px;'>Pin $i\t:\t</span>";
+//             echo '<label class="switch">';
+//             echo "<input type='checkbox' name='$i' />";
+//             echo '<span class="slider round"></span>';
+//             echo '</label>';
+//             echo "</td>";
+//         }
         echo "</tr>";
         echo "</table>";
         echo "</center>"
 	    ?>
-<!--	    <div class="center">
+	    <div class="center">
     	    <span class="button">
-    	    <input type="submit" class = "button" style="vertical-align:middle" value="Submit" ></input> -->
+    	    <input type="submit" class = "button" style="vertical-align:middle" value="Submit" ></input>
+    	    </span>
     	    <br>
-    	    <?php
-//     	    echo "<span class='sldr' style='color: white; font-size: 45px;'>Auto Update\t:\t</span>";
-// 	        echo '<label class="switch">';
-// 	        echo "<input type='checkbox' id='update' class='chkbox' onclick='setUpdate();' checked=true/>";
-// 	        echo '<span class="slider round"></span>';
-// 	        echo '</label>';
-// 	        ?>
 		</div>
 	</form>
-<!-- 	<script> var forms = ;  </script> -->
 	<div class="addbutton">
     	<button class="button roundbutton" onclick="popUP();">+</button>
 	</div>
