@@ -31,4 +31,6 @@
 ?>
 <br>
 <input type="button" value="Go Back" onclick="window.close();">
-
+<script type="text/javascript">
+    window.close();
+</script>

@@ -76,7 +76,7 @@ input:checked + .slider:before {
 </style>
 </head>
 <body>
-    <header class="jumbotron">
+    <header class="jumbotron" style="margin-bottom:0px;" >
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-2"></div>
