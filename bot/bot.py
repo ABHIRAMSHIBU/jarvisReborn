@@ -5,6 +5,7 @@ import SSAL_CLIENT
 from rasahandler import chatbot
 from mariadb_driver import MariaDriver
 import os
+from gtts import gTTS
 import speech_recognition as sr
 r = sr.Recognizer()
 
@@ -48,13 +49,13 @@ def mariaHandle(msg,state): #hardcoded response
             if(client_return_val==-1 and False):
                 response_message = "SSAL Client error for room: "+chosen_room_name+" switch: "+chosen_switch_name
             else:
-                response_message = "The "+chosen_room_name + " is "+chosen_switch_name+ " is turned on"       
+                response_message = "The "+chosen_room_name + " " + chosen_switch_name+ " is turned on."       
         elif(state==0):
             client_return_val = client.set(chosen_switch_id,0,chosen_room_id)
             if(client_return_val==-1 and False):
                 response_message = "SSAL Client error for room: "+chosen_room_name+" switch: "+chosen_switch_name
             else:
-                response_message = "The "+chosen_room_name + " is "+chosen_switch_name+ " is turned off"  
+                response_message = "The "+chosen_room_name + " " + chosen_switch_name+ " is turned off."  
     return response_message
 
     # return chosen_room_name,chosen_switch_name,chosen_room_id,chosen_switch_id
@@ -124,8 +125,15 @@ def voice_audio(bot,update):
     try:
        message=r.recognize_google(audio)   # speech recognize from recorded audio
        print("Recognized message is: "+message)
-       update.message.reply_text(str(message))   # Feedback to user
-       update.message.reply_text(handleText(message))
+       update.message.reply_text("You: "+str(message))   # Feedback to user
+       resp=handleText(message)
+       tts=gTTS(text=str(resp),lang="en")
+       print("Done tts...")
+       tts.save("response")
+       voiceresp=open('response', 'rb')
+       update.message.reply_text("Bot: "+resp)
+       bot.send_voice(chat_id=update.message.chat_id, voice=voiceresp)
+       voiceresp.close()
     except:
        print("Google recognize failure!, fallback.") # print error message
        update.message.reply_text("Internal error occured, speech recognition failure!")
