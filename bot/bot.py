@@ -4,6 +4,9 @@ import telegram
 import SSAL_CLIENT
 from rasahandler import chatbot
 from mariadb_driver import MariaDriver
+import os
+import speech_recognition as sr
+r = sr.Recognizer()
 
 client=SSAL_CLIENT.ssal()
 rasa = chatbot()
@@ -42,13 +45,13 @@ def mariaHandle(msg,state): #hardcoded response
     if(chosen_room_id!=None and chosen_switch_id!=None):
         if(state==1):
             client_return_val = client.set(chosen_switch_id,1,chosen_room_id)
-            if(client_return_val==-1):
+            if(client_return_val==-1 and False):
                 response_message = "SSAL Client error for room: "+chosen_room_name+" switch: "+chosen_switch_name
             else:
                 response_message = "The "+chosen_room_name + " is "+chosen_switch_name+ " is turned on"       
         elif(state==0):
             client_return_val = client.set(chosen_switch_id,0,chosen_room_id)
-            if(client_return_val==-1):
+            if(client_return_val==-1 and False):
                 response_message = "SSAL Client error for room: "+chosen_room_name+" switch: "+chosen_switch_name
             else:
                 response_message = "The "+chosen_room_name + " is "+chosen_switch_name+ " is turned off"  
@@ -56,11 +59,7 @@ def mariaHandle(msg,state): #hardcoded response
 
     # return chosen_room_name,chosen_switch_name,chosen_room_id,chosen_switch_id
 
-
-
-def allHandle(bot,update):
-    msg=update.message.text
-    print(update.message.from_user.name,"send",msg)
+def handleText(msg):
     response_message = "No Response"
     rasa_response=rasa.predict_nlu(msg)
     if(rasa_response["intent"]["name"]=="set_pin_on"): 
@@ -73,7 +72,12 @@ def allHandle(bot,update):
             response_message = rasa.predict_chat(msg)[0]["text"]
         else:
             response_message = "Rasa Backend ERROR"
-            
+    return response_message
+
+def allHandle(bot,update):
+    msg=update.message.text
+    print(update.message.from_user.name,"send",msg)
+    response_message=handleText(msg)
     print("bot send",response_message)
     update.message.reply_text(str(response_message))
 
@@ -102,7 +106,30 @@ try:
 except: 
    print("Error occured, try running setup.py")
    exit()
-
+def voice_audio(bot,update):
+    update.message.reply_text("Doing speech recognition on audio.. Please wait")
+    #print("Voice detected...")
+    voiceMessage = bot.get_file(update.message.voice.file_id)
+    #print("Got file object...")
+    if(os.path.exists("voice.ogg")):
+        os.remove("voice.ogg")
+        os.remove("voice.wav")
+    voiceMessage.download('voice.ogg')
+    os.system("ffmpeg -i voice.ogg voice.wav 2> /dev/null")
+    print("Converted into voice.wav")
+    #print("Downloaded File as voice.ogg")
+    with sr.AudioFile('voice.wav') as source: # use voice.wav instad of mic
+          print("Virtually recording audio file...")
+          audio =r.record(source)     # recording to google format
+    try:
+       message=r.recognize_google(audio)   # speech recognize from recorded audio
+       print("Recognized message is: "+message)
+       update.message.reply_text(str(message))   # Feedback to user
+       update.message.reply_text(handleText(message))
+    except:
+       print("Google recognize failure!, fallback.") # print error message
+       update.message.reply_text("Internal error occured, speech recognition failure!")
+    
 updater = Updater(key)
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('set', _set))
@@ -110,6 +137,7 @@ updater.dispatcher.add_handler(CommandHandler('get', get))
 updater.dispatcher.add_handler(CommandHandler('test', test))
 updater.dispatcher.add_handler(CommandHandler('reset', reset))
 unknown_handler = MessageHandler(Filters.chat, allHandle)
+updater.dispatcher.add_handler(MessageHandler(Filters.voice,voice_audio))
 updater.dispatcher.add_handler(unknown_handler)
 updater.start_polling()
 #updater.idle()
