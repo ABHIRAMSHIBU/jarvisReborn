@@ -1,4 +1,5 @@
 <?php
+    require "auth.php";
     function startSocket($ip,$port){
         $service_port = $port;
         $address = $ip;
