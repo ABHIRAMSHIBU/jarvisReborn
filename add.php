@@ -1,5 +1,6 @@
 <?php
     require 'config.php';
+    require 'auth.php';
     $type=($_GET["type"]);
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);

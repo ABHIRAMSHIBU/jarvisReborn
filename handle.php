@@ -1,6 +1,7 @@
 <?php
     require 'ssal_client.php';
     require 'config.php';
+    require 'auth.php';
     $socket = startSocket($ip,$port);
     echo "<br>From test.php<br>";
     var_dump($socket);
