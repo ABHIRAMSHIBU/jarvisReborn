@@ -1,6 +1,6 @@
+<?php  require 'auth.php' ?>
 <html>
 <head>
-<?php  require 'auth.php' ?>
 <?php  require 'config.php' ?> 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title> SAL POWER PANEL </title>
