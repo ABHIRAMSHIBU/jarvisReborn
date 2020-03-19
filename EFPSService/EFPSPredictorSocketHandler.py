@@ -7,6 +7,7 @@ Created on Mon Mar 16 23:40:07 2020
 """
 class EFPSSocketHandler:
     def __init__(self):
+        self.sensor=-1
         import telnetlib
         from influxdb import DataFrameClient
         
