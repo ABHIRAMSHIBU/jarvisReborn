@@ -9,6 +9,10 @@ intents:
 - intro
 - set_pin_on
 - set_pin_off
+entities:
+- equipment
+- room
+- room_no
 templates:
   utter_greet:
   - text: Hey! How are you?
