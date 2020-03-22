@@ -1,0 +1,59 @@
+actions:
+- utter_cheer_up
+- utter_did_that_help
+- utter_goodbye
+- utter_greet
+- utter_happy
+- utter_iamabot
+- utter_intro
+- utter_off
+- utter_on
+config:
+  store_entities_as_slots: true
+entities: []
+forms: []
+intents:
+- greet:
+    ignore_entities: []
+    use_entities: true
+- goodbye:
+    ignore_entities: []
+    use_entities: true
+- affirm:
+    ignore_entities: []
+    use_entities: true
+- deny:
+    ignore_entities: []
+    use_entities: true
+- mood_great:
+    ignore_entities: []
+    use_entities: true
+- mood_unhappy:
+    ignore_entities: []
+    use_entities: true
+- bot_challenge:
+    ignore_entities: []
+    use_entities: true
+- intro:
+    ignore_entities: []
+    use_entities: true
+- set_pin_on:
+    ignore_entities: []
+    use_entities: true
+- set_pin_off:
+    ignore_entities: []
+    use_entities: true
+slots: {}
+templates:
+  utter_goodbye:
+  - text: Bye
+  utter_greet:
+  - text: Hey! How are you?
+  utter_iamabot:
+  - text: I am a bot, for SSAL
+  utter_intro:
+  - text: This is the SSAL here.
+  utter_off:
+  - text: okay,switching off
+  utter_on:
+  - text: okay, switching on
