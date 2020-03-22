@@ -20,6 +20,7 @@
 	<classpathentry kind="lib" path="okhttp-3.14.4.jar"/>
 	<classpathentry kind="lib" path="okio-1.16.0.jar"/>
 	<classpathentry kind="lib" path="retrofit-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lz4-java-1.7.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JFX"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
