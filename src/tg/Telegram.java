@@ -35,12 +35,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import CommandHandlers.MainCMDHandler;
-import Sockets.PythonServer;
+import Sockets.EFPSPredictorDispatcher;
 
 import java.lang.Runtime;
 public class Telegram extends TelegramLongPollingBot {
 	GUI gui;
-	PythonServer python;
+	EFPSPredictorDispatcher python;
 
 	public Telegram(GUI gui) {
 		this.gui = gui;

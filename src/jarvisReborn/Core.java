@@ -30,14 +30,14 @@ import java.time.LocalDateTime;
 
 import javax.swing.UIManager;
 import Config.ConfigParse;
-import Sockets.PythonServer;
+import Sockets.EFPSPredictorDispatcher;
 import Sockets.Telnet;
 import Sockets.TelnetServer;
 import tg.SSALTeleInit;
 
 public class Core {
 	static Thread tele;
-	public static PythonServer python;
+	public static EFPSPredictorDispatcher python;
 	public static Thread telnetThread;
 	public static Telnet telnet[];
 	public static Boolean pinData[][];
@@ -45,6 +45,8 @@ public class Core {
 	public static PythonEFPS pythonEFPS ;
 	public static ConfigParse configParse ;
 	public static EFPSLogger efpsLogger;
+	public static Thread efpsPredictor;
+	public static EFPSPredictorDispatcher efpsPredictorDispatcher;
 	public static void main(String[] args) {
 		System.out.println("SSAL version 1.1, Copyleft (C) 2020 Abhiram Shibu\n" + 
 				"SSAL comes with ABSOLUTELY NO WARRANTY; for details\n" + 
@@ -76,12 +78,12 @@ public class Core {
 		 */
 		configParse = new ConfigParse();
 		
-		Thread py = new Thread() {
+		efpsPredictor = new Thread() {
     		public void run() {
-    			new PythonServer(9999);
+    			Core.efpsPredictorDispatcher=new EFPSPredictorDispatcher(9999);
     		}
     	};
-    	py.start();
+    	efpsPredictor.start();
     	System.out.println("Python server has started");
     	pinData=new Boolean[50][10];
 		telnet = new Telnet[50];        //Supports 50 clients
