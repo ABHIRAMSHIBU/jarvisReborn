@@ -7,10 +7,12 @@ from mariadb_driver import MariaDriver
 import os
 from gtts import gTTS
 import speech_recognition as sr
+import asyncio as asyncio
+loop=asyncio.get_event_loop()
 r = sr.Recognizer()
 
 client=SSAL_CLIENT.ssal()
-rasa = chatbot()
+rasa = chatbot(loop)
 mariadb = MariaDriver()
 
 def mariaHandle(msg,state): #hardcoded response
@@ -74,7 +76,8 @@ def handleText(msg):
         else:
             response_message = "Rasa Backend ERROR"
     return response_message
-
+#def handleText(msg):
+    #return "Dummy"
 def allHandle(bot,update):
     msg=update.message.text
     print(update.message.from_user.name,"send",msg)
@@ -134,10 +137,11 @@ def voice_audio(bot,update):
        update.message.reply_text("Bot: "+resp)
        bot.send_voice(chat_id=update.message.chat_id, voice=voiceresp)
        voiceresp.close()
-    except:
+    except Exception as e:
+       os.system("echo \""+str(e)+"\" >> /tmp/SSAL_ERROR.log")
+       print(e)
        print("Google recognize failure!, fallback.") # print error message
        update.message.reply_text("Internal error occured, speech recognition failure!")
-    
 updater = Updater(key)
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('set', _set))
@@ -147,6 +151,7 @@ updater.dispatcher.add_handler(CommandHandler('reset', reset))
 unknown_handler = MessageHandler(Filters.chat, allHandle)
 updater.dispatcher.add_handler(MessageHandler(Filters.voice,voice_audio))
 updater.dispatcher.add_handler(unknown_handler)
+print("Bot Ready for telegram messages")
 updater.start_polling()
 #updater.idle()
 
