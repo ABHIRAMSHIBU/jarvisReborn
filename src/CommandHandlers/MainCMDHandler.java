@@ -25,6 +25,7 @@ import javax.swing.JTextArea;
 import org.jfree.ui.RefineryUtilities;
 
 import Config.ConfigParse;
+import Sockets.EFPSPredictorHandler;
 import Sockets.Telnet;
 import jarvisReborn.Core;
 import jarvisReborn.Specification;
@@ -52,6 +53,9 @@ public class MainCMDHandler {
 		else if(input.contains("$reset")) {
 			parseRESET(input.substring(input.indexOf(" ")+1));
 		}
+		else if(input.contains("$getFailure")) {
+			parseGetFailure(input.substring(input.indexOf(" ")+1));
+		}
 		else if(input.contains("$get")) {
 			parseGET(input.substring(input.indexOf(" ")+1));
 		}
@@ -68,6 +72,21 @@ public class MainCMDHandler {
 				e.printStackTrace();
 			}
 		}
+	}
+	private void parseGetFailure(String input) {
+		int space1=input.indexOf(" ");
+		int sensorid=Integer.valueOf(input.substring(0, space1)), 
+			roomid=Integer.valueOf(input.substring(space1+1));
+		try {
+			//System.out.println(Core.efpsPredictorDispatcher); //will get null cuz of some issue noted in EFPSPredictorDispatcher.java
+			EFPSPredictorHandler efpsPredictorHandler=Core.efpsPredictorDispatcher.activeThread.get(4*roomid+sensorid);
+			output=efpsPredictorHandler.data;
+		}
+		catch (NullPointerException e) {
+			output="Python backend not yet connected!";
+			e.printStackTrace();
+		}
+		parsed=true;
 	}
 	private void plotSensors(String substring) {
 		parsed=true;
@@ -195,9 +214,18 @@ public class MainCMDHandler {
 		try {
 			synchronized (Core.telnet[mcu]) {
 				output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
-				if(output!="No input available") {
+				if(!output.equals("No input available")) {
 					if(pin-1<=10 && pin-1>0) {
 						Core.pinData[mcu][pin-1]=(operation==1);
+					}
+				}
+				else {
+					Core.telnet[mcu].checkTelnet(1);
+					output=Core.telnet[mcu].echo(pin+" "+operation+"\r");
+					if(!output.equals("No input available")) {
+						if(pin-1<=10 && pin-1>0) {
+							Core.pinData[mcu][pin-1]=(operation==1);
+						}
 					}
 				}
 			}
