@@ -77,6 +77,14 @@ input:checked + .slider:before {
     text-align:center;
     padding: 20px 3px 0 3px;
 }
+.status{
+    height:29px;
+    width:29px;
+    border-radius: 50%;
+    background-color: orchid;
+    color: orchid;
+    padding: 00px 3px 0 3px;
+}
 </style>
 </head>
 <body>
@@ -109,68 +117,32 @@ input:checked + .slider:before {
     <br><br>
     <div align="center" >
         <span class="badge badge-pill badge-primary" style="height:50px;width:95px;">Device</span>&nbsp;&nbsp;&nbsp;
-        <span class="badge badge-pill badge-warning" style="height:50px;width:95px;">Status</span>&nbsp;&nbsp;&nbsp;
+        <span class="status badge badge-pill badge-warning" style="">.</span>&nbsp;Running&nbsp;&nbsp;
         <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
         <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
         <button type="button" class="btn btn-info btn-lg active">Start</button>&nbsp;&nbsp;
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <button type="button" class="btn btn-info btn-lg active">Restart</button>&nbsp;&nbsp;
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <button type="button" class="btn btn-info btn-lg active">Stop</button>&nbsp;&nbsp; 
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <br><br>
     </div>
     <div align="center" >
         <span class="badge badge-pill badge-primary" style="height:50px;width:95px;">Device</span>&nbsp;&nbsp;&nbsp;
-        <span class="badge badge-pill badge-warning" style="height:50px;width:95px;">Status</span>&nbsp;&nbsp;&nbsp;
+        <span class="status badge badge-pill badge-warning" >.</span>&nbsp;Running&nbsp;&nbsp;
         <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
         <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
         <button type="button" class="btn btn-info btn-lg active">Start</button>&nbsp;&nbsp;
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <button type="button" class="btn btn-info btn-lg active">Restart</button>&nbsp;&nbsp;
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <button type="button" class="btn btn-info btn-lg active">Stop</button>&nbsp;&nbsp; 
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <br><br>
     </div>
     <div align="center" >
         <span class="badge badge-pill badge-primary" style="height:50px;width:95px;">Device</span>&nbsp;&nbsp;&nbsp;
-        <span class="badge badge-pill badge-warning" style="height:50px;width:95px;">Status</span>&nbsp;&nbsp;&nbsp;
+        <span class="status badge badge-pill badge-warning">.</span>&nbsp;Running&nbsp;&nbsp;
         <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
         <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
         <button type="button" class="btn btn-info btn-lg active">Start</button>&nbsp;&nbsp;
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <button type="button" class="btn btn-info btn-lg active">Restart</button>&nbsp;&nbsp;
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <button type="button" class="btn btn-info btn-lg active">Stop</button>&nbsp;&nbsp; 
-        <label class="switch">
-            <input type="checkbox" onclick="toggleOn()">
-            <span class="slider round"></span>
-        </label>
         <br><br>
     </div>
     <br><br><br><br><br><br>
