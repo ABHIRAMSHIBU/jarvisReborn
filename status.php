@@ -132,7 +132,7 @@ input:checked + .slider:before {
     <?php
     $row= '<div align="center" id="%s">
         <span class="service badge badge-pill badge-primary" style="height:50px;width:95px;">%s</span>&nbsp;&nbsp;&nbsp;
-        <span class="status badge badge-pill badge-warning" style="">&nbsp</span>&nbsp;Running&nbsp;&nbsp;
+        <span class="status badge badge-pill badge-warning" style="">&nbsp</span>&nbsp;<span class="badge badge-pill" style="background-color:white;color:black;width:80px;font-size:18;padding: 0px 3px 0 3px;">Running</span>&nbsp;&nbsp;
         <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
         <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
         <button type="button" class="btn btn-info btn-lg active" onClick = "serviceHandler(\'%s\',1);">Start</button>&nbsp;&nbsp;
@@ -160,12 +160,12 @@ input:checked + .slider:before {
                 if(DATA[service]=="0"){
                   //console.log("if");
                   document.getElementById(service).childNodes[3].style["background-color"]="red";
-                  document.getElementById(service).childNodes[4].textContent=" Dead ";
+                  document.getElementById(service).childNodes[5].textContent=" Dead ";
                 }
                 else{
                   //console.log("else");
                   document.getElementById(service).childNodes[3].style["background-color"]="green";
-                  document.getElementById(service).childNodes[4].textContent=" Running ";
+                  document.getElementById(service).childNodes[5].textContent=" Running ";
                 }
               }
             }
