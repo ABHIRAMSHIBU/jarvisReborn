@@ -5,4 +5,5 @@
     $username = "ssal";
     $password = "PqOnei4xt973wToR";
     $dbname = "ssal";
+    $services =array("chatbot","influxdb","nodm");
 ?>

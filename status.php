@@ -1,6 +1,6 @@
+<?php  require 'auth.php' ?>
 <html>
 <head>
-<?php  require 'auth.php' ?>
 <?php  require 'config.php' ?> 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title> SAL Service Status </title>
@@ -77,12 +77,15 @@ input:checked + .slider:before {
     text-align:center;
     padding: 20px 3px 0 3px;
 }
+.service{
+    border-radius:0px;
+}
 .status{
-    height:29px;
-    width:29px;
+    height:20px;
+    width:20px;
     border-radius: 50%;
-    background-color: orchid;
-    color: orchid;
+    background-color: green;
+    color: green;
     padding: 00px 3px 0 3px;
 }
 </style>
@@ -101,6 +104,7 @@ input:checked + .slider:before {
                 </div>
             </div>
     </header>  
+    
     <body>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -108,43 +112,73 @@ input:checked + .slider:before {
                 <a class="navbar-brand" href="#">WebSiteName</a>
             </div>-->
         <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Home</a></li>
+            <li><a href="index.php">Home</a></li>
             <li><a href="powerpanel.php">Power panel</a></li>
-            <li><a href="status.php">Service status</a></li>
+            <li class="active"><a href="status.php">Service status</a></li>
         </ul>
         </div>
     </nav>
     <br><br>
-    <div align="center" >
-        <span class="badge badge-pill badge-primary" style="height:50px;width:95px;">Device</span>&nbsp;&nbsp;&nbsp;
-        <span class="status badge badge-pill badge-warning" style="">.</span>&nbsp;Running&nbsp;&nbsp;
+    <script type="text/javascript">
+    function serviceHandler(serviceName,action){
+      //console.log(serviceName);
+      //console.log(action);
+      var oReq = new XMLHttpRequest();
+      oReq.onload=function(){};
+      oReq.open("get", "serviceHandler.php?serviceName="+serviceName+"&action="+action, true);
+      oReq.send();
+    }
+    </script>
+    <?php
+    $row= '<div align="center" id="%s">
+        <span class="service badge badge-pill badge-primary" style="height:50px;width:95px;">%s</span>&nbsp;&nbsp;&nbsp;
+        <span class="status badge badge-pill badge-warning" style="">&nbsp</span>&nbsp;Running&nbsp;&nbsp;
         <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
         <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-        <button type="button" class="btn btn-info btn-lg active">Start</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-info btn-lg active">Restart</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-info btn-lg active">Stop</button>&nbsp;&nbsp; 
+        <button type="button" class="btn btn-info btn-lg active" onClick = "serviceHandler(\'%s\',1);">Start</button>&nbsp;&nbsp;
+        <button type="button" class="btn btn-info btn-lg active" onClick = "serviceHandler(\'%s\',3);">Restart</button>&nbsp;&nbsp;
+        <button type="button" class="btn btn-info btn-lg active" onClick = "serviceHandler(\'%s\',2);">Stop</button>&nbsp;&nbsp; 
+        <!--start = 1, stop = 2, restart = 3-->
         <br><br>
-    </div>
-    <div align="center" >
-        <span class="badge badge-pill badge-primary" style="height:50px;width:95px;">Device</span>&nbsp;&nbsp;&nbsp;
-        <span class="status badge badge-pill badge-warning" >.</span>&nbsp;Running&nbsp;&nbsp;
-        <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-        <button type="button" class="btn btn-info btn-lg active">Start</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-info btn-lg active">Restart</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-info btn-lg active">Stop</button>&nbsp;&nbsp; 
-        <br><br>
-    </div>
-    <div align="center" >
-        <span class="badge badge-pill badge-primary" style="height:50px;width:95px;">Device</span>&nbsp;&nbsp;&nbsp;
-        <span class="status badge badge-pill badge-warning">.</span>&nbsp;Running&nbsp;&nbsp;
-        <!--<button type="button" class="btn btn-primary btn-lg active">Device</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-warning btn-lg active">Status</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-        <button type="button" class="btn btn-info btn-lg active">Start</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-info btn-lg active">Restart</button>&nbsp;&nbsp;
-        <button type="button" class="btn btn-info btn-lg active">Stop</button>&nbsp;&nbsp; 
-        <br><br>
-    </div>
+    </div>';
+    foreach ($services as $s){
+      echo sprintf($row,$s,$s,$s,$s,$s);
+    }
+    ?>
+    <script type="text/javascript">
+    var DATA="";
+      function startRequest(){
+        var data;
+        var oReq = new XMLHttpRequest();
+        oReq.onload = function() {
+            data=this.responseText; 
+            try{
+            	DATA = JSON.parse(data);
+              for (var service in DATA ){
+                //console.log(service);
+                //console.log(DATA[service]);
+                if(DATA[service]=="0"){
+                  //console.log("if");
+                  document.getElementById(service).childNodes[3].style["background-color"]="red";
+                  document.getElementById(service).childNodes[4].textContent=" Dead ";
+                }
+                else{
+                  //console.log("else");
+                  document.getElementById(service).childNodes[3].style["background-color"]="green";
+                  document.getElementById(service).childNodes[4].textContent=" Running ";
+                }
+              }
+            }
+            catch(error){
+            }
+            //console.log("Json Data :"+DATA);
+        };
+        oReq.open("get", "serviceHandler.php?serviceName=all", true);
+        oReq.send();
+    }
+    startRequest();
+    setInterval(startRequest,500);
+    </script>
     <br><br><br><br><br><br>
     <footer class="footer">
             <div class="row justify-content-center">             
