@@ -9,6 +9,7 @@
  * Copyright (c) 2020 TUXFourm
  * For queries goto https://tuxforum.com
  */
+//***** Warning pin status is the opposite of what is told by software *****//
 //Includes
 #include<string.h>
 /* STM32 */
@@ -88,6 +89,9 @@ int counter_disconnect=0;
 bool led=False;
 long time=millis();          //Heart beat timer
 //END HEART BEAT VARIABLE
+//DOS VARIABLES
+bool DOS=0;
+//END DOS VARIABLES
 bool pins[16];    // Pin stats are stored here
 float temp;
 /** EEPROM BEGIN **/
@@ -226,10 +230,10 @@ String pinData(){
     temp.reserve(20);
     temp=String(pinNow);
     if(pins[pinNow]==true){
-        temp+=" is on";
+        temp+=" is off";
     }
     else{
-        temp+=" is off";
+        temp+=" is on";
     }
     if((millis()-time2)>500){
         time2=millis();
@@ -579,6 +583,7 @@ void loop() {
             int space = dataESP.indexOf(F(" "));
             int pin=dataESP.substring(0,space).toInt();
             bool operation=dataESP.substring(space,dataESP.length()-2).toInt();
+            operation=!operation;
             pinMode(pinmap(pin),OUTPUT);
             sensorFlag=false;
             digitalWrite(pinmap(pin),operation); // do operation
@@ -591,16 +596,25 @@ void loop() {
         }
         else{
         /* Here pin status is retrived and send to the SSAL Core */
-            if(dataESP.indexOf(F("sensor"))==-1){
+            if(dataESP.indexOf(F("sensor"))==-1 && dataESP.indexOf(F("hwinfo"))==-1){
                 int pin=dataESP.substring(0,dataESP.length()-2).toInt(); 
                 String pinString;
                 pinString.reserve(10);
-                pinString=String(pins[pin]);
+                pinString=String(!pins[pin]);
                 sensorFlag=false;
                 sendData(id,pinString);
             }
             else{
-                sensorFlag=true;
+                if(dataESP.indexOf(F("sensor"))==-1){
+                    String pinString;
+                    pinString.reserve(5);
+                    pinString=String(DOS);
+                    sensorFlag=false;
+                    sendData(id,pinString);
+                }
+                else{
+                    sensorFlag=true;
+                }
             }
         }
       }
