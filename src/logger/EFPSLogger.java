@@ -38,6 +38,10 @@ public class EFPSLogger{
 		
 	}
 	public void createThread() {
+		if(Core.dosdb[i]) { //If DOS then dont create thread
+			System.out.println("EFPSLogger: Refusing to start on DOS MCU "+i);
+			return;
+		}
 		loggerThread[i] = new Thread() {
 			int id=i;
 			String message = "$sensors "+i;

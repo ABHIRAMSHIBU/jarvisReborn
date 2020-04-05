@@ -41,6 +41,7 @@ public class Core {
 	public static Thread telnetThread;
 	public static Telnet telnet[];
 	public static Boolean pinData[][];
+	public static Boolean dosdb[];
 	public static InfluxDBClient dbClient;
 	public static PythonEFPS pythonEFPS ;
 	public static ConfigParse configParse ;
@@ -86,6 +87,7 @@ public class Core {
     	efpsPredictor.start();
     	System.out.println("Python server has started");
     	pinData=new Boolean[50][10];
+    	dosdb=new Boolean[50];
 		telnet = new Telnet[50];        //Supports 50 clients
 		dbInit db[]=new dbInit[50];
 		int dbc=0;
@@ -124,7 +126,7 @@ public class Core {
 		//pythonEFPS = new PythonEFPS(1,0);
 		//Predictor predictor = new Predictor();
 		System.out.println("Core: python EFPS Pipe active");
-		//efpsLogger = new EFPSLogger();
+		efpsLogger = new EFPSLogger();
 		System.out.println("Core: python EFPS Logger active");
 		System.out.println("Core: SSAL System Active!");
 		System.out.println("Core: Bye..");
