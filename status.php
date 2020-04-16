@@ -115,6 +115,7 @@ input:checked + .slider:before {
             <li><a href="index.php">Home</a></li>
             <li><a href="powerpanel.php">Power panel</a></li>
             <li class="active"><a href="status.php">Service status</a></li>
+            <li><a href="plot.php">Live plot</a></li>
         </ul>
         </div>
     </nav>

@@ -96,9 +96,10 @@ input:checked + .slider:before {
                 <a class="navbar-brand" href="#">WebSiteName</a>
             </div>-->
         <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Home</a></li>
-            <li><a href="powerpanel.php">Power panel</a></li>
+            <li><a href="index.php">Home</a></li>
+            <li class="active"><a href="powerpanel.php">Power panel</a></li>
             <li><a href="status.php">Service status</a></li>
+            <li><a href="plot.php">Live plot</a></li>
         </ul>
         </div>
     </nav>
