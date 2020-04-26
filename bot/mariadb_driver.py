@@ -4,6 +4,11 @@ class MariaDriver:
         import mysql.connector
         self.mydb = mysql.connector.connect(host="localhost",user="ssal",password="PqOnei4xt973wToR",database="ssal")
         self.mycursor = self.mydb.cursor()
+    def query(self,q):
+        query = q
+        self.mycursor.execute(query)
+        result=self.mycursor
+        return result
     def id_to_room(self,id):
         query = "select * from ssal_rooms where id = "+str(id)+";"
         self.mycursor.execute(query)
