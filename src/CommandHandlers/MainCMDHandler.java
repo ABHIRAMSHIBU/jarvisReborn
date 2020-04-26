@@ -72,6 +72,9 @@ public class MainCMDHandler {
 				e.printStackTrace();
 			}
 		}
+		else if(input.contains("$relaycfg")) {
+			parseRelaycfg(input.substring(input.indexOf(" ")+1));
+		}
 	}
 	private void parseGetFailure(String input) {
 		int space1=input.indexOf(" ");
@@ -251,5 +254,48 @@ public class MainCMDHandler {
 			error=true;
 		}
 	}
-	
+	public void parseRelaycfg(String input) {
+		parsed=true;
+		String[] words = input.split("//s+");
+		if(words.length ==2 ) {
+			int relaynumber = Integer.parseInt(words[0]);
+			int mcu = Integer.parseInt(words[1]);
+			try {
+				synchronized (Core.telnet[mcu]) {
+					output=Core.telnet[mcu].echo("relaycfg "+relaynumber+"\r");
+					if(output.equals("No input available")) {
+						Core.telnet[mcu].checkTelnet(1);
+						output=Core.telnet[mcu].echo("relaycfg "+relaynumber+"\r");
+					}
+				}
+			}
+			catch(Exception e) {
+				output="Error contacting ESP";
+			}
+
+		}
+		else if(words.length==3) {
+			int relaynumber = Integer.parseInt(words[0]);
+			int setvalue = Integer.parseInt(words[1]);
+			int mcu = Integer.parseInt(words[2]);
+			try {
+				synchronized (Core.telnet[mcu]) {
+					output=Core.telnet[mcu].echo("relaycfg "+relaynumber+" "+setvalue+"\r");
+					if(output.equals("No input available")) {
+						Core.telnet[mcu].checkTelnet(1);
+						output=Core.telnet[mcu].echo("relaycfg "+relaynumber+" "+setvalue+"\r");
+					}
+				}
+			}
+			catch(Exception e) {
+				output="Error contacting ESP";
+			}
+
+		}
+		else {
+			output="DOS Error: Unknown Argument ";
+		}
+		int space1;
+		
+	}
 }
