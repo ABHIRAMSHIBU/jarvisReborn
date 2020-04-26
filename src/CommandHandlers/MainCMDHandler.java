@@ -75,6 +75,30 @@ public class MainCMDHandler {
 		else if(input.contains("$relaycfg")) {
 			parseRelaycfg(input.substring(input.indexOf(" ")+1));
 		}
+		else if(input.contains("$checkdos")) {
+			parseCheckDos(input.substring(input.indexOf(" ")+1));
+		}
+	}
+	private void parseCheckDos(String input) {
+		parsed=true;
+		int mcu=Integer.valueOf(input);
+		try {
+			synchronized (Core.telnet[mcu]) {
+				output=Core.telnet[mcu].echo("hwinfo\r");
+				if(output.equals("No input available")) {
+					Core.telnet[mcu].checkTelnet(0);
+					output=Core.telnet[mcu].echo("hwinfo\r");
+				}
+			}
+		}
+		catch(Exception e){
+			output="Error contacting ESP";
+			error=true;
+		}
+		if(!Core.telnet[mcu].run) {
+			output="Error contacting ESP";
+			error=true;
+		}
 	}
 	private void parseGetFailure(String input) {
 		int space1=input.indexOf(" ");
