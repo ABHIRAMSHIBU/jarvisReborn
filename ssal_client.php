@@ -1,4 +1,5 @@
 <?php
+    //SSAL Java Client API Handler.
     require "auth.php";
     function startSocket($ip,$port){
         $service_port = $port;
@@ -83,5 +84,21 @@
         $string=$string.$devID;
         //file_put_contents('php://stderr', print_r($string, TRUE));
         return echoSocket($socket, $string);
+    }
+    function setrelaycfg($socket,$relayNo,$value,$devID){
+        $command='$relaycfg '.$relayNo." ".$value." ".$devID;
+        $expOut=">OK\n";
+        $reply=echoSocket($socket, $command);
+        if($expOut==$reply){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    function getrelaycfg($socket,$relayNo,$devID){
+        $command='$relaycfg '.$relayNo." ".$devID;
+        $reply=echoSocket($socket, $command);
+        return $reply;
     }
 ?>
