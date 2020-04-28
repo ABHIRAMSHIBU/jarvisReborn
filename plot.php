@@ -9,13 +9,13 @@
   <body>
     <div class="container" style="margin-top: 4%">
           <div class="container">
-              <h3 style="margin-left: 10%"><span class="badge badge-info">Device 1</span> &nbsp; <span class="badge badge-success">Status</span> </h3>
+              <h3 style="margin-left: 10%"><span class="badge badge-info">Air Conditioner</span> &nbsp; <span class="badge badge-success">Working</span> </h3>
               <div id="myDiv" style="height: 40%"></div>
           </div>     
           <br>
           <div class="container">
               <!--<h3><span class="badge badge-secondary">Device 2</span></h3>-->
-              <h3 style="margin-left: 10%"><span class="badge badge-info">Device 2</span> &nbsp; <span class="badge badge-success">Status</span> </h3>
+              <h3 style="margin-left: 10%"><span class="badge badge-info">Refrigerator</span> &nbsp; <span class="badge badge-success">Working</span> </h3>
               <div id="myDiv1" style="height: 40%"></div>
           </div>
         <script type="text/javascript">

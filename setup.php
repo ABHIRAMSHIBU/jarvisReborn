@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <script src="script/BootstrapMenu.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script type="text/javascript" src="script/script.js"></script>
     <link rel="stylesheet" href="css/styles.css">
@@ -17,8 +16,8 @@
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 35px;
+  height: 28px;
 }
 
 .switch input { 
@@ -34,7 +33,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: red;
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -42,17 +41,17 @@
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
+  height: 20px;
+  width: 10px;
+  left: 3px;
+  bottom: 3px;
+  background-color: ;
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: green;
 }
 
 input:focus + .slider {
@@ -60,9 +59,9 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
 }
 
 /* Rounded sliders */
@@ -97,17 +96,17 @@ input:checked + .slider:before {
             </div>-->
         <ul class="nav navbar-nav">
             <li><a href="index.php">Home</a></li>
-            <li class="active"><a href="powerpanel.php">Power panel</a></li>
+            <li><a href="powerpanel.php">Power panel</a></li>
             <li><a href="status.php">Service status</a></li>
             <li><a href="plot.php">Live plot</a></li>
-            <li><a href="setup.php">Dos Setup</a></li>
+            <li class="active"><a href="setup.php">Dos Setup</a></li>
         </ul>
         </div>
     </nav>
     <div align="center" >
     <br><br>
 <!--     <h3 style="margin-left: 10%"><span class="badge badge-info">Air Conditioner</span> &nbsp; </h3> -->
-    <span class="badge badge-info"><bold>Air Conditioner</bold></span> &nbsp;&nbsp;<button type="button" class="btn btn-danger btn-lg active">SOLAR SUPPLY</button>&nbsp;&nbsp;
+    <!--<span class="badge badge-info"><bold>Air Conditioner</bold></span> &nbsp;&nbsp;<button type="button" class="btn btn-danger btn-lg active">SOLAR SUPPLY</button>&nbsp;&nbsp;
     <button type="button" class="btn btn-success btn-lg active">MAIN SUPPLY</button>&nbsp;&nbsp;
     <label class="switch">
     <input type="checkbox" onclick="toggleOn()">
@@ -119,27 +118,49 @@ input:checked + .slider:before {
                 document.get
         }
     </script>
-    <br><br>
-    <span class="badge badge-info"><bold>Air Conditioner</bold></span> &nbsp;&nbsp;<a href="#" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">SOLAR SUPPLY</a>
-    <button type="button" class="btn btn-success btn-lg active">MAIN SUPPLY</button>&nbsp;&nbsp;
+    <br><br>-->
+    <?php
+    for($i=0;$i<4;$i++){ 
+    echo('
+    <div id="'. ($i+1) .'">
+    <button type="button" class="btn btn-warning btn-lg" disabled>Relay Pair'.($i+1).'</button>&nbsp;
     <label class="switch">
-    <input type="checkbox" checked>
-    <span class="slider round"></span>
-    </label>
-    <br><br>
-    <span class="badge badge-info"><bold>Air Conditioner</bold></span> &nbsp;&nbsp;<a href="#" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">SOLAR SUPPLY</a>
-    <button type="button" class="btn btn-success btn-lg active">MAIN SUPPLY</button>&nbsp;&nbsp;
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
     <label class="switch">
-    <input type="checkbox" checked>
-    <span class="slider round"></span>
-    </label>
-    <br><br>
-    <span class="badge badge-info"<bold>Air Conditioner</bold></span> &nbsp;&nbsp;<a href="#" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">SOLAR SUPPLY</a>
-    <button type="button" class="btn btn-success btn-lg active">MAIN SUPPLY</button>&nbsp;&nbsp;
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
     <label class="switch">
-    <input type="checkbox" checked>
-    <span class="slider round"></span>
-    </label>
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
+    <label class="switch">
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
+    <label class="switch">
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
+    <label class="switch">
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
+    <label class="switch">
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;
+    <label class="switch">
+    <input type="checkbox" onclick="calculate('.($i+1).')">
+    <span class="slider"></span>
+    </label>&nbsp;&nbsp;
+    <button type="button" class="btn btn-primary btn-lg" disabled>12</button>
+    </div>
+    <br><br>');
+    }
+    ?>
     <br><br><br><br><br><br><br><br>
     </div>
     <footer class="footer">
@@ -150,4 +171,5 @@ input:checked + .slider:before {
                </div>
     </footer>
 </body>
+<script type="text/javascript" src="script/relay.js"></script>
 </html> 
