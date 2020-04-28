@@ -169,7 +169,7 @@ input:checked + .slider:before {
     <footer class="footer">
             <div class="row justify-content-center">             
                     <div class="col-auto " align="center">
-                        <p> © Copyright 2019 BrainNet Technologies</p>
+                        <p> © Copyright 2020 BrainNet Technologies</p>
                     </div>
                </div>
     </footer>

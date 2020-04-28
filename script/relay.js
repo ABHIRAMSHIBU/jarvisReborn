@@ -21,7 +21,7 @@ function mastercalc(){
         relays[j]=relayobjects[j][19].innerHTML=relays[j];
         mutex=mutex|relays[j];
     }
-    console.log(relays);
+    // console.log(relays);
 }
 mastercalc();
 function calculate(z){
@@ -40,13 +40,13 @@ function calculate(z){
             relays[j]=relays[j] | relayobjects[j][index].childNodes[1].checked << i;
             if(relayobjects[j][index].childNodes[1].checked==true){
                 count++;
-                console.log(["count",count])
+                // console.log(["count",count])
             }
         }
         else{
             flag= flag| relayobjects[j][index].childNodes[1].checked;
             relayobjects[j][index].childNodes[1].checked=false;
-            console.log([j,index,relayobjects[j][index].childNodes[1]]);
+            // console.log([j,index,relayobjects[j][index].childNodes[1]]);
         }
     }
     if(flag==1){
@@ -73,9 +73,32 @@ function calculate(z){
     }
     mastercalc(); 
 }
+function countOnes(b){
+    var val=1;
+    var count=0;
+    for(i=0;i<8;i++){
+        if((val & b) == val){
+            count++;
+        }
+        val=val<<1;
+        if(count==2){
+            break;
+        }
+    }
+    // console.log(["Counted value=",count,b]);
+    if(count==2){
+        return 1;
+    }
+    else if(count==0){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
 function submitvalues(){
     f=document.createElement("form");
-    f.action="relayHander.php";
+    f.action="relayHandler.php";
     f.method="get";
     hidden=[0,0,0,0];
     for(var i=0;i<4;i++){
@@ -83,8 +106,15 @@ function submitvalues(){
         hidden[i].type="hidden";
         hidden[i].name=i+1;
         hidden[i].value=relays[i];
+        // console.log([relays[i],countOnes(relays[i])]);
+        if(countOnes(relays[i])==0){
+            alert("One more more relay pairs dont have a pair!");
+            return 0;
+        }
         f.appendChild(hidden[i]);
     }
     document.body.appendChild(f);
+    //console.log("Form will submit");
     f.submit();
+    return 1;
 }
