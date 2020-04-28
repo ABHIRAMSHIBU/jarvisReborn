@@ -157,12 +157,12 @@ input:checked + .slider:before {
     <input type="checkbox" onclick="calculate('.($i+1).')">
     <span class="slider"></span>
     </label>&nbsp;&nbsp;
-    <button type="button" class="btn btn-primary btn-lg" name="'.$i.'" style="Width:60px;" disabled>0</button>
+    <button type="button" class="btn btn-primary btn-lg" name="'.$i.'" style="Width:60px;" Value="0" disabled>0</button>
     </div>
     <br><br>');
     }
     ?>
-    <button type="submit" class="btn btn-success" >Submit</button>
+    <button type="button" class="btn btn-success" onclick="submitvalues()">Submit</button>
     </form>
     <br><br><br><br><br><br><br><br>
     </div>
