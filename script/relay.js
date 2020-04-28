@@ -118,3 +118,55 @@ function submitvalues(){
     f.submit();
     return 1;
 }
+function createRequest(){
+    var data;
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function() {
+        data=this.responseText; 
+        try{
+            console.log(["return data from php",data]);
+            var DATA = JSON.parse(data);
+            var status= document.getElementById("status")
+            status.innerHTML="";
+            div=document.createElement("div");
+            div.className="alert alert-success";
+            div.style["width"]="40%";
+            div.style["margin-left"]="30%";
+            div.style["text-align"]="center";
+            div.innerHTML="Configuration has been successfully saved";
+            status.appendChild(div);
+            //width:40%;margin-left:30%;text-align:center
+            // h1=document.createElement("h1");
+            // h1.innerHTML=DATA;
+            // h1.style["color"]="red";
+            //document.body.appendChild(h1);
+        }
+        catch(error){
+            var status= document.getElementById("status")
+            status.innerHTML="";
+            div=document.createElement("div");
+            div.className="alert alert-success";
+            div.style["width"]="40%";
+            div.style["margin-left"]="30%";
+            div.style["text-align"]="center";
+            div.innerHTML="Some error occured, unable to save!";
+            status.appendChild(div);
+        }
+    }
+    for(var i=0;i<4;i++){
+        if(countOnes(relays[i])==0){
+            var status= document.getElementById("status")
+            status.innerHTML="";
+            div=document.createElement("div");
+            div.className="alert alert-danger";
+            div.style["width"]="40%";
+            div.style["margin-left"]="30%";
+            div.style["text-align"]="center";
+            div.innerHTML="Invalid entry, please select exactly two per pair!";
+            status.appendChild(div);
+            return 0;
+        }
+    }
+    oReq.open("get", "relayHandler.php?1="+relays[0]+"&2="+relays[1]+"&3="+relays[2]+"&4="+relays[3], true);
+    oReq.send();
+}

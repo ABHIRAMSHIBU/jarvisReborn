@@ -103,6 +103,13 @@ input:checked + .slider:before {
         </ul>
         </div>
     </nav>
+    <br>
+    <!-- <div class="card" style="width:100%;"> 
+        <div class="card-body">
+          Sucess 
+        </div>
+    </div> -->
+    <b id="status"></b>
     <div align="center" >
     <br><br>
 <!--     <h3 style="margin-left: 10%"><span class="badge badge-info">Air Conditioner</span> &nbsp; </h3> -->
@@ -162,7 +169,7 @@ input:checked + .slider:before {
     <br><br>');
     }
     ?>
-    <button type="button" class="btn btn-success" onclick="submitvalues()">Submit</button>
+    <button type="button" class="btn btn-success" onclick="createRequest()">Submit</button>
     </form>
     <br><br><br><br><br><br><br><br>
     </div>
