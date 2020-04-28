@@ -8,7 +8,7 @@ function mastercalc(){
     var relays=Array([0,0,0,0]);
     for(var j=0;j<4;j++){
         for(var i=0;i<8;i++){
-            index=(i*2)+3;
+            index=((7-i)*2)+3;
             if((mutex & relayobjects[j][index].childNodes[1].checked << i) == 1 << i ){
                 relayobjects[j][index].childNodes[1].checked = false;
                 alert("Conflict");
@@ -32,21 +32,24 @@ function calculate(z){
     var relays=Array([0,0,0,0]);
     var j =z-1;
     var count=0;
+    var flag=0;
     for(var i=0;i<8;i++){
-        index=(i*2)+3;
+        index=((7-i)*2)+3;
         if(count<2){
             relays[j]=relays[j] | relayobjects[j][index].childNodes[1].checked << i;
             if(relayobjects[j][index].childNodes[1].checked==true){
                 count++;
+                console.log(["count",count])
             }
         }
         else{
+            flag= flag| relayobjects[j][index].childNodes[1].checked;
             relayobjects[j][index].childNodes[1].checked=false;
             console.log([j,index,relayobjects[j][index].childNodes[1]]);
         }
     }
-    if(count>2){
-        alert("More than two selected");
+    if(flag==1){
+        // alert("More than two selected");
     }
     var mutex = relays[j];
     for(var j=0;j<4;j++){
@@ -55,10 +58,10 @@ function calculate(z){
             continue;
         }
         for(var i=0;i<8;i++){
-            index=(i*2)+3;
+            index=((7-i)*2)+3;
             if((mutex & relayobjects[j][index].childNodes[1].checked << i) == 1 << i ){
                 relayobjects[j][index].childNodes[1].checked = false;
-                alert("Conflict");
+                // alert("Conflict");
             }
             else{
                 relays[j]=relays[j] | relayobjects[j][index].childNodes[1].checked << i;

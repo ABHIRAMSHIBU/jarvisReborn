@@ -119,11 +119,12 @@ input:checked + .slider:before {
         }
     </script>
     <br><br>-->
+    <form method="get" action="relayhandler.php">
     <?php
     for($i=0;$i<4;$i++){ 
     echo('
     <div id="'. ($i+1) .'">
-    <button type="button" class="btn btn-warning btn-lg" disabled>Relay Pair'.($i+1).'</button>&nbsp;
+    <button type="button" class="btn btn-warning btn-lg" disabled>Relay Pair&nbsp;'.($i+1).'</button>&nbsp;
     <label class="switch">
     <input type="checkbox" onclick="calculate('.($i+1).')">
     <span class="slider"></span>
@@ -156,11 +157,13 @@ input:checked + .slider:before {
     <input type="checkbox" onclick="calculate('.($i+1).')">
     <span class="slider"></span>
     </label>&nbsp;&nbsp;
-    <button type="button" class="btn btn-primary btn-lg" disabled>12</button>
+    <button type="button" class="btn btn-primary btn-lg" name="'.$i.'" style="Width:60px;" disabled>0</button>
     </div>
     <br><br>');
     }
     ?>
+    <button type="submit" class="btn btn-success" >Submit</button>
+    </form>
     <br><br><br><br><br><br><br><br>
     </div>
     <footer class="footer">
