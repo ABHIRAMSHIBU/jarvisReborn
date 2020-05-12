@@ -34,7 +34,10 @@ public class EFPSLogger{
 	public void createThreads() {
 		System.out.println("EFPS: createThreads function called");
 		for(i=0;i<Core.configParse.data.size();i++) {
+			int temp=i;
+			i=Core.configParse.data.get(i).id;
 			createThread();
+			i=temp;
 		}
 		
 	}
