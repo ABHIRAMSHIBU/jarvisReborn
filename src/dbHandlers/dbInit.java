@@ -19,7 +19,7 @@ public class dbInit extends Thread{
 			while(true) {
 				MainCMDHandler cmd = new MainCMDHandler("$checkdos "+mcu, null);
 				if(cmd.output=="No input available") {
-					System.out.println("dbInit : Retry on mcu:\"+mcu+\" checkdos");
+					System.out.println("dbInit : Retry on mcu:"+mcu+" checkdos");
 					if(retry==0) {
 						System.out.println("dbInit : Gave up on mcu:"+mcu+" checkdos");
 						retry=Specification.FETCH_RETRY_COUNT;

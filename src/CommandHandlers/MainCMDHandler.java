@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package CommandHandlers;
 
+import java.util.ArrayList;
 import java.util.List;
 import jarvisReborn.Specification;
 
@@ -25,17 +26,17 @@ import javax.swing.JTextArea;
 import org.jfree.ui.RefineryUtilities;
 
 import Config.ConfigParse;
+import DOS.DOSmcu;
 import Sockets.EFPSPredictorHandler;
 import Sockets.Telnet;
+import dbHandlers.dbInit;
 import jarvisReborn.Core;
 import jarvisReborn.Specification;
 import jarvisReborn.PlotCurrentGUI;
 import jarvisReborn.SensorParser;
 
 public class MainCMDHandler {
-	
-	
-	
+
 	public boolean parsed=false;
 	public String output=""; 
 	public boolean error=false;
@@ -44,8 +45,17 @@ public class MainCMDHandler {
 	public MainCMDHandler(String input,JTextArea ta) {
 		// TODO Auto-generated constructor stub
 		this.ta=ta;
-		if(input.contains("$set")) {
+		if(input.contains("$setrelay")) {
+			parseSetrelay(input.substring(input.indexOf(" ")+1));
+		}
+		else if(input.contains("$set")) {
 			parseSET(input.substring(input.indexOf(" ")+1));
+		}
+		else if(input.contains("$testrelay")) {
+			parseTestrelay(input.substring(input.indexOf(" ")+1));
+		}
+		else if(input.contains("$getrelay")) {
+			parseGetrelay(input.substring(input.indexOf(" ")+1));
 		}
 		else if(input.contains("$test")) {
 			parseTEST(input.substring(input.indexOf(" ")+1));
@@ -217,9 +227,15 @@ public class MainCMDHandler {
 					System.out.println("Starting telnet for id:"+id+" ip:"+ip);
 					Core.telnet[configParse.data.get(i).id] = new Telnet(configParse.data.get(i).ip,23);
 					System.out.println("Reset Success!");
+					// Need DB initialization....
+					Core.db[configParse.data.get(i).id]=new dbInit(configParse.data.get(i).id);
+					Core.db[configParse.data.get(i).id].start();
+					Core.db[configParse.data.get(i).id].join();
+					Core.dosdbInit.reinitialize(configParse.data.get(i).id);
 					Core.efpsLogger.i=id;
 					Core.efpsLogger.createThread();
 					output="Reset Success!";
+					//Hopefully above fixes that bug..
 				}
 			}
 		}
@@ -280,10 +296,13 @@ public class MainCMDHandler {
 	}
 	public void parseRelaycfg(String input) {
 		parsed=true;
-		String[] words = input.split("//s+");
+		String[] words = input.split("\\s+");
+		System.out.println("MainCMDHandler: "+input);
+		System.out.println("MainCMDHandler: "+words.length);
 		if(words.length ==2 ) {
 			int relaynumber = Integer.parseInt(words[0]);
 			int mcu = Integer.parseInt(words[1]);
+			
 			try {
 				synchronized (Core.telnet[mcu]) {
 					output=Core.telnet[mcu].echo("relaycfg "+relaynumber+"\r");
@@ -308,6 +327,26 @@ public class MainCMDHandler {
 					if(output.equals("No input available")) {
 						Core.telnet[mcu].checkTelnet(1);
 						output=Core.telnet[mcu].echo("relaycfg "+relaynumber+" "+setvalue+"\r");
+						if(!output.equals("No input available")) {
+							if(output.contains("OK")) {
+								for(int i=0;i<Core.mcus.size();i++) {
+									if(Core.mcus.get(i).id==mcu) {
+										Core.mcus.get(i).relays[relaynumber-1][0]=setvalue;
+									}
+								}
+							}
+						}
+					}
+					else {
+						if(!output.equals("No input available")) {
+							if(output.contains("OK")) {
+								for(int i=0;i<Core.mcus.size();i++) {
+									if(Core.mcus.get(i).id==mcu) {
+										Core.mcus.get(i).relays[relaynumber-1][0]=setvalue;
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -320,6 +359,109 @@ public class MainCMDHandler {
 			output="DOS Error: Unknown Argument ";
 		}
 		int space1;
+		
+	}
+	private void parseSetrelay(String input) {
+		parsed=true;
+		String[] words = input.split("\\s+");
+		if(words.length==3) {
+			//$setrelay <relayNo> <dosSet> <mcu>
+			int relaynumber = Integer.parseInt(words[0]);
+			int setvalue = Integer.parseInt(words[1]);
+			int mcu = Integer.parseInt(words[2]);
+			try {
+				synchronized (Core.telnet[mcu]) {
+					output=Core.telnet[mcu].echo("setrelay "+relaynumber+" "+setvalue+"\r");
+					if(output.equals("No input available")) {
+						Core.telnet[mcu].checkTelnet(1);
+						output=Core.telnet[mcu].echo("setrelay "+relaynumber+" "+setvalue+"\r");
+						if(!output.equals("No input available")) {
+							if(output.contains("OK")) {
+								for(int i=0;i<Core.mcus.size();i++) {
+									if(Core.mcus.get(i).id==mcu) {
+										Core.mcus.get(i).relays[relaynumber-1][1]=setvalue;
+									}
+								}
+							}
+						}
+					}
+					else {
+						if(output.contains("OK")) {
+							for(int i=0;i<Core.mcus.size();i++) {
+								if(Core.mcus.get(i).id==mcu) {
+									Core.mcus.get(i).relays[relaynumber-1][1]=setvalue;
+								}
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				output="Error contacting ESP";
+			}
+		}
+		else {
+			output="DOS Error: Unknown Argument ";
+		}
+		
+	}
+	private void parseTestrelay(String input) {
+		parsed=true;
+		String[] words = input.split("\\s+");
+		if(words.length==2) {
+			//$testrelay <relayNo> <mcu>
+			int relaynumber = Integer.parseInt(words[0]);
+			int mcu = Integer.parseInt(words[1]);
+			try {
+				synchronized (Core.telnet[mcu]) {
+					output=Core.telnet[mcu].echo("getrelay "+relaynumber+"\r");
+					if(output.equals("No input available")) {
+						Core.telnet[mcu].checkTelnet(1);
+						output=Core.telnet[mcu].echo("getrelay "+relaynumber+"\r");
+					}
+				}
+			}
+			catch(Exception e) {
+				output="Error contacting ESP";
+			}
+		}
+		else {
+			output="DOS Error: Unknown Argument ";
+		}
+		
+	}
+	private void parseGetrelay(String input) {
+		parsed=true;
+		String[] words = input.split("\\s+");
+		if(words.length==2) {
+			//$getrelay <relayNo> <mcu>
+			
+			
+			int relaynumber = Integer.parseInt(words[0]);
+			int mcu = Integer.parseInt(words[1]);
+//			try {
+//				synchronized (Core.telnet[mcu]) {
+//					output=Core.telnet[mcu].echo("getrelay "+relaynumber+"\r");
+//					if(output.equals("No input available")) {
+//						Core.telnet[mcu].checkTelnet(1);
+//						output=Core.telnet[mcu].echo("getrelay "+relaynumber+"\r");
+//					}
+//				}
+//			}
+//			catch(Exception e) {
+//				output="Error contacting ESP";
+//			}
+			
+			ArrayList<DOSmcu> mcus= Core.mcus;
+			for(int i=0;i<mcus.size();i++) {
+				if(mcus.get(i).id==mcu) {
+					output= ""+(mcus.get(i).relays[relaynumber-1][1]);
+				}
+			}
+		}
+		else {
+			output="DOS Error: Unknown Argument ";
+		}
 		
 	}
 }

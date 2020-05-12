@@ -39,8 +39,8 @@ public class ConfigParse {
 		}
 		if(!file.exists()) {
 			System.out.println("Config file not found "
-		+System.getProperty("user.home")
-		+"/SSAL/ssal.conf");
+								+System.getProperty("user.home")
+								+"/SSAL/ssal.conf");
 		}
 		else {
 			try {
