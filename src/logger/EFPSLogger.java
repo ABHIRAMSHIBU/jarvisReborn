@@ -27,6 +27,7 @@ public class EFPSLogger{
 	public static int i;
 	
 	public EFPSLogger() {
+		i=0;
 		this.createThreads();
 	}
 	
@@ -38,8 +39,14 @@ public class EFPSLogger{
 		
 	}
 	public void createThread() {
-		if(Core.dosdb[i]) { //If DOS then dont create thread
-			System.out.println("EFPSLogger: Refusing to start on DOS MCU "+i);
+		try {
+			if(Core.dosdb[i]) { //If DOS then dont create thread
+				System.out.println("EFPSLogger: Refusing to start on DOS MCU "+i);
+				return;
+			}
+		}
+		catch(NullPointerException e) {
+			System.out.println("EFPSLogger: ID:"+i+" Not found in config");
 			return;
 		}
 		loggerThread[i] = new Thread() {
