@@ -22,7 +22,7 @@ import jarvisReborn.Core;
 import jarvisReborn.Specification;
 
 public class EFPSLogger{
-	static int mcuCount = Core.configParse.data.size();
+	static int mcuCount = 50;
 	public static Thread loggerThread[] = new Thread[mcuCount];
 	public static int i;
 	
