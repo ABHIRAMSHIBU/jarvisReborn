@@ -102,4 +102,9 @@
         $reply=echoSocket($socket, $command);
         return $reply;
     }
+    function getrelay($socket,$relayNo,$devID){
+        $command='$getrelay '.$relayNo." ".$devID;
+        $reply=echoSocket($socket, $command);
+        return $reply;
+    }
 ?>

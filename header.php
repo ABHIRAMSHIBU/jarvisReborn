@@ -16,11 +16,14 @@ $pages = array(
     array("status.php","Service status"),
     array("plot.php","Live plot"),
     array("editprofile.php","Profile"),
+    array("ipsetup.php","IP Setup"),
     array("mastersetup.php","DOS")
+
 );
 ?>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
     <title> SAL REMOTE UI </title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title> SAL REMOTE UI </title>
