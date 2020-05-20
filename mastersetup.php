@@ -1,7 +1,20 @@
 <?php  require 'auth.php' ?>
 <html>
 <head>
-<?php  require 'config.php' ?> 
+<?php  require 'config.php' ?>
+<?php
+//select ssal_rooms.id,ssal_rooms.name,ssal_ips.DOS from ssal_rooms,ssal_ips where ssal_rooms.id=ssal_ips.id
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+$sql = "select ssal_rooms.id,ssal_rooms.name,ssal_ips.DOS from ssal_rooms,ssal_ips where ssal_rooms.id=ssal_ips.id;";
+$result = $conn->query($sql);
+
+?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title> SAL POWER PANEL </title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -36,10 +49,11 @@
             </div>-->
         <ul class="nav navbar-nav">
             <li><a href="index.php">Home</a></li>
-            <li class="active"><a href="powerpanel.php">Power panel</a></li>
+            <li><a href="powerpanel.php">Power panel</a></li>
             <li><a href="status.php">Service status</a></li>
             <li><a href="plot.php">Live plot</a></li>
-            <li><a href="setup.php">Dos Setup</a></li>
+            <!-- <li><a href="setup.php">Dos Setup</a></li> -->
+            <li class="active"><a href="mastersetup.php">DOS</a></li>
         </ul>
         </div>
     </nav>
@@ -47,36 +61,32 @@
     <br><br>
         <div>
             <table class="table table-striped table-hover" style="width:60%;margin-left:20%;">
-            <thead >
+            <!-- <thead >
                 <tr class="">
                 <th scope="col">MCU ID</th>
-                <th scope="col">IP_ADDRESS</th>
-                <th scope="col">PINS</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
                 </tr>
-            </thead>
+            </thead> -->
             <tbody>
+            <?php
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        if($row['DOS']=='1'){
+
+            ?>
                 <tr>
-                    <td>1</td>
-                    <td>192.16.187.131</td>
-                    <td>12</td>
-                    <td><a>Edit</a></td>
+                    <td id='<?php echo($row['id']); ?>' ><?php echo($row['name']); ?></td>
+                    <td><button type="button" class="btn btn-danger" style="margin-left:45%;" onclick="goToConfig(this)">Setup</button></td>
+                    <td><button type="button" class="btn btn-success" style="margin-left:45%;">Status</button></td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>192.16.187.131</td>
-                    <td>13</td>
-                    <td><a>Edit</a></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>192.16.187.131</td>
-                    <td>15</td>
-                    <td><a>Edit</a></td>
-                </tr>
+                <?php
+                        }
+                }
+            }
+                ?>
             </tbody>
             </table>
-            <button type="button" class="btn btn-success" style="margin-left:45%;">ADD</button>
         </div>
     </div>
     <footer class="footer" style="margin-top:10%;">
@@ -87,4 +97,5 @@
                </div>
     </footer>
 </body>
+<script type="text/javascript" src="script/DOS.js"></script>
 </html> 

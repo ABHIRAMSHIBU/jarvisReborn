@@ -1,4 +1,5 @@
-<?php  require 'auth.php' ?>
+<?php  require 'auth.php';
+       require 'ssal_client.php'; ?>
 <html>
 <head>
 <?php  require 'config.php' ?> 
@@ -100,6 +101,7 @@ input:checked + .slider:before {
             <li><a href="status.php">Service status</a></li>
             <li><a href="plot.php">Live plot</a></li>
             <li class="active"><a href="setup.php">Dos Setup</a></li>
+            <li><a href="mastersetup.php">DOS</a></li>
         </ul>
         </div>
     </nav>
@@ -128,45 +130,87 @@ input:checked + .slider:before {
     <br><br>-->
     <form method="get" action="relayhandler.php">
     <?php
+    if(isset($_GET["devId"])==FALSE){
+      echo("Oops.. Something went wrong...");
+      exit();
+    }
+    $devId=$_GET["devId"];
+    $socket = startSocket("localhost",9998);
+    
     for($i=0;$i<4;$i++){ 
+      $value =  getrelaycfg($socket,($i+1),$devId);
+      $value =  substr($value,1);
+      $value = intval($value);
+      //var_dump($value);
+      $valuebkp=$value;
     echo('
-    <div id="'. ($i+1) .'">
-    <button type="button" class="btn btn-warning btn-lg" disabled>Relay Pair&nbsp;'.($i+1).'</button>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;
-    <label class="switch">
-    <input type="checkbox" onclick="calculate('.($i+1).')">
-    <span class="slider"></span>
-    </label>&nbsp;&nbsp;
-    <button type="button" class="btn btn-primary btn-lg" name="'.$i.'" style="Width:60px;" Value="0" disabled>0</button>
-    </div>
-    <br><br>');
+          <div id="'. ($i+1) .'">
+          <button type="button" class="btn btn-warning btn-lg" disabled>Relay Pair&nbsp;'.($i+1).'</button>&nbsp;');
+      for($j=0;$j<8;$j++){
+        if($value!=0){
+          $boolVal = $value & 128;
+          // if($value && 1==1){
+          //   $boolVal = True;
+          // }
+          // else{
+          //   $boolVal = False;
+          // }
+          //var_dump($boolVal);
+          $value = $value << 1;
+        }
+        else{
+          $boolVal=FALSE;
+        }
+        if($boolVal){
+          echo('
+                <label class="switch">
+                <input type="checkbox" checked=true onclick="calculate('.($i+1).')">
+                <span class="slider"></span>
+                </label>&nbsp;');
+        }
+        else{
+          echo('
+                <label class="switch">
+                <input type="checkbox" onclick="calculate('.($i+1).')">
+                <span class="slider"></span>
+                </label>&nbsp;');
+        }
+      }
+          //Waste code start
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;
+          // <label class="switch">
+          // <input type="checkbox" onclick="calculate('.($i+1).')">
+          // <span class="slider"></span>
+          // </label>&nbsp;&nbsp;
+          //Waste code end
+          //var_dump($valuebkp);
+          echo('&nbsp;
+          <button type="button" class="btn btn-primary btn-lg" name="'.$i.'" style="Width:60px;" value="'.$valuebkp.'" disabled>0</button>
+          </div>
+          <br><br>');
     }
     ?>
     <button type="button" class="btn btn-success" onclick="createRequest()">Submit</button>
@@ -181,5 +225,6 @@ input:checked + .slider:before {
                </div>
     </footer>
 </body>
+<input type="hidden" id="devId" value="<?php echo($devId); ?>" >
 <script type="text/javascript" src="script/relay.js"></script>
 </html> 

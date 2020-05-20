@@ -86,6 +86,7 @@
         return echoSocket($socket, $string);
     }
     function setrelaycfg($socket,$relayNo,$value,$devID){
+        // echo "devId=".$devID."<br>";
         $command='$relaycfg '.$relayNo." ".$value." ".$devID;
         $expOut=">OK\n";
         $reply=echoSocket($socket, $command);

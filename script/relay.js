@@ -145,7 +145,7 @@ function createRequest(){
             var status= document.getElementById("status")
             status.innerHTML="";
             div=document.createElement("div");
-            div.className="alert alert-success";
+            div.className="alert alert-danger";
             div.style["width"]="40%";
             div.style["margin-left"]="30%";
             div.style["text-align"]="center";
@@ -167,6 +167,8 @@ function createRequest(){
             return 0;
         }
     }
-    oReq.open("get", "relayHandler.php?1="+relays[0]+"&2="+relays[1]+"&3="+relays[2]+"&4="+relays[3], true);
+    var devId = document.getElementById("devId").value;
+    console.log(devId);
+    oReq.open("get", "relayHandler.php?devId="+devId+"&0="+relays[0]+"&1="+relays[1]+"&2="+relays[2]+"&3="+relays[3], true);
     oReq.send();
 }

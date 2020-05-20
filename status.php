@@ -116,7 +116,8 @@ input:checked + .slider:before {
             <li><a href="powerpanel.php">Power panel</a></li>
             <li><a href="status.php">Service status</a></li>
             <li><a href="plot.php">Live plot</a></li>
-            <li><a href="setup.php" class="active">Dos Setup</a></li>
+            <!-- <li><a href="setup.php" class="active">Dos Setup</a></li> -->
+            <li><a href="mastersetup.php">DOS</a></li>
         </ul>
         </div>
     </nav>

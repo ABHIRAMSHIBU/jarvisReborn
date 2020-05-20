@@ -1,7 +1,9 @@
 <?php
-    require 'auth.php';
+    $selected=0;
+    require 'header.php';
 ?>
-<html>
+
+<!-- <html>
 <head>
     <title> SAL REMOTE UI </title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -32,19 +34,17 @@
     </header>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
-            <!--<div class="navbar-header">
-                <a class="navbar-brand" href="#">WebSiteName</a>
-            </div>-->
+
         <ul class="nav navbar-nav">
             <li class="active"><a href="index.php">Home</a></li>
             <li><a href="powerpanel.php">Power panel</a></li>
             <li><a href="status.php">Service status</a></li>
             <li><a href="plot.php">Live plot</a></li>
             <li><a href="editprofile.php">Profile</a></li>
-            <li><a href="setup.php">Dos Setup</a></li>
+            <li><a href="mastersetup.php">DOS</a></li>
         </ul>
         </div>
-    </nav>
+    </nav> -->
     <div class="container">
         <div class="popup" id="popup" align="right">
                 <div class="inpopup" id="inpopup">
