@@ -1,8 +1,25 @@
-<?php  require 'auth.php' ?>
+<?php $selected=6;require 'header.php'; ?>
 <?php  require 'config.php' ?> 
 
-<?php $selected=1;require 'header.php'; ?>
 <link rel="stylesheet" href="css/powerpanel_style.css">
+<?php
+    require 'config.php';
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } 
+    if(!isset($_GET["devId"])){
+        echo("<h1 style='text-align:center; color:red;'>Oops... Something happened try again..</h1>");
+        exit();
+    }
+    $devId=$_GET["devId"];
+    $sql = "SELECT relayPairID,name,id FROM `ssal_dos_devices` where id=".$devId.";";
+    $result = $conn->query($sql);
+    //var_dump($result);
+    echo("<input type=hidden id=devID value=".$devId.">");
+    ?>
     <div align="center" >
     <br><br>
     <div>
@@ -20,7 +37,26 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+
+                <?php
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                ?>
+                <tr id=<?php echo($row["relayPairID"]); ?>>
+                    <td><?php echo($row["name"]); ?></td>
+                    <td>Grid</td>
+                    <td>
+                    <label class="switch">
+                    <input type="checkbox" onclick="toggleOn()">
+                    <span class="slider round"></span>
+                    </label>
+                    </td>
+                </tr>
+                <?php
+                    }
+                }
+                ?>
+                <!-- <tr>
                     <td>Air Conditioner</td>
                     <td>Grid</td>
                     <td>
@@ -39,21 +75,12 @@
                     <span class="slider round"></span>
                     </label>
                     </td>
-                </tr>
-                <tr>
-                    <td>Air Conditioner</td>
-                    <td>Grid</td>
-                    <td>
-                    <label class="switch">
-                    <input type="checkbox" onclick="toggleOn()">
-                    <span class="slider round"></span>
-                    </label>
-                    </td>
-                </tr>
+                </tr> -->
             </tbody>
             </table>
         </div>
     </div>
+    <br>
     <br>
     <br>
 <?php require("footer.php")?>

@@ -29,8 +29,8 @@ $result = $conn->query($sql);
             ?>
                 <tr>
                     <td id='<?php echo($row['id']); ?>' ><?php echo($row['name']); ?></td>
-                    <td><button type="button" class="btn btn-danger" style="margin-left:45%;" onclick="goToConfig(this)">Setup</button></td>
-                    <td><button type="button" class="btn btn-success" style="margin-left:45%;">Status</button></td>
+                    <td><button type="button" class="btn btn-danger" style="margin-left:45%;" onclick="goToConfig(this);">Setup</button></td>
+                    <td><button type="button" class="btn btn-success" style="margin-left:45%;" onclick="goToStatus(this);">Status</button></td>
                 </tr>
                 <?php
                         }

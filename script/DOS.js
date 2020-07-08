@@ -11,3 +11,16 @@ function goToConfig(buttonElement){
    document.body.appendChild(f);
    f.submit();
 }
+function goToStatus(buttonElement){
+   var devId = buttonElement.parentNode.parentNode.childNodes[1].id;
+   var f = document.createElement("form");
+   f.action="powerpanel.php";
+   f.method="get";
+   input = document.createElement("input");
+   input.type="hidden";
+   input.name = "devId";
+   input.value=devId;
+   f.appendChild(input);
+   document.body.appendChild(f);
+   f.submit();
+}

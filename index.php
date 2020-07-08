@@ -2,49 +2,6 @@
     $selected=0;
     require 'header.php';
 ?>
-
-<!-- <html>
-<head>
-    <title> SAL REMOTE UI </title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title> SAL REMOTE UI </title>
-    <link rel="stylesheet" href="css/bootstrap.min.css"/>
-    <script src="css/jquery.min.js"></script>
-    <script src="css/bootstrap.min.js"></script>
-    <script src="script/BootstrapMenu.min.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
-    <script type="text/javascript" src="script/script.js"></script>
-</head>
-<body>
-	<form method="post" action="switches.php" id="hiddenForm" hidden=true>
-		<input type="hidden" name="devID" value="" ></input>
-	</form>
-    <header class="jumbotron" style="margin-bottom:0px;" >
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-6">
-                        <h1>SSAL Remote Dashboard</h1>
-                    </div>
-                    <div class="col-md-4">
-                        <img src="img/ssal.png" class="img-fluid" style="height:20%">
-                    </div>
-                </div>
-            </div>
-    </header>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Home</a></li>
-            <li><a href="powerpanel.php">Power panel</a></li>
-            <li><a href="status.php">Service status</a></li>
-            <li><a href="plot.php">Live plot</a></li>
-            <li><a href="editprofile.php">Profile</a></li>
-            <li><a href="mastersetup.php">DOS</a></li>
-        </ul>
-        </div>
-    </nav> -->
     <div class="container">
         <div class="popup" id="popup" align="right">
                 <div class="inpopup" id="inpopup">

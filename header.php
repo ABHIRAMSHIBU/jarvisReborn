@@ -11,14 +11,12 @@ require "auth.php";
 
 
 $pages = array(
-    array("index.php","Home"),
-    array("powerpanel.php","Power panel"),
-    array("status.php","Service status"),
-    array("plot.php","Live plot"),
-    array("editprofile.php","Profile"),
-    array("ipsetup.php","IP Setup"),
-    array("mastersetup.php","DOS")
-
+    "0"=>array("index.php","Home"),
+    "2"=>array("status.php","Service status"),
+    "3"=>array("plot.php","Live plot"),
+    "4"=>array("editprofile.php","Profile"),
+    "5"=>array("ipsetup.php","IP Setup"),
+    "6"=>array("mastersetup.php","DOS")
 );
 ?>
 <html>
@@ -55,14 +53,24 @@ $pages = array(
             </div>-->
         <ul class="nav navbar-nav">
         <?php
-            for($i=0;$i < count($pages);$i++){
-                if($i==$selected){
-                    echo("<li class='active'><a href='".$pages[$i][0]."'>".$pages[$i][1]."</a></li>");
+        $counter=0;
+        $i=0;
+            while($counter < count($pages)){
+                //var_dump($counter);
+                //echo(" ");
+                //var_dump($i);
+                //echo("<br>");
+                if(isset($pages[$i.""])){
+                    if($i==$selected){
+                        echo("<li class='active'><a href='".$pages[$i.""][0]."'>".$pages[$i.""][1]."</a></li>");
 
+                    }
+                    else{
+                        echo("<li><a href='".$pages[$i.""][0]."'>".$pages[$i.""][1]."</a></li>");
+                    }   
+                    $counter++;
                 }
-                else{
-                    echo("<li><a href='".$pages[$i][0]."'>".$pages[$i][1]."</a></li>");
-                }
+                $i++;
             }
             ?>
 
