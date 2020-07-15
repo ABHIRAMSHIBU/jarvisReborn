@@ -2,6 +2,10 @@
     $selected=0;
     require 'header.php';
 ?>
+
+    <form method="post" action="switches.php" id="hiddenForm" hidden=true>
+		<input type="hidden" name="devID" value="" ></input>
+	</form>
     <div class="container">
         <div class="popup" id="popup" align="right">
                 <div class="inpopup" id="inpopup">
