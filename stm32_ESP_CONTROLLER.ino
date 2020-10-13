@@ -93,7 +93,7 @@ bool led=False;
 long time=millis();          //Heart beat timer
 //END HEART BEAT VARIABLE
 //DOS VARIABLES
-bool DOS=0;
+bool DOS=true;
 uint8_t relaycfg[4];
 //END DOS VARIABLES
 bool pins[16];    // Pin stats are stored here
@@ -269,7 +269,7 @@ void loadFromEEPROM(){
 float readCurrent(int analogInput){
     int sensorVal=analogRead(analogInput);
     float voltage= (sensorVal*3.3)/4096; //STM32 3.3 v reference.
-    float amps=(1.65-voltage)/0.07;
+    float amps=(voltage); 
     return amps;
 }
 String sendSensorBuffer(){
@@ -774,6 +774,43 @@ void loop() {
             }
             sendData(id,pinString);
           }
+          else if(dataESP.indexOf(F("getrelay"))!=-1){
+              String pinString;
+              String data = dataESP.substring(0,dataESP.length()-2);
+              int space1 = data.indexOf(" ");
+              if(space1!=-1){
+                short relayNo = data.substring(space1).toInt();
+                short pin1,pin2;
+                relayConfDecode(relaycfg[relayNo-1],&pin1,&pin2);
+                // if(value==0){
+                //     setpin(pin1,1);
+                //     setpin(pin2,1);     
+                //   }
+                //   else if(value==1){
+                //     setpin(pin1,0);
+                //     setpin(pin2,1);
+                //   }
+                //   else if(value==2){
+                //     setpin(pin1,0);
+                //     setpin(pin2,0);
+                //   }
+                short value=-1;
+                if(pins[pin1]==1 && pins[pin2]==1){
+                  value = 0;
+                }
+                else if(pins[pin1]==0 && pins[pin2]==1){
+                  value = 1;
+                }
+                else if(pins[pin1]==0 && pins[pin2]==0){
+                  value = 2;
+                }
+                pinString += String(value);
+              }
+              else{
+                pinString=F("Error");
+              }
+              sendData(id,pinString);
+          }
           else if(dataESP.indexOf(F("setrelay"))!=-1){
             /*  setrelay relaynumber mode
                 ------modes------
@@ -798,7 +835,7 @@ void loop() {
                   pinString="OK";
                   if(value==0){
                     setpin(pin1,1);
-                    setpin(pin2,1);
+                    setpin(pin2,1);     
                   }
                   else if(value==1){
                     setpin(pin1,0);
@@ -852,7 +889,7 @@ void loop() {
     dataESP="";       //ESP data never got logged wink wink
   }
   if((millis()-last_sample)>=100){
-    short a = readCurrent(PA0)*1000;
+    short a = readCurrent(PA0)*1000; //Current is voltage in millivolts.
     short b = readCurrent(PA1)*1000;
     short c = readCurrent(PB0)*1000;
     short d = readCurrent(PB1)*1000;
