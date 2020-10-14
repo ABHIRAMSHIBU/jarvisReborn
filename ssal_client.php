@@ -37,6 +37,7 @@
         if($retries==-1){
             return "Error";
         }
+        $expError=">Not allowed! ";
         $string='$set ';
         $string.=(string)$pinNo;
         $string.=" ";
@@ -54,6 +55,11 @@
         }
         //file_put_contents('php://stderr', print_r($string, TRUE));
         $reply=echoSocket($socket, $string);
+        if(trim($reply)==trim($expError)){
+            resetESP($socket,$devID);
+            sleep(0.2);
+            return setPin($socket,$devID,$pinNo,$state,$retries-1);
+        }
         if($reply==$expOut){
             return $reply;
         }
@@ -106,5 +112,16 @@
         $command='$getrelay '.$relayNo." ".$devID;
         $reply=echoSocket($socket, $command);
         return $reply;
+    }
+    function setrelay($socket,$relayNo,$value,$devID){
+        $command='$setrelay '.$relayNo." ".$value." ".$devID;
+        $expOut=">OK\n";
+        $reply=echoSocket($socket, $command);
+        if($expOut==$reply){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 ?>
