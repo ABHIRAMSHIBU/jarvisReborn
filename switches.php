@@ -21,7 +21,7 @@
 .button {
   display: inline-block;
   border-radius: 4px;
-  background-color: #f4511e;
+  background-color: #1C2833;
   border: none;
   color: #FFFFFF;
   text-align: center;
@@ -129,9 +129,16 @@ input:checked + .slider:before {
 }
 .roundbutton {
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
 }
+
+.footer {
+    background-color: #F1C40F;
+    margin: 0px;
+    padding: 20px 0px 20px 0px;
+}
+
 h2{
     text-align:center;   
     font-size:40px;
@@ -293,12 +300,12 @@ body{
     setInterval(startRequest,500);
 	</script>
 </head>
-<body bgcolor="black">
+<body bgcolor="white">
 	<div class=popup id=popup hidden=true>
         <div class=inpopup id=inpopup>
         </div>
     </div>
-    <font color="white">
+    <font color="black">
     <h2>Toggle Switch</h2>
     </font>
     <form target="_blank" action="handle.php" method="post" id="form_switches">
@@ -318,6 +325,8 @@ body{
 	    
 	    $sql = "SELECT * from ssal_switches where id=$devID";
 	    $result = $conn->query($sql);
+	    $sql_name = "SELECT name from ssal_rooms where id=$devID";
+	    $result_name = $conn->query($sql);
 	    file_put_contents('php://stderr', print_r($result, TRUE));
 	    $i=0;
 	    $start=true;
@@ -332,7 +341,7 @@ body{
 	        $name=$row['name'];
 	        $id=$row['id_switch'];
 	        echo "<td>";
-	        echo "<span class='sldr' style='color: white; font-size: 45px;'>$name\t:\t</span>";
+	        echo "<span class='sldr' style='color: black; font-size: 45px;'>$name\t:\t</span>";
 	        echo '<label class="switch">';
 	        echo "<input type='checkbox' name='$id' id='$id' class='chkbox' onclick=\"delay_refresh($id)\"/>";
 	        echo '<span class="slider round"></span>';
@@ -374,5 +383,13 @@ body{
 	<div class="rembutton">
     	<button class="button roundbutton" onclick="popUP2();">-</button>
 	</div>
+<!--	<footer class="footer" style="height:5%;">
+
+            <div class="row justify-content-center">             
+                    <div class="col-auto" align="center">
+                        <p> © Copyright 2020 BrainNet Technologies</p>
+                    </div>
+               </div>
+    </footer>-->
 </body>
 </html> 
