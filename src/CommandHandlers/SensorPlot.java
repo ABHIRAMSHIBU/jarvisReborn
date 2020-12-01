@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import jarvisReborn.Core;
-import jarvisReborn.Details;
+import jarvisReborn.Specification;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -50,10 +50,10 @@ public class SensorPlot extends Application {
     	
     }
     public Double getNextData() {
-    	String[] args = Details.plotInput.split("\\s+");
-		System.out.println("The input recieved is "+Details.plotInput);
+    	String[] args = Specification.plotInput.split("\\s+");
+		System.out.println("The input recieved is "+Specification.plotInput);
 		if(args.length!=2) {
-			System.out.println("Some error with plot argument = "+Details.plotInput);
+			System.out.println("Some error with plot argument = "+Specification.plotInput);
 		}
 		Integer sensorIndex = Integer.parseInt(args[0]);
 		Integer mcu = Integer.parseInt(args[1]);
