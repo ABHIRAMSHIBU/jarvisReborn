@@ -11,3 +11,19 @@
 <li>Afterall saves energy (Turn on and forget)</li>
 </ul>
 Config file in branch <a href="'https://gitlab.com/ABHIRAMSHIBU/jarvisReborn.git/">config</a>
+
+
+
+
+
+**To build and run SSAL UI**
+
+```bash
+git clone https://gitlab.com/abhiramshibu/jarvisReborn
+cd jarvisReborn
+ant jar
+java -jar build/jar/SSAL.jar
+```
+
+ 
+
