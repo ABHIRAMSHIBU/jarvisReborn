@@ -1,0 +1,34 @@
+<project default="compile">
+    <path id="jarpath">
+        <fileset dir=".">
+            <include name="**/**.jar"/>
+        </fileset>
+    </path>
+
+    <path id="srcpath">
+        <fileset dir="src">
+            <exclude name="src/jarvisReborn/NewJFrame.java"/>
+        </fileset>
+    </path>
+    
+    <target name="clean">
+        <delete dir="build" />
+    </target>
+    <target name="compile" depends="clean"> 
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"  destdir="build/classes" debug="on" >
+            <classpath refid="jarpath"/>
+            <exclude name="jarvisReborn/NewJFrame.java"/>
+        </javac>
+    </target>
+
+     <target name="jar" depends="compile">
+        <mkdir dir="build/jar" />
+        <jar destfile="build/jar/SSAL.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="jarvisReborn.Core"/>
+            </manifest>
+        </jar>
+    </target> 
+
+</project>
